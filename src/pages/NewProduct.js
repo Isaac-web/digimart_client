@@ -1,5 +1,14 @@
-import React, { useContext } from "react";
-import { Box, Container, Grid, Paper, Typography } from "@mui/material";
+import React, { useContext, useState } from "react";
+import {
+  Box,
+  Container,
+  Grid,
+  Paper,
+  Typography,
+  FormControlLabel,
+  Switch,
+  Tooltip,
+} from "@mui/material";
 import { Save } from "@mui/icons-material";
 import * as Yup from "yup";
 
@@ -7,11 +16,24 @@ import { AppContext } from "../context/AppContext";
 import Form from "../components/form/Form";
 import FormTextField from "../components/form/FormTextField";
 import FormSubmitButton from "../components/form/FormSubmitButton";
+import AppImagePicker from "../components/AppImagePicker";
 
 const NewProduct = () => {
+  const [image, setImage] = useState(null);
   const { matchesMD } = useContext(AppContext);
+
+  const handleImageLoad = (image) => {
+    setImage(image);
+  };
+
   const handleSubmit = (data) => {
-    console.log(data);
+    if (image) {
+      const formData = new FormData();
+      formData.append("image", image);
+
+      console.log("Form Data", formData.entries());
+      console.log(data);
+    }
   };
 
   const validationSchema = Yup.object().shape({
@@ -24,7 +46,7 @@ const NewProduct = () => {
   return (
     <Container>
       <Paper sx={{ width: "100%" }}>
-        <Container maxWidth="md" sx={{ padding: 3 }}>
+        <Container maxWidth="md" sx={{ padding: 5 }}>
           <Box style={{ padding: matchesMD ? "0px" : "0 6em" }}>
             <Box>
               <Typography variant="h4">New Product</Typography>
@@ -59,6 +81,19 @@ const NewProduct = () => {
                     xs={12}
                     rows={5}
                   />
+
+                  <Grid item xs={12}>
+                    <AppImagePicker label="Photo" onChange={handleImageLoad} />
+                  </Grid>
+                  <Grid item container sx={{ padding: "1em 0" }}>
+                    <Tooltip title="Indicate whether product is available">
+                      <FormControlLabel
+                        label="Available"
+                        control={<Switch />}
+                        labelPlacement="start"
+                      />
+                    </Tooltip>
+                  </Grid>
                   <FormSubmitButton sm={12} md={6} startIcon={<Save />}>
                     Save
                   </FormSubmitButton>

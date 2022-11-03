@@ -14,7 +14,6 @@ import {
   Grid,
   useTheme,
   useMediaQuery,
-  Grow,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { Add } from "@mui/icons-material";
@@ -56,7 +55,7 @@ const Products = () => {
   ];
   return (
     <Container>
-      <Paper sx={{ padding: 3 }}>
+      <Paper sx={{ padding: 5 }}>
         <Box>
           <Typography fontWeight={"semibold"} variant="h3">
             Products
@@ -68,16 +67,18 @@ const Products = () => {
         <Box sx={{ padding: "2em 0em" }}>
           <Grid container alignItems={"center"} justifyContent={"space-around"}>
             <Grid item xs={12} md={10}>
-              <InputBase
-                startAdornment={<SearchIcon sx={{ marginRight: 1 }} />}
-                sx={{
-                  backgroundColor: theme.palette.grey[100],
-                  borderRadius: "10px",
-                  padding: "0.4em",
-                }}
-                placeholder="Search Products"
-                fullWidth
-              />
+              <Paper>
+                <InputBase
+                  startAdornment={<SearchIcon sx={{ marginRight: 1 }} />}
+                  sx={{
+                    backgroundColor: theme.palette.grey[50],
+                    borderRadius: "10px",
+                    padding: "0.4em",
+                  }}
+                  placeholder="Search Products"
+                  fullWidth
+                />
+              </Paper>
             </Grid>
             <Grid
               item
