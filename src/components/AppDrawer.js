@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Box,
   CardMedia,
@@ -14,25 +14,41 @@ import {
 } from "@mui/material";
 import { Link, useLocation } from "react-router-dom";
 
+import { AppContext } from "../context/AppContext";
+import drawerData from "../data/drawer";
+
 const AppDrawer = () => {
   const location = useLocation();
+
+  const categories = [];
+  for (let item in drawerData) {
+    categories.push(item);
+  }
+
+  const {
+    drawerOpen,
+    setDrawerOpen,
+    drawerMargin: drawerWidth,
+    matchesMD,
+  } = useContext(AppContext);
 
   const items = [
     { id: "1", title: "Home", link: "/home" },
     { id: "2", title: "Orders", link: "/orders" },
     { id: "3", title: "Products", link: "/products" },
-    { id: "4", title: "Categoreis", link: "/categories" },
+    { id: "4", title: "Categories", link: "/categories" },
   ];
 
   return (
     <div>
       <Drawer
         anchor="left"
-        open={true}
+        open={drawerOpen}
         PaperProps={{
-          style: { width: 240, padding: "0 10px" },
+          style: { width: 230, padding: "0 20px", boxSizing: "border-box" },
         }}
-        variant="persistent"
+        variant={matchesMD ? "temporary" : "persistent"}
+        onClose={() => setDrawerOpen(false)}
       >
         <DrawerHeader>
           <Box
@@ -58,13 +74,19 @@ const AppDrawer = () => {
         </DrawerHeader>
         <Divider />
         <List>
-          {items.map((item) => (
-            <DrawerListItem
-              active={location.pathname.startsWith(item.link)}
-              key={item.link}
-              link={item.link}
-              title={item.title}
-            />
+          {categories.map((c, index) => (
+            <>
+              {index !== 0 && <Divider sx={{ margin: "1em 0" }} />}
+              {drawerData[c].map((item) => (
+                <DrawerListItem
+                  Icon={item.Icon}
+                  active={location.pathname.startsWith(item.link)}
+                  key={item.link}
+                  link={item.link}
+                  title={item.title}
+                />
+              ))}
+            </>
           ))}
         </List>
       </Drawer>
@@ -94,22 +116,35 @@ const DrawerListItem = ({ title, Icon, link, active = false }) => {
           sx={() => ({
             "&:hover": {
               color: active
-                ? theme.palette.common.white
+                ? theme.palette.primary.main
                 : theme.palette.primary.main,
-              backgroundColor: active ? theme.palette.primary.main : "none",
+              backgroundColor: active
+                ? theme.palette.common.extraLight
+                : "none",
             },
             borderRadius: 2,
             color: active
-              ? theme.palette.common.white
-              : theme.palette.primary.main,
-            backgroundColor: active ? theme.palette.primary.main : "white",
-            height: 45,
-            marginBottom: "5px",
+              ? theme.palette.primary.main
+              : theme.palette.common.medium,
+            backgroundColor: active ? theme.palette.common.extraLight : "white",
+            height: 40,
+            marginBottom: 1,
           })}
         >
-          {Icon && <ListItemIcon>{Icon}</ListItemIcon>}
+          {Icon && (
+            <ListItemIcon
+              style={{
+                color: active
+                  ? theme.palette.primary.main
+                  : theme.palette.common.medium,
+                marginRight: "-1em",
+              }}
+            >
+              {Icon}
+            </ListItemIcon>
+          )}
           <ListItemText>
-            <Typography variant="subtitle1">{title}</Typography>
+            <Typography variant="subtitle2">{title}</Typography>
           </ListItemText>
         </ListItemButton>
       </Link>

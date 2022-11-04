@@ -7,6 +7,7 @@ const theme = createTheme({
         root: {
           borderRadius: 10,
           textTransform: "capitalize",
+          minWidth: "100px",
         },
       },
       defaultProps: {
@@ -16,7 +17,6 @@ const theme = createTheme({
     MuiTable: {
       styleOverrides: {
         root: {
-          borderRadius: 10,
           overflow: "hidden",
         },
       },
@@ -32,6 +32,9 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "rgba(0, 0, 0, 0.05)",
+          "&:hover": {
+            backgroundColor: "rgba(0, 0, 0, 0.05)",
+          },
         },
       },
     },
@@ -57,6 +60,10 @@ const theme = createTheme({
   palette: {
     common: {
       black: "#000000",
+      dark: "#2E2F30",
+      extraLight: "#eceff1",
+      light: "#E7EBF0",
+      medium: "#737578",
       white: "#FFFFFF",
     },
     primary: {

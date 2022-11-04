@@ -57,7 +57,7 @@ const Products = () => {
     <Container>
       <Paper sx={{ padding: 5 }}>
         <Box>
-          <Typography fontWeight={"semibold"} variant="h3">
+          <Typography fontWeight={"semibold"} variant="h4">
             Products
           </Typography>
           <Typography variant="subtitle1">
@@ -115,7 +115,12 @@ const Products = () => {
             </TableHead>
             <TableBody>
               {items.map((item) => (
-                <TableRow key={item.id}>
+                <TableRow
+                  key={item.id}
+                  component={Link}
+                  to={`/products/${item.id}`}
+                  sx={{ textDecoration: "none" }}
+                >
                   <TableCell>
                     <Box
                       style={{

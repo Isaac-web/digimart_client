@@ -1,4 +1,4 @@
-import React, { createContext } from "react";
+import React, { createContext, useState } from "react";
 import { useTheme, useMediaQuery } from "@mui/material";
 
 export const AppContext = createContext(null);
@@ -11,6 +11,9 @@ const AppContextWrapper = ({ children, value }) => {
   const matchesLG = useMediaQuery(theme.breakpoints.down("lg"));
   const matchesXL = useMediaQuery(theme.breakpoints.down("xl"));
 
+  const [drawerOpen, setDrawerOpen] = useState(true);
+  const drawerMargin = drawerOpen ? 230 : 0;
+
   return (
     <AppContext.Provider
       value={{
@@ -19,6 +22,9 @@ const AppContextWrapper = ({ children, value }) => {
         matchesMD,
         matchesLG,
         matchesXL,
+        drawerOpen,
+        setDrawerOpen,
+        drawerMargin,
         ...value,
       }}
     >
