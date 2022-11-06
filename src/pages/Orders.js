@@ -12,12 +12,15 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { ArrowDownward, Done, Sort } from "@mui/icons-material";
+import { Done, FilterList, Sort } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 import AppTable from "../components/AppTable";
 import SearchField from "../components/SearchField";
 
 const Orders = () => {
+  const navigate = useNavigate();
+
   const items = [
     {
       id: "1",
@@ -91,6 +94,10 @@ const Orders = () => {
     },
   ];
 
+  const handleRowSelect = (item) => {
+    navigate(`/orders/${item.id}`);
+  };
+
   return (
     <Container>
       <Box sx={{ padding: "2em 0" }}>
@@ -111,9 +118,9 @@ const Orders = () => {
                 <SearchField
                   placeholder="Search by order Id"
                   endAdornment={
-                    <InputAdornment>
+                    <InputAdornment position="end">
                       <IconButton>
-                        <Sort />
+                      <FilterList/>
                       </IconButton>
                     </InputAdornment>
                   }
@@ -133,7 +140,11 @@ const Orders = () => {
               </Grid>
             </Grid>
           </Toolbar>
-          <AppTable columns={columns} data={items} />
+          <AppTable
+            columns={columns}
+            data={items}
+            onRowSelect={handleRowSelect}
+          />
         </Paper>
       </Box>
     </Container>
@@ -173,7 +184,7 @@ const FilterMenu = ({ onItemSelect }) => {
         clickable
         onClick={handleOpenMenu}
         label={currentItem.label}
-        endIcon={<Done />}
+        deleteIcon={<Done />}
       />
       <Menu
         open={open}
@@ -182,7 +193,9 @@ const FilterMenu = ({ onItemSelect }) => {
         aria-label="Sort Menu"
       >
         {items.map((m) => (
-          <MenuItem onClick={() => raiseItemSelect(m)}>{m.label}</MenuItem>
+          <MenuItem key={m.id} onClick={() => raiseItemSelect(m)}>
+            {m.label}
+          </MenuItem>
         ))}
       </Menu>
     </>

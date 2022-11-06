@@ -9,28 +9,39 @@ import {
 } from "@mui/material";
 import _ from "lodash";
 
-const AppTable = ({ columns, data }) => {
+const AppTable = ({ columns, data, onRowSelect }) => {
   const renderCell = (item, column) => {
-    if (column.render) return column.render;
+    if (column.render) return column.render(item);
 
     return _.get(item, column.dataIndex);
   };
+
+
+  const raiseRowSelect = (item) => {
+    if (typeof onRowSelect === "function") onRowSelect(item);
+  }
+
   return (
     <Box>
       <Table>
         <TableHead>
           <TableRow>
             {columns.map((c) => (
-              <TableCell>{c.label}</TableCell>
+              <TableCell align={c?.align} key={c.id}>{c.label}</TableCell>
             ))}
           </TableRow>
         </TableHead>
 
         <TableBody>
           {data.map((item) => (
-            <TableRow>
+            <TableRow
+              key={item?.id || item?._id}
+              onClick={raiseRowSelect}
+            >
               {columns.map((c) => (
-                <TableCell>{renderCell(item, c)}</TableCell>
+                <TableCell align={c?.align} key={c.dataIndex + (item.id || item._id)}>
+                  {renderCell(item, c)}
+                </TableCell>
               ))}
             </TableRow>
           ))}

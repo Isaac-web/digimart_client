@@ -2,6 +2,16 @@ import { createTheme } from "@mui/material";
 
 const theme = createTheme({
   components: {
+    MuiAvatar: {
+      defaultProps: {
+        variant: "rounded",
+      },
+      styleOverrides: {
+        root: {
+          borderRadius: "0.4em",
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
@@ -12,6 +22,11 @@ const theme = createTheme({
       },
       defaultProps: {
         variant: "contained",
+      },
+    },
+    MuiDialog: {
+      defaultProps: {
+        PaperProps: { variant: "outlined", sx: { borderRadius: 3 } },
       },
     },
     MuiTable: {
@@ -32,6 +47,7 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "rgba(0, 0, 0, 0.05)",
+          color: "red",
           "&:hover": {
             backgroundColor: "rgba(0, 0, 0, 0.05)",
           },
@@ -56,6 +72,13 @@ const theme = createTheme({
         },
       },
     },
+    MuiTypography: {
+      styleOverrides: {
+        h4: {
+          fontWeight: "bold",
+        },
+      },
+    },
   },
   palette: {
     common: {
@@ -69,6 +92,12 @@ const theme = createTheme({
     primary: {
       main: "#980200",
     },
+  },
+  rounded: {
+    small: "0.5em",
+    medium: "1em",
+    large: "3em",
+    full: "50%",
   },
 });
 

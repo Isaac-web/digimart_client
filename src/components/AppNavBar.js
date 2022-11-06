@@ -22,6 +22,7 @@ const AppNavBar = () => {
           backgroundColor: theme.palette.common.white,
           paddingLeft: `${drawerMargin}px`,
           transition: theme.transitions.create(["padding"]),
+          boxShadow: `0 0 1px ${theme.palette.common.medium}`,
         }}
       >
         <Toolbar sx={{ color: theme.palette.primary.main }}>

@@ -75,7 +75,7 @@ const AppDrawer = () => {
         <Divider />
         <List>
           {categories.map((c, index) => (
-            <>
+            <Box key={c}>
               {index !== 0 && <Divider sx={{ margin: "1em 0" }} />}
               {drawerData[c].map((item) => (
                 <DrawerListItem
@@ -86,7 +86,7 @@ const AppDrawer = () => {
                   title={item.title}
                 />
               ))}
-            </>
+            </Box>
           ))}
         </List>
       </Drawer>

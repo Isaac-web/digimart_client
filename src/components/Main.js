@@ -12,6 +12,7 @@ import Products from "../pages/Products";
 
 import { AppContext } from "../context/AppContext";
 import ProductDetails from "../pages/ProductDetails";
+import OrderDetails from "../pages/OrderDetails";
 
 const Main = () => {
   const { drawerMargin } = useContext(AppContext);
@@ -32,6 +33,7 @@ const Main = () => {
         <Route path="/products/:id" element={<ProductDetails />} />
         <Route path="/categories/new" element={<NewCategory />} />
         <Route path="/categories" element={<Categories />} />
+        <Route path="/orders/:id" element={<OrderDetails />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/home" element={<Home />} />
         <Route path="/" element={<Navigate to="/home" />} />

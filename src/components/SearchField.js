@@ -10,7 +10,7 @@ const SearchField = ({ placeholder = "Search...", ...rest }) => {
       fullWidth
       placeholder={placeholder}
       startAdornment={
-        <InputAdornment sx={{ padding: "0 0.5em" }}>
+        <InputAdornment position="start" sx={{ padding: "0 0.5em" }}>
           <Search />
         </InputAdornment>
       }
