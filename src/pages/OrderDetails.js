@@ -10,6 +10,7 @@ import {
   useTheme,
   Chip,
 } from "@mui/material";
+import { Receipt, Send } from "@mui/icons-material";
 
 import AppTable from "../components/AppTable";
 import {
@@ -20,7 +21,7 @@ import {
   orderAddress,
 } from "../data/orderDetails";
 import RiderPicker from "../components/RiderPicker";
-import { Receipt, Send } from "@mui/icons-material";
+import ProductListAccordion from "../components/ProductListAccordion";
 
 const OrderDetails = () => {
   const theme = useTheme();
@@ -29,9 +30,9 @@ const OrderDetails = () => {
 
   return (
     <Container>
-      <Box sx={{ padding: "3em" }}>
-        <Box sx={{ paddingBottom: "1em" }}>
-          <Typography variant="h4">
+      <Box sx={{}}>
+        <Box>
+          <Typography gutterBottom variant="h4">
             Order Number{" "}
             <Typography
               sx={{ display: "inline", color: theme.palette.secondary.main }}
@@ -63,6 +64,10 @@ const OrderDetails = () => {
                       }}
                     >
                       <AppTable columns={columns} data={items} />
+
+                      <Box sx={{ padding: "1em 0" }}>
+                        <ProductListAccordion items={items} />
+                      </Box>
                     </Box>
                   </Paper>
                 </Box>

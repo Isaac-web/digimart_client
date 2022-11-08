@@ -47,9 +47,10 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "rgba(0, 0, 0, 0.05)",
+          borderRadius: "10px",
           color: "red",
           "&:hover": {
-            backgroundColor: "rgba(0, 0, 0, 0.05)",
+            backgroundColor: "#FFFFFF",
           },
         },
       },
@@ -90,7 +91,10 @@ const theme = createTheme({
       white: "#FFFFFF",
     },
     primary: {
-      main: "#980200",
+      main: "#7c0607",
+    },
+    secondary: {
+      main: "#f8a825",
     },
   },
   rounded: {

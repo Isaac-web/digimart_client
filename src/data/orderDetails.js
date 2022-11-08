@@ -25,7 +25,7 @@ export const columns = [
   },
   { id: "3", label: "Quantity", dataIndex: "quantity", key: "quantity" },
   { id: "4", label: "Unit Price", dataIndex: "price", key: "price" },
-  { id: "5", label: "Subtital", dataIndex: "subtotal", key: "subtotal" },
+  { id: "5", label: "Subtotal", dataIndex: "subtotal", key: "subtotal" },
   {
     id: "6",
     label: "",

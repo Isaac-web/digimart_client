@@ -19,7 +19,10 @@ const NewCategory = () => {
 
   return (
     <Container>
-      <Paper sx={{ width: "100%" }}>
+      <Paper
+        sx={(theme) => ({ width: "100%", borderRadius: theme.rounded.medium })}
+        variant="outlined"
+      >
         <Container maxWidth="sm" sx={{ padding: 8 }}>
           <Box>
             <Typography variant="h4">New Category</Typography>
@@ -47,7 +50,6 @@ const NewCategory = () => {
               </Grid>
 
               <Box sx={{ marginBottom: 5 }} />
-
               <FormSubmitButton startIcon={<Save />}>Save</FormSubmitButton>
             </Form>
           </Box>

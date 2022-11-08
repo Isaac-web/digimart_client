@@ -16,6 +16,7 @@ import { Link, useLocation } from "react-router-dom";
 
 import { AppContext } from "../context/AppContext";
 import drawerData from "../data/drawer";
+import logo from "../assets/logo.png";
 
 const AppDrawer = () => {
   const location = useLocation();
@@ -54,15 +55,15 @@ const AppDrawer = () => {
           <Box
             sx={{ alignItems: "center", display: "flex", flexDirection: "row" }}
           >
-            <Box sx={{ marginRight: 1 }}>
+            <Box sx={{ marginRight: 0 }}>
               <CardMedia
                 sx={{
-                  backgroundColor: "rgba(0, 0, 0, 0.1)",
                   borderRadius: "10px",
-                  height: 50,
-                  width: 50,
+                  height: "3.3em",
+                  width: "4.0em",
+                  backgroundSize: "contain",
                 }}
-                image={"../assets/digimart_logo.png"}
+                image={logo}
               />
             </Box>
             <Box>

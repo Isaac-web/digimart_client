@@ -22,6 +22,7 @@ import { Add, Delete, ModeEdit, MoreVert, Search } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 
 import { AppContext } from "../context/AppContext";
+import SearchField from "../components/SearchField";
 
 const Categories = () => {
   const { matchesMD } = useContext(AppContext);
@@ -33,59 +34,44 @@ const Categories = () => {
     { id: "4", name: "Category 4", numberOfProducts: "4" },
   ];
   return (
-    <Container>
-      <Paper sx={{ width: "100%" }}>
-        <Container maxWidth="md" sx={{ padding: 5 }}>
-          <Box>
-            <Typography variant="h4">Categories</Typography>
-            <Typography variant="subtitle2" gutterBottom>
-              There are currently {items.length} categories in the database
-            </Typography>
-          </Box>
+    <Container maxWidth="md">
+      <Box>
+        <Typography variant="h4">Categories</Typography>
+        <Typography variant="subtitle2" gutterBottom>
+          There are currently {items.length} categories in the database
+        </Typography>
+      </Box>
 
-          <Box>
-            <Grid container>
-              <Grid item xs={12} md={10} sx={{ marginBottom: 2 }}>
-                <InputBase
-                  fullWidth
-                  placeholder="Search Categories"
-                  startAdornment={
-                    <Search sx={{ marginRight: 2, marginLeft: 1 }} />
-                  }
-                  sx={(theme) => ({
-                    padding: 0.8,
-                    backgroundColor: theme.palette.common.light,
-                    borderRadius: 2,
-                  })}
-                />
-              </Grid>
-              <Grid item xs={12} md={2} sx={{ paddingLeft: matchesMD ? 0 : 1 }}>
-                <Button
-                  component={Link}
-                  fullWidth
-                  startIcon={<Add />}
-                  size={"large"}
-                  to="/categories/new"
-                >
-                  Add New
-                </Button>
-              </Grid>
-            </Grid>
-          </Box>
+      <Box>
+        <Grid container>
+          <Grid item xs={12} md={10} sx={{ marginBottom: 2 }}>
+            <SearchField placeholder="Search categories..." />
+          </Grid>
+          <Grid item xs={12} md={2} sx={{ paddingLeft: matchesMD ? 0 : 1 }}>
+            <Button
+              component={Link}
+              fullWidth
+              startIcon={<Add />}
+              size={"large"}
+              to="/categories/new"
+            >
+              Add New
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
 
-          <Box>
-            <List>
-              {items.map((item) => (
-                <CategoryItem
-                  key={item.id}
-                  title={item.name}
-                  subtitle={item.numberOfProducts}
-                />
-              ))}
-            </List>
-          </Box>
-        </Container>
-      </Paper>
+      <Box>
+        <List>
+          {items.map((item) => (
+            <CategoryItem
+              key={item.id}
+              title={item.name}
+              subtitle={item.numberOfProducts}
+            />
+          ))}
+        </List>
+      </Box>
     </Container>
   );
 };
@@ -110,50 +96,50 @@ const CategoryItem = ({ onSelect, subtitle, title }) => {
   };
 
   return (
-    <ListItem
-      component={Paper}
+    <Paper
       sx={(theme) => ({
-        marginBottom: 2,
-        "&:hover": {
-          backgroundColor: "rgba(0, 0, 0, 0.02)",
-          cursor: "pointer",
-        },
+        cursor: "pointer",
+        marginBottom: "10px",
+        borderRadius: theme.rounded.small,
       })}
+      variant="outlined"
     >
-      <ListItemAvatar>
-        <CardMedia
-          sx={(theme) => ({
-            height: 60,
-            backgroundColor: theme.palette.common.light,
-            borderRadius: 2,
-            marginRight: 2,
-            width: 60,
-          })}
+      <ListItem>
+        <ListItemAvatar>
+          <CardMedia
+            sx={(theme) => ({
+              height: "3em",
+              backgroundColor: theme.palette.common.extraLight,
+              borderRadius: 2,
+              marginRight: 2,
+              width: "3em",
+            })}
+          />
+        </ListItemAvatar>
+        <ListItemText
+          primary={title}
+          secondary={<Typography variant="subtitle2">{subtitle}</Typography>}
         />
-      </ListItemAvatar>
-      <ListItemText
-        primary={title}
-        secondary={<Typography variant="subtitle2">{subtitle}</Typography>}
-      />
-      <ListItemSecondaryAction>
-        <IconButton onClick={handleOpenMenu}>
-          <MoreVert />
-        </IconButton>
-        <Menu
-          aria-label="Options"
-          anchorEl={anchorElement}
-          open={open}
-          onClose={handleCloseMenu}
-        >
-          {menuItems.map((m) => (
-            <MenuItem key={m.id}>
-              <ListItemIcon>{m.Icon}</ListItemIcon>
-              <ListItemText>{m.title}</ListItemText>
-            </MenuItem>
-          ))}
-        </Menu>
-      </ListItemSecondaryAction>
-    </ListItem>
+        <ListItemSecondaryAction>
+          <IconButton onClick={handleOpenMenu}>
+            <MoreVert />
+          </IconButton>
+          <Menu
+            aria-label="Options"
+            anchorEl={anchorElement}
+            open={open}
+            onClose={handleCloseMenu}
+          >
+            {menuItems.map((m) => (
+              <MenuItem key={m.id}>
+                <ListItemIcon>{m.Icon}</ListItemIcon>
+                <ListItemText>{m.title}</ListItemText>
+              </MenuItem>
+            ))}
+          </Menu>
+        </ListItemSecondaryAction>
+      </ListItem>
+    </Paper>
   );
 };
 

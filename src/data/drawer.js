@@ -5,9 +5,10 @@ import {
   MdOutlinePeople,
   MdTipsAndUpdates,
 } from "react-icons/md";
-import { GrTransaction } from "react-icons/gr";
+import { GrTransaction, GrUserWorker } from "react-icons/gr";
 import { SlCalender } from "react-icons/sl";
 import { CiYoutube } from "react-icons/ci";
+import { RiTeamFill } from "react-icons/ri";
 
 const sections = {
   dashboard: [{ title: "Home", Icon: <AiOutlineHome />, link: "/home" }],
@@ -18,6 +19,7 @@ const sections = {
     { title: "Customers", Icon: <MdOutlinePeople />, link: "/customers" },
   ],
   report: [
+    { title: "Employees", Icon: <RiTeamFill />, link: "/employees" },
     { title: "Transactions", Icon: <GrTransaction />, link: "/transactions" },
     { title: "Charts", Icon: <AiOutlineAreaChart />, link: "/charts" },
     { title: "Calender", Icon: <SlCalender />, link: "/calender" },

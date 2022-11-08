@@ -18,6 +18,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import { Add } from "@mui/icons-material";
 import { Link } from "react-router-dom";
+import SearchField from "../components/SearchField";
 
 const Products = () => {
   const theme = useTheme();
@@ -55,53 +56,47 @@ const Products = () => {
   ];
   return (
     <Container>
-      <Paper sx={{ padding: 5 }}>
-        <Box>
-          <Typography fontWeight={"semibold"} variant="h4">
-            Products
-          </Typography>
-          <Typography variant="subtitle1">
-            There are currently a number of products in the database.
-          </Typography>
-        </Box>
-        <Box sx={{ padding: "2em 0em" }}>
-          <Grid container alignItems={"center"} justifyContent={"space-around"}>
-            <Grid item xs={12} md={10}>
-              <Paper>
-                <InputBase
-                  startAdornment={<SearchIcon sx={{ marginRight: 1 }} />}
-                  sx={{
-                    backgroundColor: theme.palette.grey[50],
-                    borderRadius: "10px",
-                    padding: "0.4em",
-                  }}
-                  placeholder="Search Products"
-                  fullWidth
-                />
-              </Paper>
-            </Grid>
-            <Grid
-              item
-              md={2}
-              sx={{
-                paddingLeft: matchesMD ? 0 : 1,
-                marginTop: matchesMD ? 1 : 0,
-              }}
-              xs={12}
-            >
-              <Button
-                fullWidth
-                component={Link}
-                size="large"
-                startIcon={<Add />}
-                to="/products/new"
-                variant="contained"
-              >
-                Add Product
-              </Button>
-            </Grid>
+      <Box>
+        <Typography fontWeight={"semibold"} variant="h4">
+          Products
+        </Typography>
+        <Typography variant="subtitle1">
+          There are currently a number of products in the database.
+        </Typography>
+      </Box>
+
+      <Box sx={{ padding: "1em 0em" }}>
+        <Grid container alignItems={"center"} justifyContent={"space-around"}>
+          <Grid item xs={12} md={10}>
+            <SearchField placeholder="Search Products..."/>
           </Grid>
-        </Box>
+          <Grid
+            item
+            md={2}
+            sx={{
+              paddingLeft: matchesMD ? 0 : 1,
+              marginTop: matchesMD ? 1 : 0,
+            }}
+            xs={12}
+          >
+            <Button
+              fullWidth
+              component={Link}
+              size="large"
+              startIcon={<Add />}
+              to="/products/new"
+              variant="contained"
+            >
+              Add Product
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
+
+      <Paper
+        sx={(theme) => ({ padding: 3, borderRadius: theme.rounded.medium })}
+        variant="outlined"
+      >
         <Box>
           <Table>
             <TableHead>

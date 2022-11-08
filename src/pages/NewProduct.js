@@ -8,6 +8,7 @@ import {
   FormControlLabel,
   Switch,
   Tooltip,
+  useTheme,
 } from "@mui/material";
 import { Save } from "@mui/icons-material";
 import * as Yup from "yup";
@@ -21,6 +22,7 @@ import AppImagePicker from "../components/AppImagePicker";
 const NewProduct = () => {
   const [image, setImage] = useState(null);
   const { matchesMD } = useContext(AppContext);
+  const theme = useTheme();
 
   const handleImageLoad = (image) => {
     setImage(image);
@@ -44,8 +46,11 @@ const NewProduct = () => {
   });
 
   return (
-    <Container>
-      <Paper sx={{ width: "100%" }}>
+    <Container sx={{ paddingBottom: "1em" }}>
+      <Paper
+        sx={{ width: "100%", borderRadius: theme.rounded.medium }}
+        variant="outlined"
+      >
         <Container maxWidth="md" sx={{ padding: 5 }}>
           <Box style={{ padding: matchesMD ? "0px" : "0 6em" }}>
             <Box>

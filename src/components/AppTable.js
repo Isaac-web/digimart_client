@@ -22,24 +22,26 @@ const AppTable = ({ columns, data, onRowSelect }) => {
   }
 
   return (
-    <Box>
+    <Box sx={{ overflow: "auto" }}>
       <Table>
         <TableHead>
           <TableRow>
             {columns.map((c) => (
-              <TableCell align={c?.align} key={c.id}>{c.label}</TableCell>
+              <TableCell align={c?.align} key={c.id}>
+                {c.label}
+              </TableCell>
             ))}
           </TableRow>
         </TableHead>
 
         <TableBody>
-          {data.map((item) => (
-            <TableRow
-              key={item?.id || item?._id}
-              onClick={raiseRowSelect}
-            >
+          {data?.map((item) => (
+            <TableRow key={item?.id || item?._id} onClick={raiseRowSelect}>
               {columns.map((c) => (
-                <TableCell align={c?.align} key={c.dataIndex + (item.id || item._id)}>
+                <TableCell
+                  align={c?.align}
+                  key={c.dataIndex + (item.id || item._id)}
+                >
                   {renderCell(item, c)}
                 </TableCell>
               ))}

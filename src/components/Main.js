@@ -13,6 +13,11 @@ import Products from "../pages/Products";
 import { AppContext } from "../context/AppContext";
 import ProductDetails from "../pages/ProductDetails";
 import OrderDetails from "../pages/OrderDetails";
+import Customers from "../pages/Customers";
+import Transaction from "../pages/Transactions";
+import Employees from "../pages/Employees";
+import Charts from "../pages/Charts";
+import Calender from "../pages/Calender";
 
 const Main = () => {
   const { drawerMargin } = useContext(AppContext);
@@ -35,6 +40,11 @@ const Main = () => {
         <Route path="/categories" element={<Categories />} />
         <Route path="/orders/:id" element={<OrderDetails />} />
         <Route path="/orders" element={<Orders />} />
+        <Route path="/customers" element={<Customers />} />
+        <Route path="/employees" element={<Employees />} />
+        <Route path="/charts" element={<Charts />} />
+        <Route path="/calender" element={<Calender />} />
+        <Route path="/transactions" element={<Transaction />} />
         <Route path="/home" element={<Home />} />
         <Route path="/" element={<Navigate to="/home" />} />
       </Routes>

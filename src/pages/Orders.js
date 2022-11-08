@@ -100,14 +100,21 @@ const Orders = () => {
 
   return (
     <Container>
-      <Box sx={{ padding: "2em 0" }}>
-        <Box sx={{ marginBottom: 3 }}>
+      <Box>
+        <Box>
           <Typography variant="h4">Orders</Typography>
-          <Typography variant="subtitle2">
+          <Typography variant="subtitle2" gutterBottom>
             There are currently 20 pending orders
           </Typography>
         </Box>
-        <Paper sx={{ borderRadius: 2 }}>
+        <Paper
+          sx={(theme) => ({
+            borderRadius: theme.rounded.medium,
+            padding: "0 1.5em",
+            paddingBottom: "1em",
+          })}
+          variant="outlined"
+        >
           <Toolbar
             sx={{
               padding: "1em 0",
@@ -120,7 +127,7 @@ const Orders = () => {
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton>
-                      <FilterList/>
+                        <FilterList />
                       </IconButton>
                     </InputAdornment>
                   }
@@ -193,7 +200,11 @@ const FilterMenu = ({ onItemSelect }) => {
         aria-label="Sort Menu"
       >
         {items.map((m) => (
-          <MenuItem key={m.id} onClick={() => raiseItemSelect(m)}>
+          <MenuItem
+            key={m.id}
+            sx={{ fontSize: "0.8em" }}
+            onClick={() => raiseItemSelect(m)}
+          >
             {m.label}
           </MenuItem>
         ))}
