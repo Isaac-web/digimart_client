@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -12,33 +12,53 @@ import {
   ListItemSecondaryAction,
   ListItemAvatar,
   IconButton,
-  InputBase,
   Typography,
   Menu,
   MenuItem,
   ListItemIcon,
 } from "@mui/material";
-import { Add, Delete, ModeEdit, MoreVert, Search } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import { Add, Delete, ModeEdit, MoreVert } from "@mui/icons-material";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 import { AppContext } from "../context/AppContext";
+import AppProgress from "../components/AppProgress";
+
+import {
+  fetchCategories,
+  deleteCategory,
+} from "../store/reducers/entities/categories";
 import SearchField from "../components/SearchField";
 
 const Categories = () => {
   const { matchesMD } = useContext(AppContext);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { data: categories, loading } = useSelector(
+    (state) => state.entities.categories
+  );
 
-  const items = [
-    { id: "1", name: "Category 1", numberOfProducts: "13" },
-    { id: "2", name: "Category 2", numberOfProducts: "24" },
-    { id: "3", name: "Category 3", numberOfProducts: "55" },
-    { id: "4", name: "Category 4", numberOfProducts: "4" },
-  ];
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, []);
+
+  const handleDelete = (category) => {
+    dispatch(deleteCategory(category._id));
+  };
+
+  const handleUpdate = (category) => {
+    navigate(`/categories/update/${category._id}`);
+  };
+
+  if (loading)
+    return <AppProgress subtitle="Please wait while we load categories." />;
+
   return (
     <Container maxWidth="md">
       <Box>
         <Typography variant="h4">Categories</Typography>
         <Typography variant="subtitle2" gutterBottom>
-          There are currently {items.length} categories in the database
+          There are currently {categories.length} categories in the database
         </Typography>
       </Box>
 
@@ -63,11 +83,13 @@ const Categories = () => {
 
       <Box>
         <List>
-          {items.map((item) => (
+          {categories.map((item) => (
             <CategoryItem
-              key={item.id}
+              key={item._id}
               title={item.name}
               subtitle={item.numberOfProducts}
+              onDelete={() => handleDelete(item)}
+              onUpdate={() => handleUpdate(item)}
             />
           ))}
         </List>
@@ -76,7 +98,7 @@ const Categories = () => {
   );
 };
 
-const CategoryItem = ({ onSelect, subtitle, title }) => {
+const CategoryItem = ({ onDelete, onUpdate, subtitle, title }) => {
   const [anchorElement, setAnchorElement] = useState(null);
   const [open, setOpen] = useState(false);
 
@@ -88,11 +110,28 @@ const CategoryItem = ({ onSelect, subtitle, title }) => {
   const handleOpenMenu = (e) => {
     setAnchorElement(e.target);
     setOpen(true);
-    anchorElement(null);
   };
 
   const handleCloseMenu = () => {
     setOpen(false);
+  };
+
+  const handleMenuSelect = (menu) => {
+    switch (menu.id) {
+      case "1":
+        if (onUpdate) onUpdate();
+        break;
+      case "2":
+        if (onDelete) onDelete();
+        break;
+      default:
+        break;
+    }
+
+    // if (menu.id === '1' && onUpdate) onUpdate()
+    // if (menu.id === '2' && onDelete) onUpdate()
+
+    handleCloseMenu();
   };
 
   return (
@@ -107,6 +146,7 @@ const CategoryItem = ({ onSelect, subtitle, title }) => {
       <ListItem>
         <ListItemAvatar>
           <CardMedia
+            src="none"
             sx={(theme) => ({
               height: "3em",
               backgroundColor: theme.palette.common.extraLight,
@@ -131,7 +171,7 @@ const CategoryItem = ({ onSelect, subtitle, title }) => {
             onClose={handleCloseMenu}
           >
             {menuItems.map((m) => (
-              <MenuItem key={m.id}>
+              <MenuItem key={m.id} onClick={() => handleMenuSelect(m)}>
                 <ListItemIcon>{m.Icon}</ListItemIcon>
                 <ListItemText>{m.title}</ListItemText>
               </MenuItem>

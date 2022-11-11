@@ -1,59 +1,49 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
-  Container,
   Box,
-  Typography,
-  Table,
-  TableHead,
-  TableBody,
-  TableCell,
-  TableRow,
-  Paper,
-  InputBase,
   Button,
+  Container,
   Grid,
+  Paper,
+  Typography,
   useTheme,
   useMediaQuery,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
+import AppTable from "../components/AppTable";
+import SearchField from "../components/SearchField";
 import { Add } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-import SearchField from "../components/SearchField";
+
+import { productTableColumns, items } from "../data/products";
+import { loadProducts } from "../store/reducers/entities/products";
 
 const Products = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const theme = useTheme();
   const matchesMD = useMediaQuery(theme.breakpoints.down("md"));
+  const { data: products } = useSelector((state) => state.entities.products);
 
-  const items = [
-    {
-      id: "1",
-      title: "Product 1",
-      category: "Category 1",
-      price: 21,
-      available: true,
-    },
-    {
-      id: "2",
-      title: "Product 2",
-      category: "Category 1",
-      price: 21,
-      available: true,
-    },
-    {
-      id: "3",
-      title: "Product 3",
-      category: "Category 1",
-      price: 21,
-      available: true,
-    },
-    {
-      id: "4",
-      title: "Product 6",
-      category: "Category 1",
-      price: 21,
-      available: true,
-    },
-  ];
+  const mapToViewModel = (data) => {
+    return data?.map((p) => ({
+      _id: p._id,
+      name: p.name,
+      category: p.category.name,
+      price: p.price,
+    }));
+  };
+
+  useEffect(() => {
+    dispatch(loadProducts());
+  }, []);
+
+  const handleRowSelect = (item) => {
+    navigate(`/products/${item._id}`);
+  };
+
   return (
     <Container>
       <Box>
@@ -68,7 +58,7 @@ const Products = () => {
       <Box sx={{ padding: "1em 0em" }}>
         <Grid container alignItems={"center"} justifyContent={"space-around"}>
           <Grid item xs={12} md={10}>
-            <SearchField placeholder="Search Products..."/>
+            <SearchField placeholder="Search Products..." />
           </Grid>
           <Grid
             item
@@ -98,42 +88,12 @@ const Products = () => {
         variant="outlined"
       >
         <Box>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell></TableCell>
-                <TableCell>Name</TableCell>
-                <TableCell>Category</TableCell>
-                <TableCell>Price</TableCell>
-                <TableCell>Status</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {items.map((item) => (
-                <TableRow
-                  key={item.id}
-                  component={Link}
-                  to={`/products/${item.id}`}
-                  sx={{ textDecoration: "none" }}
-                >
-                  <TableCell>
-                    <Box
-                      style={{
-                        height: 50,
-                        width: 50,
-                        borderRadius: 10,
-                        backgroundColor: "rgba(0, 0, 0, 0.1)",
-                      }}
-                    ></Box>
-                  </TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Category</TableCell>
-                  <TableCell>Price</TableCell>
-                  <TableCell>status</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <AppTable
+            rowKey={"_id"}
+            columns={productTableColumns}
+            data={mapToViewModel(products)}
+            onRowSelect={handleRowSelect}
+          />
         </Box>
       </Paper>
     </Container>

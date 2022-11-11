@@ -18,6 +18,7 @@ import Transaction from "../pages/Transactions";
 import Employees from "../pages/Employees";
 import Charts from "../pages/Charts";
 import Calender from "../pages/Calender";
+import UpdateCategory from "../pages/UpdateCategory";
 
 const Main = () => {
   const { drawerMargin } = useContext(AppContext);
@@ -37,6 +38,7 @@ const Main = () => {
         <Route path="/products/new" element={<NewProduct />} />
         <Route path="/products/:id" element={<ProductDetails />} />
         <Route path="/categories/new" element={<NewCategory />} />
+        <Route path="/categories/update/:id" element={<UpdateCategory />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/orders/:id" element={<OrderDetails />} />
         <Route path="/orders" element={<Orders />} />

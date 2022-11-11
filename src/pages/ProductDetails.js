@@ -42,6 +42,7 @@ const ProductDetails = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} md={3}>
               <CardMedia
+                image={"none"}
                 sx={{
                   height: "15em",
                   backgroundColor: "rgba(255, 255, 255, 0.1)",
@@ -78,7 +79,8 @@ const ProductDetails = () => {
 
         <Box>
           <Grid container>
-            <Grid xs={12} md={3}></Grid>
+            {/* This Grid is for alignment */}
+            <Grid item xs={12} md={3}></Grid>
 
             <Grid xs={12} md={9}>
               <Grid sx={{ padding: "4em", paddingTop: "2em" }}>

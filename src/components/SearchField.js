@@ -9,7 +9,10 @@ const SearchField = ({ placeholder = "Search...", PaperProps, ...rest }) => {
     <Paper sx={{ borderRadius: theme.rounded.small }} {...PaperProps}>
       <InputBase
         startAdornment={
-          <InputAdornment sx={{ marginRight: "0.4em", marginLeft: 0.3 }}>
+          <InputAdornment
+            position="start"
+            sx={{ marginRight: "0.4em", marginLeft: 0.3 }}
+          >
             <Search />
           </InputAdornment>
         }

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import {
   Box,
   Chip,
@@ -12,7 +13,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { Done, FilterList, Sort } from "@mui/icons-material";
+import { Done, FilterList } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 import AppTable from "../components/AppTable";
@@ -20,45 +21,7 @@ import SearchField from "../components/SearchField";
 
 const Orders = () => {
   const navigate = useNavigate();
-
-  const items = [
-    {
-      id: "1",
-      orderId: "111222333444",
-      date: "1 Jul 2022",
-      deliveryDate: "3 Jul 2022",
-      itemsCount: "12",
-      status: 0,
-      total: 150,
-    },
-    {
-      id: "2",
-      orderId: "111222333444",
-      date: "1 Jul 2022",
-      deliveryDate: "3 Jul 2022",
-      itemsCount: "12",
-      status: 0,
-      total: 150,
-    },
-    {
-      id: "3",
-      orderId: "111222333444",
-      date: "1 Jul 2022",
-      deliveryDate: "3 Jul 2022",
-      itemsCount: "12",
-      status: 0,
-      total: 150,
-    },
-    {
-      id: "4",
-      orderId: "111222333444",
-      date: "1 Jul 2022",
-      deliveryDate: "3 Jul 2022",
-      itemsCount: "12",
-      status: 0,
-      total: 150,
-    },
-  ];
+  const { data } = useSelector((state) => state.entities.orders);
 
   const columns = [
     {
@@ -148,8 +111,9 @@ const Orders = () => {
             </Grid>
           </Toolbar>
           <AppTable
+            rowKey={"id"}
             columns={columns}
-            data={items}
+            data={data}
             onRowSelect={handleRowSelect}
           />
         </Paper>

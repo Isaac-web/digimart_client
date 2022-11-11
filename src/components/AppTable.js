@@ -9,25 +9,24 @@ import {
 } from "@mui/material";
 import _ from "lodash";
 
-const AppTable = ({ columns, data, onRowSelect }) => {
+const AppTable = ({ columns, data, onRowSelect, rowKey, columnKey }) => {
   const renderCell = (item, column) => {
     if (column.render) return column.render(item);
 
     return _.get(item, column.dataIndex);
   };
 
-
   const raiseRowSelect = (item) => {
     if (typeof onRowSelect === "function") onRowSelect(item);
-  }
+  };
 
   return (
     <Box sx={{ overflow: "auto" }}>
       <Table>
         <TableHead>
           <TableRow>
-            {columns.map((c) => (
-              <TableCell align={c?.align} key={c.id}>
+            {columns.map((c, index) => (
+              <TableCell align={c?.align} key={index.toString()}>
                 {c.label}
               </TableCell>
             ))}
@@ -36,12 +35,9 @@ const AppTable = ({ columns, data, onRowSelect }) => {
 
         <TableBody>
           {data?.map((item) => (
-            <TableRow key={item?.id || item?._id} onClick={raiseRowSelect}>
-              {columns.map((c) => (
-                <TableCell
-                  align={c?.align}
-                  key={c.dataIndex + (item.id || item._id)}
-                >
+            <TableRow key={item[rowKey]} onClick={() => raiseRowSelect(item)}>
+              {columns.map((c, index) => (
+                <TableCell align={c?.align} key={c.dataIndex + index}>
                   {renderCell(item, c)}
                 </TableCell>
               ))}

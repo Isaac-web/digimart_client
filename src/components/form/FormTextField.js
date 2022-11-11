@@ -3,7 +3,7 @@ import { Grid, TextField } from "@mui/material";
 import { useFormikContext } from "formik";
 
 const FormTextField = ({ xs = 6, md, lg, sm, name, ...rest }) => {
-  const { handleChange, errors, touched } = useFormikContext();
+  const { handleChange, errors, touched, values } = useFormikContext();
   return (
     <Grid item xs={xs} sm={sm} md={md} lg={lg}>
       <TextField
@@ -12,6 +12,7 @@ const FormTextField = ({ xs = 6, md, lg, sm, name, ...rest }) => {
         helperText={touched[name] && errors[name]}
         onChange={handleChange(name)}
         name={name}
+        value={values[name]}
         {...rest}
       />
     </Grid>

@@ -42,7 +42,7 @@ const Employees = () => {
         sx={{ padding: "1.5em", borderRadius: theme.rounded.medium }}
         variant="outlined"
       >
-        <AppTable columns={tableColumns} data={employees} />
+        <AppTable rowKey="_id" columns={tableColumns} data={employees} />
       </Paper>
     </Container>
   );

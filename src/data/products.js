@@ -1,47 +1,89 @@
-export const productsData = {
-  columns: [
-    {
-      title: "",
-      key: "image",
-      dataIndex: "image",
-      render: (imageUri) => (
-        <div className="w-10 h-10 bg-red-100 rounded-lg">{imageUri}</div>
-      ),
-    },
-    { title: "Name", key: "name", dataIndex: "name" },
-    { title: "Category", key: "categogy", dataIndex: "category" },
-    { title: "Price", key: "price", dataIndex: "price" },
-  ],
-  data: [
-    {
-      id: "1",
-      name: "Mango",
-      category: "Fruits",
-      price: 2,
-    },
-    {
-      id: "2",
-      name: "Cabbage",
-      category: "Vegetable",
-      price: 2,
-    },
-    {
-      id: "3",
-      name: "Beef",
-      category: "Meat",
-      price: 2,
-    },
-    {
-      id: "4",
-      name: "Bread",
-      category: "Beverage",
-      price: 2,
-    },
-    {
-      id: "5",
-      name: "Tilapia",
-      category: "Fish",
-      price: 2,
-    },
-  ],
+import { Box, Button } from "@mui/material";
+import { useDispatch } from "react-redux";
+
+import {deleteProduct} from "../store/reducers/entities/products";
+
+export const productTableColumns = [
+  {
+    label: "",
+    key: "image",
+    dataIndex: "image",
+    render: (item) => (
+      <Box
+        sx={(theme) => ({
+          height: "3.5em",
+          width: "3.5em",
+          background: theme.palette.common.extraLight,
+          borderRadius: theme.rounded.small,
+        })}
+      ></Box>
+    ),
+  },
+  { label: "Name", key: "name", dataIndex: "name" },
+  { label: "Category", key: "categogy", dataIndex: "category" },
+  { label: "Price", key: "price", dataIndex: "price" },
+  {
+    align: "right",
+    label: "",
+    key: "deleteButton",
+    dataIndex: "deleteButton",
+    render: (item) => <DeleteButton item={item} />,
+  },
+];
+
+export const items = [
+  {
+    id: "1",
+    name: "Mango",
+    category: "Fruits",
+    price: 2,
+    status: "Available",
+  },
+  {
+    id: "2",
+    name: "Cabbage",
+    category: "Vegetable",
+    price: 2,
+    status: "Available",
+  },
+  {
+    id: "3",
+    name: "Beef",
+    category: "Meat",
+    price: 2,
+    status: "Available",
+  },
+  {
+    id: "4",
+    name: "Bread",
+    category: "Beverage",
+    price: 2,
+    status: "Available",
+  },
+  {
+    id: "5",
+    name: "Tilapia",
+    category: "Fish",
+    price: 2,
+  },
+];
+
+const DeleteButton = ({ item }) => {
+  const dispatch = useDispatch();
+  
+  const handleDelete = (e, item) => {
+    e.stopPropagation();
+
+    dispatch(deleteProduct(item._id));
+  };
+
+  return (
+    <Button
+      size="small"
+      variant={"outlined"}
+      onClick={(e) => handleDelete(e, item)}
+    >
+      Delete
+    </Button>
+  );
 };
