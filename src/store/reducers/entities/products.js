@@ -20,7 +20,6 @@ const slice = createSlice({
       );
       products.data.splice(index, 1);
     },
-
     productFetchBegan: (products, action) => {
       products.loading = true;
     },
@@ -71,6 +70,7 @@ export const deleteProduct = (id) => async (dispatch) => {
 
   dispatch(
     apiRequest({
+      toggleOnError: true,
       url: `${url}/${id}`,
       method: "delete",
     })

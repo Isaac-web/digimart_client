@@ -1,23 +1,27 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, CardMedia } from "@mui/material";
 import { useDispatch } from "react-redux";
 
-import {deleteProduct} from "../store/reducers/entities/products";
+import { deleteProduct } from "../store/reducers/entities/products";
 
 export const productTableColumns = [
   {
     label: "",
     key: "image",
     dataIndex: "image",
-    render: (item) => (
-      <Box
-        sx={(theme) => ({
-          height: "3.5em",
-          width: "3.5em",
-          background: theme.palette.common.extraLight,
-          borderRadius: theme.rounded.small,
-        })}
-      ></Box>
-    ),
+    render: (item) => {
+      console.log(item);
+      return (
+        <CardMedia
+          image={item?.imageUri || "none"}
+          sx={(theme) => ({
+            height: "3.5em",
+            width: "3.5em",
+            backgroundColor: theme.palette.common.extraLight,
+            borderRadius: theme.rounded.small,
+          })}
+        />
+      );
+    },
   },
   { label: "Name", key: "name", dataIndex: "name" },
   { label: "Category", key: "categogy", dataIndex: "category" },
@@ -70,7 +74,7 @@ export const items = [
 
 const DeleteButton = ({ item }) => {
   const dispatch = useDispatch();
-  
+
   const handleDelete = (e, item) => {
     e.stopPropagation();
 

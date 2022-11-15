@@ -11,14 +11,15 @@ import {
   Tooltip,
   useTheme,
 } from "@mui/material";
-import { Save } from "@mui/icons-material";
+import { ConstructionOutlined, Save } from "@mui/icons-material";
 import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { AppContext } from "../context/AppContext";
 import { fetchCategories } from "../store/reducers/entities/categories";
 import { createProduct } from "../store/reducers/entities/products";
+import { fetchProduct, updateProduct } from "../store/reducers/details/product";
 import Form from "../components/form/Form";
 import FormTextField from "../components/form/FormTextField";
 import FormSubmitButton from "../components/form/FormSubmitButton";
@@ -26,15 +27,18 @@ import AppImagePicker from "../components/AppImagePicker";
 import FormSelectField from "../components/form/FormSelectField";
 import AppProgress from "../components/AppProgress";
 
-const NewProduct = () => {
+const EditProduct = () => {
   const [image, setImage] = useState(null);
   const { matchesMD } = useContext(AppContext);
   const theme = useTheme();
+  const { id: productId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, data } = useSelector((state) => state.entities.categories);
+  const categories = useSelector((state) => state.entities.categories);
+  const product = useSelector((state) => state.details.product);
 
   useEffect(() => {
+    dispatch(fetchProduct(productId));
     dispatch(fetchCategories());
   }, []);
 
@@ -48,7 +52,9 @@ const NewProduct = () => {
     //   data.imageUri = result.url;
     // }
 
-    dispatch(createProduct(data, () => navigate("/products")));
+    dispatch(
+      updateProduct(productId, data, () => navigate(`/products/${productId}`))
+    );
   };
 
   const validationSchema = Yup.object().shape({
@@ -59,7 +65,7 @@ const NewProduct = () => {
     desc: Yup.string().max(500),
   });
 
-  if (loading)
+  if (product.loading)
     return (
       <AppProgress
         title="Please Wait"
@@ -76,23 +82,23 @@ const NewProduct = () => {
         <Container maxWidth="md" sx={{ padding: 5 }}>
           <Box style={{ padding: matchesMD ? "0px" : "0 6em" }}>
             <Box>
-              <Typography variant="h4">New Product</Typography>
+              <Typography variant="h4">Edit Product</Typography>
               <Typography
                 gutterBottom
                 variant="subtitle2"
                 sx={{ marginBottom: 5 }}
               >
-                Fill out the details to create a new product
+                Update the exsiting data
               </Typography>
             </Box>
 
             <Box>
               <Form
                 initialValues={{
-                  name: "",
-                  categoryId: "",
-                  price: "",
-                  desc: "",
+                  name: product.data.name,
+                  categoryId: product.data.category._id,
+                  price: product.data.price,
+                  desc: product.data.desc,
                   status: true,
                 }}
                 onSubmit={handleSubmit}
@@ -107,7 +113,7 @@ const NewProduct = () => {
                     inputLabel={"Category"}
                     menuItemLabelAttribute={"name"}
                     menuItemValueAttribute={"_id"}
-                    items={data}
+                    items={categories.data}
                   />
                   <FormTextField
                     label="Description"
@@ -124,7 +130,7 @@ const NewProduct = () => {
                     <Tooltip title="Indicate whether product is available">
                       <FormControlLabel
                         label="Available"
-                        control={<Switch checked={true} />}
+                        control={<Switch checked={"checked"} />}
                         labelPlacement="start"
                       />
                     </Tooltip>
@@ -142,7 +148,7 @@ const NewProduct = () => {
   );
 };
 
-export default NewProduct;
+export default EditProduct;
 
 const uploadImage = async (image) => {
   const formData = new FormData();

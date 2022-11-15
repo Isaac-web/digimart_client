@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   CardMedia,
@@ -15,10 +15,20 @@ import {
   Toolbar,
 } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
+import { useDispatch, useSelector } from "react-redux";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
+
+import { fetchProduct } from "../store/reducers/details/product";
 
 const ProductDetails = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { id: productId } = useParams();
+  const navigate = useNavigate();
   const theme = useTheme();
+  const dispatch = useDispatch();
+  const { data: product, loading } = useSelector(
+    (state) => state.details.product
+  );
 
   const closeDialog = (id) => {
     setDialogOpen(false);
@@ -28,13 +38,20 @@ const ProductDetails = () => {
     closeDialog();
   };
 
+  useEffect(() => {
+    dispatch(fetchProduct(productId));
+  }, []);
+
+  if (loading) return null;
+  console.log(product);
+
   return (
-    <Container>
-      <Paper>
+    <Container sx={{ paddingBottom: "2em" }}>
+      <Paper sx={(theme) => ({ borderRadius: theme.rounded.medium })}>
         <Box
           sx={{
             height: "15em",
-            background: "darkred",
+            // background: "darkred",
             padding: "3em",
             paddingBottom: "1em",
           }}
@@ -45,7 +62,7 @@ const ProductDetails = () => {
                 image={"none"}
                 sx={{
                   height: "15em",
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  backgroundColor: "rgba(0, 0, 0, 0.1)",
                   borderRadius: 2,
                 }}
               />
@@ -57,15 +74,17 @@ const ProductDetails = () => {
                 sx={{
                   height: "15em",
                   padding: "0 2em",
-                  color: theme.palette.common.white,
+                  color: theme.palette.common.black,
                 }}
                 justifyContent="flex-end"
               >
                 <Grid item>
-                  <Typography variant="body1">Category</Typography>
+                  <Typography variant="body1">
+                    {product?.category?.name}
+                  </Typography>
                 </Grid>
                 <Grid item>
-                  <Typography variant="h4">Title</Typography>
+                  <Typography variant="h4">{product?.name}</Typography>
                 </Grid>
                 <Grid item>
                   <Typography variant="subtitle2">
@@ -82,7 +101,7 @@ const ProductDetails = () => {
             {/* This Grid is for alignment */}
             <Grid item xs={12} md={3}></Grid>
 
-            <Grid xs={12} md={9}>
+            <Grid item xs={12} md={9}>
               <Grid sx={{ padding: "4em", paddingTop: "2em" }}>
                 <Grid container direction="column">
                   <Grid item>
@@ -105,21 +124,15 @@ const ProductDetails = () => {
                     <Typography variant="h5">Description</Typography>
                   </Grid>
                   <Grid item>
-                    <Typography variant="body1">
-                      Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                      Itaque sit est sapiente, nulla exercitationem id porro?
-                      Aliquam pariatur, dicta hic laboriosam facilis rem ipsa
-                      nemo. Ad porro magnam nostrum beatae distinctio, inventore
-                      exercitationem iure tempore quis sed. Nostrum architecto
-                      sed enim odio harum. Voluptatem atque, non saepe ipsam
-                      laudantium placeat!
-                    </Typography>
+                    <Typography variant="body1">{product.desc}</Typography>
                   </Grid>
 
                   <Grid item sx={{ padding: "1em 0", paddingBottom: "0.5em" }}>
                     <Typography variant="h6">
                       Price Per Unit:{" "}
-                      <span style={{ fontWeight: "bold" }}>Ghc100.00</span>
+                      <span style={{ fontWeight: "bold" }}>
+                        Ghc{product?.price?.toFixed(2)}
+                      </span>
                     </Typography>
                   </Grid>
 
@@ -144,7 +157,11 @@ const ProductDetails = () => {
                   <Toolbar>
                     <Grid container justifyContent="flex-end" spacing={2}>
                       <Grid item>
-                        <Button startIcon={<Edit />} variant="outlined">
+                        <Button
+                          onClick={() => navigate(`/products/edit/${productId}`)}
+                          startIcon={<Edit />}
+                          variant="outlined"
+                        >
                           Edit
                         </Button>
                       </Grid>

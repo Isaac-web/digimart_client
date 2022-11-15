@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { apiRequest } from "../../actions/api";
 
 const employees = [
   {
@@ -39,13 +40,64 @@ const slice = createSlice({
   name: "employees",
   initialState: {
     loading: false,
+    posting: false,
     data: [...employees],
   },
   reducers: {
+    employeesLoadBegan: (employees) => {
+      employees.loading = true;
+    },
+    employeesLoadEnded: (employees) => {
+      employees.loading = false;
+    },
     employeesLoaded: (employees, action) => {
-      employees = action.payload;
+      employees.data = action.payload;
+    },
+    employeeAddBegan: (employees) => {
+      employees.posting = true;
+    },
+    employeeAddEnded: (employees) => {
+      employees.posting = false;
+    },
+    employeeAdded: (employees, action) => {
+      employees.data.push(action.payload.data);
     },
   },
 });
 
 export default slice.reducer;
+const {
+  employeesLoaded,
+  employeesLoadBegan,
+  employeesLoadEnded,
+  employeeAddBegan,
+  employeeAddEnded,
+  employeeAdded,
+} = slice.actions;
+
+export const loadEmployees = () => async (dispatch) => {
+  dispatch(
+    apiRequest({
+      onBegin: employeesLoadBegan.type,
+      onEnd: employeesLoadEnded.type,
+      onSuccess: employeesLoaded.type,
+      url: "/employees",
+    })
+  );
+};
+
+export const createEmployee = (data, callback) => async (dispatch) => {
+  return console.log(data)
+  await dispatch(
+    apiRequest({
+      data,
+      onSuccess: employeeAdded.type,
+      onBegin: employeeAddBegan.type,
+      onEnd: employeeAddEnded.type,
+      method: "post",
+      url: "/employees/new",
+    })
+  );
+
+  if (callback) callback();
+};

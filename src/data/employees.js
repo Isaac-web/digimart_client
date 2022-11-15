@@ -21,19 +21,24 @@ export const tableColumns = [
   },
   {
     key: "2",
-    label: "Salary",
-    dataIndex: "salary",
+    label: "Phone",
+    dataIndex: "phone",
   },
   {
     key: "3",
+    label: "Email",
+    dataIndex: "email",
+  },
+  {
+    key: "4",
     label: "Job Title",
     dataIndex: "designation",
   },
-  {
-    key: "3",
-    label: "Last Seen",
-    dataIndex: "lastSeen",
-  },
+  // {
+  //   key: "3",
+  //   label: "Last Seen",
+  //   dataIndex: "lastSeen",
+  // },
 ];
 
 export const employees = [

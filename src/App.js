@@ -7,18 +7,24 @@ import Drawer from "./components/AppDrawer";
 import Main from "./components/Main";
 import theme from "./theme";
 import configureReduxStore from "./store";
+import AppSnacbar from "./components/AppSnacbar";
+import DateTimeProvider from "./components/DateTimeProvider";
 
 const App = () => {
   const store = configureReduxStore();
+
   return (
     <Provider store={store}>
       <AppContext>
-        <ThemeProvider theme={theme}>
-          <div>
-            <Drawer />
-            <Main />
-          </div>
-        </ThemeProvider>
+        <DateTimeProvider>
+          <ThemeProvider theme={theme}>
+            <div>
+              <AppSnacbar />
+              <Drawer />
+              <Main />
+            </div>
+          </ThemeProvider>
+        </DateTimeProvider>
       </AppContext>
     </Provider>
   );

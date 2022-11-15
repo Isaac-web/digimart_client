@@ -14,7 +14,7 @@ const FormSelectField = ({
   menuItemValueAttribute,
   sm,
   xl,
-  xs,
+  xs = 6,
 }) => {
   const { errors, touched, setFieldValue, values } = useFormikContext();
 

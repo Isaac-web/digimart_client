@@ -29,6 +29,7 @@ import {
   deleteCategory,
 } from "../store/reducers/entities/categories";
 import SearchField from "../components/SearchField";
+import Empty from "../Empty";
 
 const Categories = () => {
   const { matchesMD } = useContext(AppContext);
@@ -53,48 +54,52 @@ const Categories = () => {
   if (loading)
     return <AppProgress subtitle="Please wait while we load categories." />;
 
-  return (
-    <Container maxWidth="md">
-      <Box>
-        <Typography variant="h4">Categories</Typography>
-        <Typography variant="subtitle2" gutterBottom>
-          There are currently {categories.length} categories in the database
-        </Typography>
-      </Box>
 
-      <Box>
-        <Grid container>
-          <Grid item xs={12} md={10} sx={{ marginBottom: 2 }}>
-            <SearchField placeholder="Search categories..." />
-          </Grid>
-          <Grid item xs={12} md={2} sx={{ paddingLeft: matchesMD ? 0 : 1 }}>
-            <Button
-              component={Link}
-              fullWidth
-              startIcon={<Add />}
-              size={"large"}
-              to="/categories/new"
-            >
-              Add New
-            </Button>
-          </Grid>
-        </Grid>
-      </Box>
+  return ( categories.length ?
+<Container maxWidth="md">
+  <Box>
+    <Typography variant="h4">Categories</Typography>
+    <Typography variant="subtitle2" gutterBottom>
+      There are currently {categories.length} categories in the database
+    </Typography>
+  </Box>
 
-      <Box>
-        <List>
-          {categories.map((item) => (
-            <CategoryItem
-              key={item._id}
-              title={item.name}
-              subtitle={item.numberOfProducts}
-              onDelete={() => handleDelete(item)}
-              onUpdate={() => handleUpdate(item)}
-            />
-          ))}
-        </List>
-      </Box>
-    </Container>
+  <Box>
+    <Grid container>
+      <Grid item xs={12} md={10} sx={{ marginBottom: 2 }}>
+        <SearchField placeholder="Search categories..." />
+      </Grid>
+      <Grid item xs={12} md={2} sx={{ paddingLeft: matchesMD ? 0 : 1 }}>
+        <Button
+          component={Link}
+          fullWidth
+          startIcon={<Add />}
+          size={"large"}
+          to="/categories/new"
+        >
+          Add New
+        </Button>
+      </Grid>
+    </Grid>
+  </Box>
+
+  <Box>
+    <List>
+      {categories.map((item) => (
+        <CategoryItem
+          key={item._id}
+          title={item.name}
+          subtitle={item.numberOfProducts}
+          onDelete={() => handleDelete(item)}
+          onUpdate={() => handleUpdate(item)}
+        />
+      ))}
+    </List>
+  </Box>
+</Container> :  
+<Container>
+    <Empty CustomComponent={<NoCategoryComponent />} />
+</Container>
   );
 };
 
@@ -127,9 +132,6 @@ const CategoryItem = ({ onDelete, onUpdate, subtitle, title }) => {
       default:
         break;
     }
-
-    // if (menu.id === '1' && onUpdate) onUpdate()
-    // if (menu.id === '2' && onDelete) onUpdate()
 
     handleCloseMenu();
   };
@@ -180,6 +182,33 @@ const CategoryItem = ({ onDelete, onUpdate, subtitle, title }) => {
         </ListItemSecondaryAction>
       </ListItem>
     </Paper>
+  );
+};
+
+const NoCategoryComponent = () => {
+  return (
+    <Box sx={{ padding: "3em" }}>
+      <Grid
+        container
+        direction="column"
+        justifyContent={"center"}
+        alignItems="center"
+      >
+        <Grid item>
+          <Typography sx={{ fontWeight: "bold" }} variant="h5">
+            No category Yet
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Typography>No category has been added yet</Typography>
+        </Grid>
+        <Grid item>
+          <Button component={Link} to="/categories/new" variant="text">
+            Click here to add one
+          </Button>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 

@@ -8,8 +8,17 @@ const apiMiddleware =
   async (action) => {
     if (action.type !== apiRequest.type) return next(action);
 
-    const { data, method, url, onSuccess, onError, onBegin, onEnd } =
-      action.payload;
+    const {
+      data,
+      method,
+      url,
+      onSuccess,
+      onError,
+      onBegin,
+      onEnd,
+      toggleOnError,
+      toggleOnSuccess,
+    } = action.payload;
 
     next(action);
 
@@ -50,6 +59,16 @@ const apiMiddleware =
               errorMessage: err.response.data.message,
             },
           });
+
+          if (toggleOnError) {
+            dispatch({
+              type: toggleOnError,
+              payload: {
+                message: err.response.data.message,
+                severity: "error",
+              },
+            });
+          }
         } else {
           dispatch({
             type: onError,

@@ -13,6 +13,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import AppTable from "../components/AppTable";
+import AppProgress from "../components/AppProgress";
+import Empty from "../Empty";
 import SearchField from "../components/SearchField";
 import { Add } from "@mui/icons-material";
 import { Link } from "react-router-dom";
@@ -25,7 +27,9 @@ const Products = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const matchesMD = useMediaQuery(theme.breakpoints.down("md"));
-  const { data: products } = useSelector((state) => state.entities.products);
+  const { data: products, loading } = useSelector(
+    (state) => state.entities.products
+  );
 
   const mapToViewModel = (data) => {
     return data?.map((p) => ({
@@ -33,6 +37,8 @@ const Products = () => {
       name: p.name,
       category: p.category.name,
       price: p.price,
+      imageUri: p?.imageUri,
+      status: p?.status
     }));
   };
 
@@ -44,7 +50,15 @@ const Products = () => {
     navigate(`/products/${item._id}`);
   };
 
-  return (
+  if (loading)
+    return (
+      <AppProgress
+        title="Loading"
+        subtitle="Please wait while we fetch the products..."
+      />
+    );
+
+  return products?.length ? (
     <Container>
       <Box>
         <Typography fontWeight={"semibold"} variant="h4">
@@ -97,6 +111,37 @@ const Products = () => {
         </Box>
       </Paper>
     </Container>
+  ) : (
+    <Container>
+      <Empty CustomComponent={<NoProductComponent />} />
+    </Container>
+  );
+};
+
+const NoProductComponent = () => {
+  return (
+    <Box sx={{ padding: "3em" }}>
+      <Grid
+        container
+        direction="column"
+        justifyContent={"center"}
+        alignItems="center"
+      >
+        <Grid item>
+          <Typography sx={{ fontWeight: "bold" }} variant="h5">
+            Nothing yet
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Typography>No product has been added yet</Typography>
+        </Grid>
+        <Grid item>
+          <Button component={Link} to="/products/new" variant="text">
+            Click here to add one
+          </Button>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 
