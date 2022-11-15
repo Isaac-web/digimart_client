@@ -15,11 +15,12 @@ import { tableColumns } from "../data/employees";
 import SearchField from "../components/SearchField";
 import AppProgress from "../components/AppProgress";
 import { loadEmployees } from "../store/reducers/entities/employees";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Employees = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { data: employees, loading } = useSelector(
     (state) => state.entities.employees
   );
@@ -58,7 +59,7 @@ const Employees = () => {
             <SearchField placeholder="Search by Name or email address" />
           </Grid>
           <Grid item xs={12} md={4}>
-            <Button component={Link} to="/employees/new">
+            <Button onClick={() => navigate("/employees/new")}>
               New Employee
             </Button>
           </Grid>

@@ -50,7 +50,6 @@ const apiMiddleware =
         },
       });
     } catch (err) {
-      console.log(err);
       if (onError) {
         if (err.response) {
           dispatch({

@@ -41,7 +41,7 @@ const slice = createSlice({
   initialState: {
     loading: false,
     posting: false,
-    data: [...employees],
+    data: [],
   },
   reducers: {
     employeesLoadBegan: (employees) => {
@@ -87,7 +87,6 @@ export const loadEmployees = () => async (dispatch) => {
 };
 
 export const createEmployee = (data, callback) => async (dispatch) => {
-  return console.log(data)
   await dispatch(
     apiRequest({
       data,

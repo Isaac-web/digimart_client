@@ -11,11 +11,10 @@ const FormDatePicker = ({ name, xs = 6, sm, md, lg, xl, ...rest }) => {
     <Grid item xs={xs} sm={sm} md={md} lg={lg} xl={xl}>
       <AppDatePicker
         name={name}
-        onChange={(newDate) => setFieldValue(name, newDate)}
+        onChange={(newDate) => setFieldValue(name, newDate.toString())}
         value={values[name]}
         helperText={touched[name] && errors[name]}
-        // error={touched[name] && errors[name]}
-        // value={values[name]}
+        error={touched[name] && errors[name]}
         {...rest}
       />
     </Grid>

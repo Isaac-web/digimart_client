@@ -8,6 +8,7 @@ import {
   TextField,
 } from "@mui/material";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import Form from "../components/form/Form";
@@ -17,12 +18,13 @@ import FormDatePicker from "../components/form/FormDatePicker";
 import FormSelectField from "../components/form/FormSelectField";
 import { fetchBranches } from "../store/reducers/entities/branches";
 import { fetchDesignations } from "../store/reducers/entities/designations";
+import { createEmployee } from "../store/reducers/entities/employees";
 import AppProgress from "../components/AppProgress";
 
 const validationSchema = Yup.object().shape({
   firstname: Yup.string().required(),
   lastname: Yup.string().required(),
-  middlename: Yup.string().required(),
+  middlename: Yup.string(),
   dateOfBirth: "",
   email: Yup.string().email().required(),
   phone: Yup.string().required(),
@@ -30,12 +32,13 @@ const validationSchema = Yup.object().shape({
   digitalAddress: Yup.string(),
   salary: Yup.number().min(0).required(),
   imageUri: Yup.string(),
-  branch: Yup.string().required(),
-  designation: Yup.string().required(),
+  branchId: Yup.string().required(),
+  designationId: Yup.string().required(),
 });
 
 const NewEmployee = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { data: branches, loading: loadingBranches } = useSelector(
     (state) => state.entities.branches
@@ -45,7 +48,9 @@ const NewEmployee = () => {
   );
 
   const handleSubmit = (data) => {
-    console.log(data);
+    dispatch(
+      createEmployee(data, () => navigate("/employees", { replace: true }))
+    );
   };
 
   useEffect(() => {
@@ -71,18 +76,18 @@ const NewEmployee = () => {
 
           <Form
             initialValues={{
-              firstname: "",
-              lastname: "",
-              middlename: "",
+              firstname: "Testing",
+              lastname: "Testing",
+              middlename: "Testing",
               dateOfBirth: null,
-              email: "",
-              phone: "",
-              address: "",
-              digitalAddress: "",
-              salary: "",
+              email: "test@gmail.com",
+              phone: "5555555555",
+              address: "line 1, line 2, line 3",
+              digitalAddress: "1122A334sABZ",
+              salary: "2000",
               imageUri: "",
-              branch: "",
-              designation: "",
+              branchId: "",
+              designationId: "",
             }}
             onSubmit={handleSubmit}
             validationSchema={validationSchema}
@@ -100,7 +105,7 @@ const NewEmployee = () => {
               <FormTextField label="Phone" name="phone" />
               <FormSelectField
                 inputLabel={"Branch"}
-                name="branch"
+                name="branchId"
                 items={branches}
                 menuItemLabelAttribute="name"
                 menuItemValueAttribute={"_id"}
@@ -108,7 +113,7 @@ const NewEmployee = () => {
               />
               <FormSelectField
                 inputLabel={"Job Title"}
-                name="branch"
+                name="designationId"
                 items={designations}
                 menuItemLabelAttribute="value"
                 menuItemValueAttribute={"_id"}
