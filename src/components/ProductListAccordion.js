@@ -3,7 +3,6 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  AccordionActions,
   Box,
   Typography,
   List,
@@ -15,7 +14,7 @@ import {
   ListItemSecondaryAction,
   Button,
 } from "@mui/material";
-import { AccountBoxRounded, ExpandMore } from "@mui/icons-material";
+import { ExpandMore } from "@mui/icons-material";
 
 const ProductListAccordion = ({ items, title, onRemoveItem }) => {
   return (
@@ -34,7 +33,7 @@ const ProductListAccordion = ({ items, title, onRemoveItem }) => {
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <AccordionContentList items={items} />
+        <AccordionContentList items={items} onRemoveItem={onRemoveItem} />
       </AccordionDetails>
     </Accordion>
   );
@@ -69,7 +68,7 @@ const AccordionContentList = ({ items, onRemoveItem }) => {
   return (
     <List>
       {items?.map((i, index) => (
-        <>
+        <Box key={index.toString()}>
           {index !== 0 && (
             <Box sx={{ padding: "0 2em" }}>
               <Divider />
@@ -84,10 +83,11 @@ const AccordionContentList = ({ items, onRemoveItem }) => {
                   borderRadius: theme.rounded.small,
                   backgroundColor: theme.palette.common.extraLight,
                 })}
+                image={i?.imageUri}
               />
             </ListItemAvatar>
             <ListItemText
-              primary={i.item}
+              primary={i.productName}
               secondary={
                 <Typography variant="subtitle2">
                   {i.quantity}, Ghc {i.subtotal}
@@ -104,7 +104,7 @@ const AccordionContentList = ({ items, onRemoveItem }) => {
               </Button>
             </ListItemSecondaryAction>
           </ListItem>
-        </>
+        </Box>
       ))}
     </List>
   );

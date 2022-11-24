@@ -32,6 +32,7 @@ const Employees = () => {
   const mapToViewModel = (items) => {
     if (items?.length) {
       return items.map((item) => ({
+        _id: item._id,
         name: `${item.firstname} ${item.lastname}`,
         email: item.email,
         designation: item.designation.value,

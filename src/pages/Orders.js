@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Chip,
@@ -15,50 +14,40 @@ import {
 } from "@mui/material";
 import { Done, FilterList } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 
 import AppTable from "../components/AppTable";
 import SearchField from "../components/SearchField";
+import { fetchOrders } from "../store/reducers/entities/orders";
+import { columns } from "../data/orders";
 
 const Orders = () => {
   const navigate = useNavigate();
-  const { data } = useSelector((state) => state.entities.orders);
-
-  const columns = [
-    {
-      key: "1",
-      label: "Order id",
-      dataIndex: "orderId",
-    },
-    {
-      key: "1",
-      label: "Date",
-      dataIndex: "date",
-    },
-    {
-      key: "2",
-      label: "Delivery Date",
-      dataIndex: "deliveryDate",
-    },
-
-    {
-      key: "4",
-      label: "Number Of Items",
-      dataIndex: "itemsCount",
-    },
-    {
-      key: "3",
-      label: "Status",
-      dataIndex: "status",
-    },
-    {
-      key: "3",
-      label: "Total",
-      dataIndex: "deliveryDate",
-    },
-  ];
+  const dispatch = useDispatch();
+  const orders = useSelector((state) => state.entities.orders);
 
   const handleRowSelect = (item) => {
-    navigate(`/orders/${item.id}`);
+    navigate(`/orders/${item._id}`);
+  };
+
+  useEffect(() => {
+    dispatch(fetchOrders());
+  }, []);
+
+  const mapToViewModel = (data) => {
+    if (data.length) {
+      return data.map((item) => ({
+        _id: item._id,
+        orderId: item._id,
+        status: item.status.value,
+        itemsCount: item.order_items.length,
+        total: item.total,
+        date: "N/A",
+        deliveryDate: "N/A",
+      }));
+    } else {
+      return [];
+    }
   };
 
   return (
@@ -70,17 +59,12 @@ const Orders = () => {
             There are currently 20 pending orders
           </Typography>
         </Box>
-        <Paper
-          sx={(theme) => ({
-            borderRadius: theme.rounded.medium,
-            padding: "0 1.5em",
-            paddingBottom: "1em",
-          })}
-          variant="outlined"
-        >
+
+        <Box>
           <Toolbar
             sx={{
               padding: "1em 0",
+              margin: "0",
             }}
           >
             <Grid container>
@@ -110,10 +94,19 @@ const Orders = () => {
               </Grid>
             </Grid>
           </Toolbar>
+        </Box>
+        <Paper
+          sx={(theme) => ({
+            borderRadius: theme.rounded.medium,
+            padding: "1.5em",
+            paddingBottom: "1em",
+          })}
+          variant="outlined"
+        >
           <AppTable
-            rowKey={"id"}
+            rowKey={"_id"}
             columns={columns}
-            data={data}
+            data={mapToViewModel(orders.data)}
             onRowSelect={handleRowSelect}
           />
         </Paper>

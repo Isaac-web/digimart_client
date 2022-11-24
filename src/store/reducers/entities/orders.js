@@ -1,55 +1,37 @@
 import { createSlice } from "@reduxjs/toolkit";
-
-const items = [
-  {
-    id: "1",
-    orderId: "111222333444",
-    date: "1 Jul 2022",
-    deliveryDate: "3 Jul 2022",
-    itemsCount: "12",
-    status: 0,
-    total: 150,
-  },
-  {
-    id: "2",
-    orderId: "111222333444",
-    date: "1 Jul 2022",
-    deliveryDate: "3 Jul 2022",
-    itemsCount: "12",
-    status: 0,
-    total: 150,
-  },
-  {
-    id: "3",
-    orderId: "111222333444",
-    date: "1 Jul 2022",
-    deliveryDate: "3 Jul 2022",
-    itemsCount: "12",
-    status: 0,
-    total: 150,
-  },
-  {
-    id: "4",
-    orderId: "111222333444",
-    date: "1 Jul 2022",
-    deliveryDate: "3 Jul 2022",
-    itemsCount: "12",
-    status: 0,
-    total: 150,
-  },
-];
+import { apiRequest } from "../../actions/api";
 
 const slice = createSlice({
   name: "orders",
   initialState: {
     loading: false,
-    data: [...items],
+    data: [],
   },
   reducers: {
     orderFetched: (orders, action) => {
-      orders = action.payload;
+      orders.data = action.payload.data;
+    },
+    orderFetchStarted: (orders, action) => {
+      orders.loading = true;
+    },
+    orderFetchEnded: (orders, action) => {
+      orders.loading = false;
     },
   },
 });
 
 export default slice.reducer;
+const { orderFetched, orderFetchStarted, orderFetchEnded } = slice.actions;
+
+const url = "/orders";
+export const fetchOrders = () => (dispatch) => {
+  dispatch(
+    apiRequest({
+      url,
+      onSuccess: orderFetched.type,
+      toggleOnError: true,
+      onBegin: orderFetchStarted.type,
+      onEnd: orderFetchEnded.type,
+    })
+  );
+};

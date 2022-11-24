@@ -35,10 +35,11 @@ const Products = () => {
     return data?.map((p) => ({
       _id: p._id,
       name: p.name,
+      image: p?.image,
       category: p.category.name,
       price: p.price,
       imageUri: p?.imageUri,
-      status: p?.status
+      status: p?.status,
     }));
   };
 
@@ -59,13 +60,13 @@ const Products = () => {
     );
 
   return products?.length ? (
-    <Container>
+    <Container sx={{ paddingBottom: "2em" }}>
       <Box>
         <Typography fontWeight={"semibold"} variant="h4">
           Products
         </Typography>
         <Typography variant="subtitle1">
-          There are currently a number of products in the database.
+          There are currently {products?.length} products in the database.
         </Typography>
       </Box>
 

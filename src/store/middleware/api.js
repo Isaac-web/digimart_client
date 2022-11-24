@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import { apiRequest, apiRequestError, apiRequestSuccess } from "../actions/api";
+import { showSnackbar } from "../reducers/utils/snackbar";
 
 const apiMiddleware =
   ({ dispatch }) =>
@@ -42,6 +43,14 @@ const apiMiddleware =
           },
         });
       }
+      
+      if(toggleOnSuccess) {
+        dispatch(
+          showSnackbar({
+            message: "Success...",
+            severity: "success",
+          }))
+      }
 
       dispatch({
         type: apiRequestSuccess.type,
@@ -51,23 +60,13 @@ const apiMiddleware =
       });
     } catch (err) {
       if (onError) {
-        if (err.response) {
+        if (err?.response) {
           dispatch({
             type: onError,
             payload: {
               errorMessage: err.response.data.message,
             },
           });
-
-          if (toggleOnError) {
-            dispatch({
-              type: toggleOnError,
-              payload: {
-                message: err.response.data.message,
-                severity: "error",
-              },
-            });
-          }
         } else {
           dispatch({
             type: onError,
@@ -79,6 +78,22 @@ const apiMiddleware =
       }
 
       if (err.response) {
+        if (toggleOnError) {
+          dispatch(
+            showSnackbar({
+              message: err.response.data,
+              severity: "error",
+            })
+          );
+          // dispatch({
+          //   type: toggleOnError,
+          //   payload: {
+          //     message: err.response.data.message,
+          //     severity: "error",
+          //   },
+          // });
+        }
+
         dispatch({
           type: apiRequestError.type,
           payload: {

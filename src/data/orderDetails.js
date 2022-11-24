@@ -1,4 +1,6 @@
 import { Button, CardMedia } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { clearOrderItem } from "../store/reducers/details/order";
 
 export const columns = [
   {
@@ -20,11 +22,11 @@ export const columns = [
   {
     id: "2",
     label: "Item",
-    dataIndex: "item",
-    key: "item",
+    dataIndex: "productName",
+    key: "productName",
   },
   { id: "3", label: "Quantity", dataIndex: "quantity", key: "quantity" },
-  { id: "4", label: "Unit Price", dataIndex: "price", key: "price" },
+  { id: "4", label: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
   { id: "5", label: "Subtotal", dataIndex: "subtotal", key: "subtotal" },
   {
     id: "6",
@@ -32,13 +34,23 @@ export const columns = [
     dataIndex: "addProductButton",
     key: "addProductButton",
     align: "right",
-    render: (item) => (
-      <Button variant="outlined" size="small">
-        Clear
-      </Button>
-    ),
+    render: (item) => <DeleteButton item={item} />,
   },
 ];
+
+const DeleteButton = ({ item }) => {
+  const dispatch = useDispatch();
+
+  const handleDelete = () => {
+    dispatch(clearOrderItem(item));
+  };
+
+  return (
+    <Button onClick={handleDelete} variant="outlined" size="small">
+      Clear
+    </Button>
+  );
+};
 
 export const items = [
   {

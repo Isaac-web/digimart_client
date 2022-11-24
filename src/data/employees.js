@@ -1,4 +1,8 @@
-import { Avatar } from "@mui/material";
+import { Avatar, Icon, IconButton } from "@mui/material";
+import { Delete } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+
+import { deleteEmployee } from "../store/reducers/entities/employees";
 
 export const tableColumns = [
   {
@@ -34,44 +38,26 @@ export const tableColumns = [
     label: "Job Title",
     dataIndex: "designation",
   },
-  // {
-  //   key: "3",
-  //   label: "Last Seen",
-  //   dataIndex: "lastSeen",
-  // },
+  {
+    key: "5",
+    label: null,
+    dataIndex: "deleteButton",
+    render: (item) => <DeleteButton item={item} />,
+  },
 ];
 
-export const employees = [
-  {
-    _id: "1",
-    image: "",
-    name: "Employee 1",
-    salary: "Ghc 2000",
-    designation: "Rider",
-    lastSeen: "Just Now",
-  },
-  {
-    _id: "2",
-    image: "",
-    name: "Employee 2",
-    salary: "Ghc 5000",
-    designation: "Manager",
-    lastSeen: "Online",
-  },
-  {
-    _id: "3",
-    image: "",
-    name: "Employee 3",
-    salary: "Ghc 2000",
-    designation: "Rider",
-    lastSeen: "Just Now",
-  },
-  {
-    _id: "4",
-    image: "",
-    name: "Employee 1",
-    salary: "Ghc 2300",
-    designation: "Sales Person",
-    lastSeen: "Online",
-  },
-];
+export const employees = [];
+
+const DeleteButton = ({ item }) => {
+  const dispatch = useDispatch();
+
+  const handleDelete = (item) => {
+    dispatch(deleteEmployee(item._id))
+  };
+
+  return (
+    <IconButton onClick={() => handleDelete(item)}>
+      <Delete />
+    </IconButton>
+  );
+};

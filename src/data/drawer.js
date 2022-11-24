@@ -20,7 +20,7 @@ const sections = {
   ],
   report: [
     { title: "Employees", Icon: <RiTeamFill />, link: "/employees" },
-    { title: "Transactions", Icon: <GrTransaction />, link: "/transactions" },
+    { title: "Branches", Icon: <GrTransaction />, link: "/branches" },
     { title: "Charts", Icon: <AiOutlineAreaChart />, link: "/charts" },
     { title: "Calender", Icon: <SlCalender />, link: "/calender" },
   ],

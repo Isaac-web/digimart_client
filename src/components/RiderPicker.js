@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Paper,
   Box,
@@ -19,9 +19,15 @@ import {
   ListItemSecondaryAction,
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRiders } from "../store/reducers/entities/riders";
 
 const RiderPicker = ({ rider, onRiderChange }) => {
   const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
+  const apiCalled = useRef(false);
+
+  const riders = useSelector((state) => state.entities.riders);
 
   const handleOpenDialog = () => {
     setOpen(true);
@@ -31,22 +37,35 @@ const RiderPicker = ({ rider, onRiderChange }) => {
     setOpen(false);
   };
 
-  const employees = [
-    // { _id: "1", name: "Tom Kwame", designation: "Rider" },
-    // { _id: "2", name: "Adom Kofi", designation: "Rider" },
-    // { _id: "3", name: "Antwi", designation: "Rider" },
-    // { _id: "4", name: "Dominic Kwame", designation: "Rider" },
-  ];
+  const mapToViewModel = (data) => {
+    if (data && data?.length) {
+      return data.map((emp) => ({
+        _id: emp._id,
+        name: `${emp.firstname} ${emp.lastname}`,
+        designation: emp.designation.value,
+        imageUri: emp.imageuri,
+      }));
+    }
+    return [];
+  };
+
+  const employees = mapToViewModel(riders.data);
 
   const raiseRiderSelect = (rider) => {
     handleCloseDialog();
     onRiderChange(rider);
   };
 
+  useEffect(() => {
+    if (!apiCalled.current) {
+      dispatch(fetchRiders());
+      apiCalled.current = true;
+    }
+  }, []);
+
   return (
     <>
       <Paper
-        variant="outlined"
         sx={(theme) => ({
           borderRadius: theme.rounded.medium,
         })}
@@ -86,7 +105,7 @@ const RiderPicker = ({ rider, onRiderChange }) => {
             fullWidth
             placeholder="Search Riders"
             startAdornment={
-              <InputAdornment sx={{ padding: "0 0.5em" }}>
+              <InputAdornment position="start" sx={{ padding: "0 0.5em" }}>
                 <Search color="primary" />
               </InputAdornment>
             }
@@ -141,10 +160,10 @@ const EmployeeList = ({ list, onEmployeeSelect }) => {
       {list?.map((e) => (
         <ListItem>
           <ListItemText
-            primary={"Name"}
+            primary={e.name}
             secondary={
               <Typography key={e._id || e.id} variant="subtitle2">
-                Designation
+                {e.designation}
               </Typography>
             }
           />

@@ -62,6 +62,11 @@ const slice = createSlice({
     employeeAdded: (employees, action) => {
       employees.data.push(action.payload.data);
     },
+    employeeRemoved: (employees, action) => {
+      employees.data = employees.data.filter(
+        (e) => e._id !== action.payload.data._id
+      );
+    },
   },
 });
 
@@ -73,15 +78,17 @@ const {
   employeeAddBegan,
   employeeAddEnded,
   employeeAdded,
+  employeeRemoved,
 } = slice.actions;
 
+const url = "/employees";
 export const loadEmployees = () => async (dispatch) => {
   dispatch(
     apiRequest({
       onBegin: employeesLoadBegan.type,
       onEnd: employeesLoadEnded.type,
       onSuccess: employeesLoaded.type,
-      url: "/employees",
+      url,
     })
   );
 };
@@ -94,9 +101,19 @@ export const createEmployee = (data, callback) => async (dispatch) => {
       onBegin: employeeAddBegan.type,
       onEnd: employeeAddEnded.type,
       method: "post",
-      url: "/employees/new",
+      url: `${url}/new`,
     })
   );
 
   if (callback) callback();
+};
+
+export const deleteEmployee = (id) => (dispatch) => {
+  dispatch(
+    apiRequest({
+      url: `${url}/${id}`,
+      method: "delete",
+      onSuccess: employeeRemoved.type,
+    })
+  );
 };

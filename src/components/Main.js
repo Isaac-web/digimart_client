@@ -14,13 +14,15 @@ import { AppContext } from "../context/AppContext";
 import ProductDetails from "../pages/ProductDetails";
 import OrderDetails from "../pages/OrderDetails";
 import Customers from "../pages/Customers";
-import Transaction from "../pages/Transactions";
+import Branches from "../pages/Branches";
 import Employees from "../pages/Employees";
 import Charts from "../pages/Charts";
 import Calender from "../pages/Calender";
 import UpdateCategory from "../pages/UpdateCategory";
 import EditProduct from "../pages/EditProduct";
 import NewEmployee from "../pages/NewEmployee";
+import NewBranch from "../pages/NewBranch";
+import EditBranch from "../pages/EditBranch";
 
 const Main = () => {
   const { drawerMargin } = useContext(AppContext);
@@ -50,7 +52,9 @@ const Main = () => {
         <Route path="/employees" element={<Employees />} />
         <Route path="/charts" element={<Charts />} />
         <Route path="/calender" element={<Calender />} />
-        <Route path="/transactions" element={<Transaction />} />
+        <Route path="/branches/edit/:id" element={<EditBranch />} />
+        <Route path="/branches/new" element={<NewBranch />} />
+        <Route path="/branches" element={<Branches />} />
         <Route path="/home" element={<Home />} />
         <Route path="/" element={<Navigate to="/home" />} />
       </Routes>

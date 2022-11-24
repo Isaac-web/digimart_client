@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
@@ -25,9 +24,15 @@ import FormSubmitButton from "../components/form/FormSubmitButton";
 import AppImagePicker from "../components/AppImagePicker";
 import FormSelectField from "../components/form/FormSelectField";
 import AppProgress from "../components/AppProgress";
+import { uploadFile } from "../utils/uploader";
+import ProgressDialog from "../components/ProgressDialog";
 
 const NewProduct = () => {
   const [image, setImage] = useState(null);
+  const [progressDialogOpen, setProgressDialogOpen] = useState(false);
+  const [progressDialogError, setProgressDialogError] = useState(false);
+  const [progressDone, setProgressDone] = useState(false);
+  const [progressValue, setProgressValue] = useState(0);
   const { matchesMD } = useContext(AppContext);
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -42,13 +47,30 @@ const NewProduct = () => {
     setImage(image);
   };
 
-  const handleSubmit = async (data) => {
-    // if (image) {
-    //   const result = await uploadImage(image);
-    //   data.imageUri = result.url;
-    // }
+  const closeProgressDialog = () => {
+    setProgressDialogOpen(false);
+  };
 
-    dispatch(createProduct(data, () => navigate("/products")));
+  const handleUploadProgress = (loaded, total) => {
+    let progressPercent = Math.floor(loaded * 100) / total;
+    setProgressValue(progressPercent);
+
+    if (progressPercent >= 100) setProgressDone(true);
+  };
+
+  const handleSubmit = async (data) => {
+    setProgressDialogOpen(true);
+    setProgressDialogError(false);
+    if (image) {
+      const result = await uploadFile(image, "testing", handleUploadProgress);
+      if (!result.url) setProgressDialogError(true);
+      console.log(result);
+      data.imageUri = result?.url;
+      data.imagePublicId = result?.public_id;
+    }
+
+    console.log("Creating...");
+    dispatch(createProduct(data));
   };
 
   const validationSchema = Yup.object().shape({
@@ -138,31 +160,18 @@ const NewProduct = () => {
           </Box>
         </Container>
       </Paper>
+      <ProgressDialog
+        open={progressDialogOpen}
+        onClose={closeProgressDialog}
+        onCancel={closeProgressDialog}
+        onDone={() => navigate("/products")}
+        loaded={progressValue}
+        title="Data Upload"
+        error={progressDialogError}
+        done={progressDone}
+      />
     </Container>
   );
 };
 
 export default NewProduct;
-
-const uploadImage = async (image) => {
-  const formData = new FormData();
-  formData.append("file", image);
-  formData.append("upload_preset", "testing");
-
-  const cloudName = "don6m08ed";
-
-  const payload = { url: null, uploaded: false };
-  try {
-    const result = await axios.post(
-      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-      formData
-    );
-
-    payload.url = result?.data.url;
-    payload.uploaded = true;
-  } catch (err) {
-    payload.uploaded = false;
-  }
-
-  return payload;
-};

@@ -26,9 +26,16 @@ import FormSubmitButton from "../components/form/FormSubmitButton";
 import AppImagePicker from "../components/AppImagePicker";
 import FormSelectField from "../components/form/FormSelectField";
 import AppProgress from "../components/AppProgress";
+import ProgressDialog from "../components/ProgressDialog";
+import { uploadFile } from "../utils/uploader";
 
 const EditProduct = () => {
   const [image, setImage] = useState(null);
+  const [loaded, setLoaded] = useState(0);
+  const [progressDialogOpen, setProgressDialogOpen] = useState(0);
+  const [progressDone, setProgressDone] = useState(false);
+  const [progressError, setProgressError] = useState(false);
+
   const { matchesMD } = useContext(AppContext);
   const theme = useTheme();
   const { id: productId } = useParams();
@@ -46,14 +53,27 @@ const EditProduct = () => {
     setImage(image);
   };
 
+  const trackUploadProgress = (loaded, total) => {
+    let loadedPercent = Math.floor(loaded * 100) / total;
+    setLoaded(loadedPercent);
+    if (loadedPercent >= 100) setProgressDone(true);
+  };
+
   const handleSubmit = async (data) => {
-    // if (image) {
-    //   const result = await uploadImage(image);
-    //   data.imageUri = result.url;
-    // }
+    if (image) {
+      setLoaded(0);
+      setProgressDialogOpen(true);
+      const result = await uploadFile(image, "testing", trackUploadProgress);
+      console.log(result);
+      if (!result.uploaded) return setProgressError(true);
+      data.imageUri = result?.url;
+      data.imagePublicId = result?.public_id;
+    }
 
     dispatch(
-      updateProduct(productId, data, () => navigate(`/products/${productId}`))
+      updateProduct(productId, data, () =>
+        navigate(`/products/${productId}`, { replace: true })
+      )
     );
   };
 
@@ -144,31 +164,19 @@ const EditProduct = () => {
           </Box>
         </Container>
       </Paper>
+      <ProgressDialog
+        title="Data Upload"
+        open={progressDialogOpen}
+        loaded={loaded}
+        onDone={() => {
+          navigate(`/products/${product._id}`);
+        }}
+        done={progressDone}
+        error={progressError}
+        onClose={() => setProgressDialogOpen(false)}
+      />
     </Container>
   );
 };
 
 export default EditProduct;
-
-const uploadImage = async (image) => {
-  const formData = new FormData();
-  formData.append("file", image);
-  formData.append("upload_preset", "testing");
-
-  const cloudName = "don6m08ed";
-
-  const payload = { url: null, uploaded: false };
-  try {
-    const result = await axios.post(
-      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-      formData
-    );
-
-    payload.url = result?.data.url;
-    payload.uploaded = true;
-  } catch (err) {
-    payload.uploaded = false;
-  }
-
-  return payload;
-};

@@ -43,143 +43,92 @@ const ProductDetails = () => {
   }, []);
 
   if (loading) return null;
-  console.log(product);
-
+  // console.log(product);
   return (
     <Container sx={{ paddingBottom: "2em" }}>
-      <Paper sx={(theme) => ({ borderRadius: theme.rounded.medium })}>
-        <Box
-          sx={{
-            height: "15em",
-            // background: "darkred",
-            padding: "3em",
-            paddingBottom: "1em",
-          }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={3}>
-              <CardMedia
-                image={"none"}
-                sx={{
-                  height: "15em",
-                  backgroundColor: "rgba(0, 0, 0, 0.1)",
-                  borderRadius: 2,
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} md={9}>
-              <Grid
-                container
-                direction="column"
-                sx={{
-                  height: "15em",
-                  padding: "0 2em",
-                  color: theme.palette.common.black,
-                }}
-                justifyContent="flex-end"
-              >
-                <Grid item>
-                  <Typography variant="body1">
-                    {product?.category?.name}
-                  </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography variant="h4">{product?.name}</Typography>
-                </Grid>
-                <Grid item>
-                  <Typography variant="subtitle2">
-                    {"Last Updated: -, Created At: -"}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Box>
-
+      <Paper
+        sx={(theme) => ({
+          borderRadius: theme.rounded.medium,
+          padding: "1.5em",
+        })}
+      >
         <Box>
-          <Grid container>
-            {/* This Grid is for alignment */}
-            <Grid item xs={12} md={3}></Grid>
-
-            <Grid item xs={12} md={9}>
-              <Grid sx={{ padding: "4em", paddingTop: "2em" }}>
-                <Grid container direction="column">
-                  <Grid item>
-                    <Grid container direction="row" alignItems={"flex-end"}>
-                      <Grid item>
-                        <Typography variant="h1">20</Typography>
-                      </Grid>
-                      <Grid item>
-                        <Typography
-                          variant="h5"
-                          sx={{ paddingBottom: "0.7em", margin: "0 10px" }}
-                        >
-                          Orders made
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </Grid>
-
-                  <Grid item>
-                    <Typography variant="h5">Description</Typography>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="body1">{product.desc}</Typography>
-                  </Grid>
-
-                  <Grid item sx={{ padding: "1em 0", paddingBottom: "0.5em" }}>
-                    <Typography variant="h6">
-                      Price Per Unit:{" "}
-                      <span style={{ fontWeight: "bold" }}>
-                        Ghc{product?.price?.toFixed(2)}
-                      </span>
-                    </Typography>
-                  </Grid>
-
-                  <Grid item sx={{ paddingBottom: "1em 0" }}>
-                    <Typography variant="body1">
-                      Measures In:{" "}
-                      <span style={{ fontWeight: "bold" }}>Kg</span>
-                    </Typography>
-                  </Grid>
-
-                  <Grid item sx={{ paddingBottom: "1em 0" }}>
-                    <Typography variant="body1">
-                      Status:{" "}
-                      <span style={{ fontWeight: "bold", color: "green" }}>
-                        Available
-                      </span>
-                    </Typography>
-                  </Grid>
-                </Grid>
-
-                <Box sx={{ marginTop: 10 }}>
-                  <Toolbar>
-                    <Grid container justifyContent="flex-end" spacing={2}>
-                      <Grid item>
-                        <Button
-                          onClick={() => navigate(`/products/edit/${productId}`)}
-                          startIcon={<Edit />}
-                          variant="outlined"
-                        >
-                          Edit
-                        </Button>
-                      </Grid>
-                      <Grid item>
-                        <Button
-                          endIcon={<Delete />}
-                          onClick={() => setDialogOpen(true)}
-                        >
-                          Delete
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </Toolbar>
-                </Box>
-              </Grid>
-            </Grid>
-          </Grid>
+          <Typography gutterBottom variant="h6" sx={{ fontWeight: "bold" }}>
+            Product Details
+          </Typography>
         </Box>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <Box>
+              <CardMedia
+                image={product?.image?.url}
+                sx={(theme) => ({
+                  width: "100%",
+                  height: "25em",
+                  backgroundColor: theme.palette.common.light,
+                })}
+              />
+            </Box>
+            <Box></Box>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Box>
+              <Typography gutterBottom variant="subtitle2">
+                {product.category.name}
+              </Typography>
+              <Typography
+                gutterBottom
+                variant="h5"
+                sx={{ fontWeight: "bold", fontSize: "1.8em" }}
+              >
+                {product.name}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography gutterBottom variant="body2">
+                {product.desc}
+              </Typography>
+            </Box>
+
+            <Box>
+              <Typography gutterBottom variant="h4" sx={{ fontWeight: "500" }}>
+                Ghc {product.price.toFixed(2)}
+              </Typography>
+            </Box>
+
+            <Box sx={{ marginBottom: "5em" }}>
+              <Typography gutterBottom variant="subtitle2">
+                <Typography
+                  sx={{ display: "inline", fontWeight: "500" }}
+                  variant="inherit"
+                >
+                  Status:
+                </Typography>{" "}
+                {product.status ? "Available" : "Unavailable"}
+              </Typography>
+            </Box>
+
+            <Box>
+              <Grid container spacing={3}>
+                <Grid item>
+                  <Button
+                    startIcon={<Edit />}
+                    sx={{ width: 120 }}
+                    variant="outlined"
+                    onClick={() => navigate(`/products/edit/${productId}`)}
+                  >
+                    Edit
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button sx={{ width: 120 }} endIcon={<Delete />}>
+                    Delete
+                  </Button>
+                </Grid>
+              </Grid>
+            </Box>
+          </Grid>
+        </Grid>
       </Paper>
 
       <Dialog open={dialogOpen}>

@@ -9,10 +9,9 @@ export const productTableColumns = [
     key: "image",
     dataIndex: "image",
     render: (item) => {
-      console.log(item);
       return (
         <CardMedia
-          image={item?.imageUri || "none"}
+          image={item?.image?.url || "none"}
           sx={(theme) => ({
             height: "3.5em",
             width: "3.5em",
