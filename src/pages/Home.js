@@ -15,8 +15,9 @@ const Home = () => {
 
       <Box>
         <Grid container spacing={3}>
-          {dashboardData.map((item) => (
+          {dashboardData.map((item, index) => (
             <DashboardSummeryTile
+              key={index.toString()}
               title={item.title}
               subtitle={item.subtitle}
               xData={item.xData}

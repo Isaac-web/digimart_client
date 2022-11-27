@@ -16,25 +16,36 @@ import { useDispatch, useSelector } from "react-redux";
 import AppTable from "../components/AppTable";
 import {
   columns,
-  items,
-  orderSummery,
+  getOrderAddress,
+  getOrderSummery,
   orderAddress,
 } from "../data/orderDetails";
 import RiderPicker from "../components/RiderPicker";
 import ProductListAccordion from "../components/ProductListAccordion";
 import {
+  dispatchOrder,
   fetchOrder,
   setRider,
   unclearOrderItem,
+  updateOnOpen,
 } from "../store/reducers/details/order";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AppProgress from "../components/AppProgress";
+import StatusIndicator from "../components/StatusIndicator";
 
 const OrderDetails = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const { id: orderId } = useParams();
   const order = useSelector((state) => state.details.order);
+  const navigate = useNavigate();
+
+  const orderSummery = [
+    { id: "1", title: "Order Created", value: "Sun May 7, 2022" },
+    { id: "2", title: "Order Time", value: "06:24 AM" },
+    { id: "3", title: "Sub Total", value: 120 },
+    { id: "4", title: "Delivery Fee", value: order?.deliveryFee },
+  ];
 
   const mapToItemsTable = (data) => {
     if (data?.order_items?.length) {
@@ -50,7 +61,13 @@ const OrderDetails = () => {
       return items;
     } else return [];
   };
-  const rider = { name: "Kwame Tom", title: "Rider" };
+
+  const mapToRider = (rider) => {
+    if (rider) return { name: rider.name, title: rider.designation };
+    else return null;
+  };
+
+  const rider = mapToRider(order.data?.rider);
 
   const mapToDetailsList = (order) => {
     if (order) {
@@ -60,8 +77,11 @@ const OrderDetails = () => {
           value: `${order?.customer?.firstname} ${order?.customer?.lastname}`,
         },
         { title: "Phone Number", value: order.customer?.phone },
-        { title: "Payment method", value: "Cash" },
-        { title: "Delivery Date", value: "1st Dec, 2022" },
+        {
+          title: "Payment method",
+          value: order?.payment_method?.name || "Cash",
+        },
+        // { title: "Delivery Date", value: "1st Dec, 2022" },
         { title: "Note", value: order?.comment },
       ];
     }
@@ -75,17 +95,20 @@ const OrderDetails = () => {
   useEffect(() => {
     if (!apiCalled.current) {
       dispatch(fetchOrder(orderId));
-
+      dispatch(updateOnOpen(orderId));
       apiCalled.current = true;
     }
   }, []);
 
-  
   const handleDispatch = () => {
-      console.log(order);
-  }
+    const data = {
+      riderId: order.data.rider._id,
+      orderId,
+    };
+    dispatch(dispatchOrder(data, () => navigate("/orders")));
+  };
 
-  if (order.loading) return null;
+  if (order.loading) return <AppProgress subtitle="Fetching order data..." />;
 
   return (
     <Container sx={{ padding: "2em" }}>
@@ -182,16 +205,15 @@ const OrderDetails = () => {
                         <Typography variant="h6">Order Summery</Typography>
                       </Grid>
                       <Grid item>
-                        <Chip
-                          color="primary"
-                          label="On the Way"
-                          variant="outlined"
+                        <StatusIndicator
+                          value={order?.data?.status?.value}
+                          loading={order.updatingStatus}
                         />
                       </Grid>
                     </Grid>
 
                     <Grid container spacing={2}>
-                      {orderSummery.map((s, index) => (
+                      {getOrderSummery(order?.data).map((s, index) => (
                         <OrderSummeryListItem
                           key={index.toString()}
                           title={s.title}
@@ -228,7 +250,7 @@ const OrderDetails = () => {
                     </Box>
                     <Box>
                       <Grid container>
-                        {orderAddress.map((item, index) => (
+                        {getOrderAddress(order.data).map((item, index) => (
                           <OrderSummeryListItem
                             key={index.toString()}
                             title={item.title}
@@ -253,7 +275,12 @@ const OrderDetails = () => {
                   </Button>
                 </Grid>
                 <Grid item xs={6}>
-                  <Button onClick={handleDispatch} fullWidth endIcon={<Send size="small" />}>
+                  <Button
+                    onClick={handleDispatch}
+                    fullWidth
+                    endIcon={<Send size="small" />}
+                    disabled={!order.data.rider}
+                  >
                     Dispatch Order
                   </Button>
                 </Grid>
@@ -265,187 +292,6 @@ const OrderDetails = () => {
     </Container>
   );
 };
-
-// const OrderDetails = () => {
-//   const theme = useTheme();
-//   const dispatch = useDispatch();
-//   const { id: orderId } = useParams();
-
-//   const order = useSelector((state) => state.details.order);
-//   console.log(order);
-
-//   const rider = { name: "Kwame Tom", title: "Rider" };
-
-//   const apiCalled = useRef(false);
-
-//   const mapToDetails = (order) => {
-//     if (order) {
-//       return [
-//         {
-//           title: "Customer Name",
-//           value: `${order?.customer?.firstname} ${order?.customer?.lastname}`,
-//         },
-//         { title: "Phone Number", value: order.customer?.phone },
-//         { title: "Payment method", value: "Cash" },
-//         { title: "Delivery Date", value: "1st Dec, 2022" },
-//         { title: "Note", value: order?.comment },
-//       ];
-//     }
-//   };
-
-//   if (order.loading) return <AppProgress subtitle="Fetching order data..." />;
-
-//   return (
-//     <Container>
-
-//         <Box>
-//
-
-//               <Grid item xs={12}>
-//                 <Box sx={{ paddingBottom: "1em" }}>
-//                   <Paper
-//                     variant="outlined"
-//                     sx={{ padding: "1em ", borderRadius: theme.rounded.medium }}
-//                   >
-//                     <Box sx={{ padding: "0 2em" }}>
-//                       <Typography variant="h6" sx={{ fontWeight: "600" }}>
-//                         Customer And Order Details
-//                       </Typography>
-//                     </Box>
-//                     <Box sx={{ padding: 1 }}>
-//                       <Divider />
-//                     </Box>
-
-//                     <Box>
-//                       <Grid container>
-//                         {mapToDetails(order.data).map((k, index) => (
-//                           <Grid container key={index.toString()}>
-//                             <Grid item container>
-//                               <Box style={{ padding: 1 }}>
-//                                 <Divider />
-//                               </Box>
-//                             </Grid>
-//                             <Grid
-//                               item
-//                               container
-//                               justifyContent={"space-between"}
-//                               sx={{ padding: "1em 0" }}
-//                             >
-//                               <Grid item>
-//                                 <Typography varaint sx={{ fontWeight: "500" }}>
-//                                   {k?.title}
-//                                 </Typography>
-//                               </Grid>
-//                               <Grid item>{k?.value}</Grid>
-//                             </Grid>
-//                           </Grid>
-//                         ))}
-//                       </Grid>
-//                     </Box>
-//                   </Paper>
-//                 </Box>
-//               </Grid>
-//             </Grid>
-
-//             <Grid item xs={12} md={4} container direction="column" spacing={3}>
-//               <Grid item>
-//                 <RiderPicker
-//                   rider={rider}
-//                   onRiderChange={(rider) => console.log(rider)}
-//                 />
-//               </Grid>
-
-//               <Grid item>
-//                 <Paper
-//                   variant="outlined"
-//                   sx={{ borderRadius: theme.rounded.medium }}
-//                 >
-//                   <Box sx={{ padding: "1.5em" }}>
-//                     <Grid
-//                       container
-//                       justifyContent={"space-between"}
-//                       alignItems="center"
-//                       sx={{ marginBottom: "2em" }}
-//                     >
-//                       <Grid item>
-//                         <Typography variant="h6">Order Summery</Typography>
-//                       </Grid>
-//                       <Grid item>
-//                         <Chip
-//                           color="primary"
-//                           label="On the Way"
-//                           variant="outlined"
-//                         />
-//                       </Grid>
-//                     </Grid>
-
-//                     <Grid container spacing={2}>
-//                       {orderSummery.map((s) => (
-//                         <OrderSummeryListItem title={s.title} value={s.value} />
-//                       ))}
-//                     </Grid>
-//                   </Box>
-//                 </Paper>
-//               </Grid>
-
-//               <Grid item>
-//                 <Paper
-//                   variant="outlined"
-//                   sx={{ borderRadius: theme.rounded.medium }}
-//                 >
-//                   <Box sx={{ padding: "1.5em" }}>
-//                     <OrderSummeryListItem title="Total" value="Ghc125.00" />
-//                   </Box>
-//                 </Paper>
-//               </Grid>
-
-//               <Grid item>
-//                 <Paper
-//                   variant="outlined"
-//                   sx={{ borderRadius: theme.rounded.medium }}
-//                 >
-//                   <Box sx={{ padding: "1.5em" }}>
-//                     <Box sx={{ marginBottom: "1.5em" }}>
-//                       <Typography variant="h6">Delivery Address</Typography>
-//                     </Box>
-//                     <Box>
-//                       <Grid container>
-//                         {orderAddress.map((item) => (
-//                           <OrderSummeryListItem
-//                             title={item.title}
-//                             value={item.value}
-//                           />
-//                         ))}
-//                       </Grid>
-//                     </Box>
-//                   </Box>
-//                 </Paper>
-//               </Grid>
-
-//               <Grid item container spacing={3}>
-//                 <Grid item xs={6}>
-//                   <Button
-//                     startIcon={<Receipt />}
-//                     variant="outlined"
-//                     fullWidth
-//                     disabled
-//                   >
-//                     Print Invoice
-//                   </Button>
-//                 </Grid>
-//                 <Grid item xs={6}>
-//                   <Button fullWidth endIcon={<Send size="small" />}>
-//                     Dispatch Order
-//                   </Button>
-//                 </Grid>
-//               </Grid>
-//             </Grid>
-//           </Grid>
-//         </Box>
-//       </Box>
-//     </Container>
-//   );
-// };
 
 const OrderSummeryListItem = ({ title, value }) => {
   return (
@@ -461,5 +307,7 @@ const OrderSummeryListItem = ({ title, value }) => {
     </Grid>
   );
 };
+
+
 
 export default OrderDetails;

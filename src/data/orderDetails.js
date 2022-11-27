@@ -1,6 +1,7 @@
 import { Button, CardMedia } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { clearOrderItem } from "../store/reducers/details/order";
+import getDateTime from "../utils/getDateTime";
 
 export const columns = [
   {
@@ -83,23 +84,55 @@ export const items = [
   },
 ];
 
-export const orderDetails = {
-  customerDetails: { title: "Customer Name", value: "John Details" },
-  phoneNumber: { title: "Phone Number", value: "555 555 5555" },
-  paymentMethod: { title: "Payment method", value: "Cash" },
-  deliveryDate: { title: "Delivery Date", value: "1st Dec, 2022" },
-  note: { title: "Note", value: "This is a note" },
+export const orderSummery = [
+  { id: "1", title: "Order Created", value: "_" },
+  { id: "2", title: "Order Time", value: "_" },
+  { id: "3", title: "Sub Total", value: "_" },
+  { id: "4", title: "Delivery Fee", value: "_" },
+];
+
+export const getOrderSummery = (order) => {
+  if (!order) {
+    return orderSummery;
+  } else {
+    const dateTime = getDateTime(new Date(order.createdAt));
+    return [
+      { id: "1", title: "Order Created", value: dateTime.dateString },
+      { id: "2", title: "Order Time", value: dateTime.timeString },
+      {
+        id: "3",
+        title: "Sub Total",
+        value: `Ghc ${order.subtotal?.toFixed(2)}`,
+      },
+      {
+        id: "4",
+        title: "Delivery Fee",
+        value: `Ghc ${order?.deliveryFee?.toFixed(2)}`,
+      },
+    ];
+  }
 };
 
-export const orderSummery = [
-  { id: "1", title: "Order Created", value: "Sun May 7, 2022" },
-  { id: "2", title: "Order Time", value: "06:24 AM" },
-  { id: "3", title: "Sub Total", value: 120 },
-  { id: "4", title: "Delivery Fee", value: 5 },
+export const orderAddress = [
+  { id: "1", title: "City", value: "_" },
+  { id: "2", title: "Area", value: "_" },
+  { id: "3", title: "Coordinates", value: "_, _" },
 ];
 
-export const orderAddress = [
-  { id: "1", title: "City", value: "Accra" },
-  { id: "2", title: "Area", value: "Spintex" },
-  { id: "3", title: "Coordinates", value: "120.223, 1124.897" },
-];
+export const getOrderAddress = (order) => {
+  if (order) {
+    const address = order?.delivery_address?.coordinates;
+    return [
+      { id: "1", title: "City", value: address?.city || "_" },
+      { id: "2", title: "Area", value: address?.area || "_" },
+      {
+        id: "3",
+        title: "Coordinates",
+        value:
+          `Lat: ${address?.lat}, Long: ${address?.long}` || "Lat: _, Long: _",
+      },
+    ];
+  } else {
+    return orderAddress;
+  }
+};

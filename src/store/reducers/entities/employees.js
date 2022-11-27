@@ -114,6 +114,7 @@ export const deleteEmployee = (id) => (dispatch) => {
       url: `${url}/${id}`,
       method: "delete",
       onSuccess: employeeRemoved.type,
+      toggleOnError: "true",
     })
   );
 };

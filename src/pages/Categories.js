@@ -27,6 +27,8 @@ import AppProgress from "../components/AppProgress";
 import {
   fetchCategories,
   deleteCategory,
+  searchCategories,
+  clearSearch,
 } from "../store/reducers/entities/categories";
 import SearchField from "../components/SearchField";
 import Empty from "../Empty";
@@ -35,10 +37,14 @@ const Categories = () => {
   const { matchesMD } = useContext(AppContext);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { data: categories, loading } = useSelector(
-    (state) => state.entities.categories
-  );
+  const {
+    data: categories,
+    loading,
+    searchResults,
+    searching,
+  } = useSelector((state) => state.entities.categories);
 
+  console.log(searchResults, searching);
   useEffect(() => {
     dispatch(fetchCategories());
   }, []);
@@ -51,55 +57,66 @@ const Categories = () => {
     navigate(`/categories/update/${category._id}`);
   };
 
+  const handleSearch = (value, key) => {
+    if (key === "Enter") {
+      dispatch(searchCategories(value));
+    }
+  };
+
   if (loading)
     return <AppProgress subtitle="Please wait while we load categories." />;
 
+  return categories.length ? (
+    <Container maxWidth="md">
+      <Box>
+        <Typography variant="h4">Categories</Typography>
+        <Typography variant="subtitle2" gutterBottom>
+          There are currently {categories.length} categories in the database
+        </Typography>
+      </Box>
 
-  return ( categories.length ?
-<Container maxWidth="md">
-  <Box>
-    <Typography variant="h4">Categories</Typography>
-    <Typography variant="subtitle2" gutterBottom>
-      There are currently {categories.length} categories in the database
-    </Typography>
-  </Box>
+      <Box>
+        <Grid container>
+          <Grid item xs={12} md={10} sx={{ marginBottom: 2 }}>
+            <SearchField
+              placeholder="Search categories..."
+              onChange={handleSearch}
+              loading={searching}
+              onClear={() => dispatch(clearSearch())}
+            />
+          </Grid>
+          <Grid item xs={12} md={2} sx={{ paddingLeft: matchesMD ? 0 : 1 }}>
+            <Button
+              component={Link}
+              fullWidth
+              startIcon={<Add />}
+              size={"large"}
+              to="/categories/new"
+            >
+              Add New
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
 
-  <Box>
-    <Grid container>
-      <Grid item xs={12} md={10} sx={{ marginBottom: 2 }}>
-        <SearchField placeholder="Search categories..." />
-      </Grid>
-      <Grid item xs={12} md={2} sx={{ paddingLeft: matchesMD ? 0 : 1 }}>
-        <Button
-          component={Link}
-          fullWidth
-          startIcon={<Add />}
-          size={"large"}
-          to="/categories/new"
-        >
-          Add New
-        </Button>
-      </Grid>
-    </Grid>
-  </Box>
-
-  <Box>
-    <List>
-      {categories.map((item) => (
-        <CategoryItem
-          key={item._id}
-          title={item.name}
-          subtitle={item.numberOfProducts}
-          onDelete={() => handleDelete(item)}
-          onUpdate={() => handleUpdate(item)}
-        />
-      ))}
-    </List>
-  </Box>
-</Container> :  
-<Container>
-    <Empty CustomComponent={<NoCategoryComponent />} />
-</Container>
+      <Box>
+        <List>
+          {(searchResults.length ? searchResults : categories).map((item) => (
+            <CategoryItem
+              key={item._id}
+              title={item.name}
+              subtitle={item.numberOfProducts}
+              onDelete={() => handleDelete(item)}
+              onUpdate={() => handleUpdate(item)}
+            />
+          ))}
+        </List>
+      </Box>
+    </Container>
+  ) : (
+    <Container>
+      <Empty CustomComponent={<NoCategoryComponent />} />
+    </Container>
   );
 };
 

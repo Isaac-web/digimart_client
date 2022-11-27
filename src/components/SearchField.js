@@ -1,9 +1,35 @@
 import React from "react";
-import { InputAdornment, InputBase, Paper, useTheme } from "@mui/material";
+import {
+  CircularProgress,
+  InputAdornment,
+  InputBase,
+  Paper,
+  useTheme,
+} from "@mui/material";
 import { Search } from "@mui/icons-material";
+import { Box } from "@mui/system";
 
-const SearchField = ({ placeholder = "Search...", PaperProps, ...rest }) => {
+const SearchField = ({
+  placeholder = "Search...",
+  onChange,
+  onClear,
+  PaperProps,
+  loading = false,
+  ...rest
+}) => {
   const theme = useTheme();
+
+  const raiseKeyPress = ({ target, key }) => {
+    if (onChange) {
+      onChange(target.value, key);
+    }
+  };
+
+  const raiseChange = ({ target: input }) => {
+    if (!input.value) {
+      if (onClear) onClear();
+    }
+  };
 
   return (
     <Paper sx={{ borderRadius: theme.rounded.small }} {...PaperProps}>
@@ -13,7 +39,19 @@ const SearchField = ({ placeholder = "Search...", PaperProps, ...rest }) => {
             position="start"
             sx={{ marginRight: "0.4em", marginLeft: 0.3 }}
           >
-            <Search />
+            {!loading ? (
+              <Search />
+            ) : (
+              <Box
+                sx={{
+                  padding: "0 0.2em",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <CircularProgress size="1.1em" />
+              </Box>
+            )}
           </InputAdornment>
         }
         sx={{
@@ -24,6 +62,8 @@ const SearchField = ({ placeholder = "Search...", PaperProps, ...rest }) => {
         fullWidth
         placeholder={placeholder}
         {...rest}
+        onKeyPress={raiseKeyPress}
+        onChange={raiseChange}
       />
     </Paper>
   );

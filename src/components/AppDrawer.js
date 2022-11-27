@@ -17,9 +17,11 @@ import { Link, useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import drawerData from "../data/drawer";
 import logo from "../assets/logo.png";
+import storage from "../utils/storage";
 
 const AppDrawer = () => {
   const location = useLocation();
+  const token = storage.getItem("token");
 
   const categories = [];
   for (let item in drawerData) {

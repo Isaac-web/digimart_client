@@ -5,6 +5,8 @@ const slice = createSlice({
   name: "order",
   initialState: {
     loading: false,
+    updating: false,
+    updatingStatus: false,
     data: {
       order_items: [],
     },
@@ -38,6 +40,22 @@ const slice = createSlice({
     riderSet: (order, action) => {
       order.data.rider = action.payload;
     },
+    orderDispatchBegan: (order) => {
+      order.updating = true;
+    },
+    orderDispatchEnded: (order) => {
+      order.updating = false;
+    },
+    orderOpened: (order, action) => {
+      order.data.status = action.payload.data;
+      console.log(order.data.status);
+    },
+    orderOpenBegan: (order) => {
+      order.updatingStatus = true;
+    },
+    orderOpenEnded: (order) => {
+      order.updatingStatus = false;
+    },
   },
 });
 
@@ -49,6 +67,11 @@ const {
   orderItemCleared,
   orderItemUncleared,
   riderSet,
+  orderDispatchBegan,
+  orderDispatchEnded,
+  orderOpened,
+  orderOpenBegan,
+  orderOpenEnded,
 } = slice.actions;
 
 const url = "/orders";
@@ -74,4 +97,36 @@ export const unclearOrderItem = (product) => (dispatch) => {
 export const setRider = (rider) => (dispatch) => {
   dispatch(riderSet(rider));
 };
+
+export const dispatchOrder = (data, callback) => async (dispatch) => {
+  await dispatch(
+    apiRequest({
+      url: `${url}/${data.orderId}/dispatch`,
+      method: "patch",
+      data: { riderId: data.riderId },
+      onBegin: orderDispatchBegan.type,
+      onEnd: orderDispatchEnded.type,
+      toggleOnSuccess: true,
+      toggleOnError: true,
+    })
+  );
+
+  if (callback) callback();
+};
+
+export const updateOnOpen = (id) => (dispatch) => {
+  dispatch(
+    apiRequest({
+      url: `${url}/${id}/opened`,
+      method: "patch",
+      toggleOnError: true,
+      onSuccess: orderOpened.type,
+      onBegin: orderOpenBegan.type,
+      onEnd: orderOpenEnded.type,
+    })
+  );
+};
+
+
+
 

@@ -5,7 +5,9 @@ const slice = createSlice({
   name: "products",
   initialState: {
     loading: false,
+    searching: false,
     data: [],
+    searchResults: [],
   },
   reducers: {
     productsFetched: (products, action) => {
@@ -26,6 +28,18 @@ const slice = createSlice({
     productFetchEnded: (products, action) => {
       products.loading = false;
     },
+    searchResultsFetched: (products, action) => {
+      products.searchResults = action.payload.data;
+    },
+    searchBegan: (products) => {
+      products.searching = true;
+    },
+    searchEnded: (products) => {
+      products.searching = false;
+    },
+    searchCleared: (products) => {
+      products.searchResults = [];
+    },
   },
 });
 export default slice.reducer;
@@ -35,6 +49,10 @@ const {
   productFetchEnded,
   productAdded,
   productRemoved,
+  searchResultsFetched,
+  searchBegan,
+  searchEnded,
+  searchCleared
 } = slice.actions;
 
 const url = "/products";
@@ -43,7 +61,7 @@ export const loadProducts = (data) => (dispatch) => {
 
   dispatch(
     apiRequest({
-      onStart: productFetchBegan.type,
+      onBegin: productFetchBegan.type,
       onSuccess: productsFetched.type,
       onEnd: productFetchEnded.type,
       url,
@@ -76,3 +94,20 @@ export const deleteProduct = (id) => async (dispatch) => {
     })
   );
 };
+
+export const searchProducts = (data) => (dispatch) => {
+  dispatch(
+    apiRequest({
+      url: `${url}/search?q=${data}`,
+      onSuccess: searchResultsFetched.type,
+      onBegin: searchBegan.type,
+      onEnd: searchEnded.type,
+      toggleOnError: true,
+    })
+  );
+};
+
+
+export const clearSearch = () => dispatch => {
+  dispatch(searchCleared())
+}

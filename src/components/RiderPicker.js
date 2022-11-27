@@ -18,7 +18,7 @@ import {
   List,
   ListItemSecondaryAction,
 } from "@mui/material";
-import { Search } from "@mui/icons-material";
+import { Cyclone, Search } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRiders } from "../store/reducers/entities/riders";
 
@@ -74,28 +74,47 @@ const RiderPicker = ({ rider, onRiderChange }) => {
           <Box>
             <Typography variant="h6">Rider Details</Typography>
           </Box>
-          <Box>
-            <ListItem>
-              <ListItemAvatar>
-                <Avatar />
-              </ListItemAvatar>
-              <ListItemText
-                primary={
-                  <Typography variant="body1" fontWeight="bold">
-                    {rider.name}
-                  </Typography>
-                }
-                secondary={
-                  <Typography variant="subtitle2">{rider.title}</Typography>
-                }
-              />
-            </ListItem>
-          </Box>
-          <Box>
-            <Button variant="text" onClick={handleOpenDialog}>
-              Change Rider
-            </Button>
-          </Box>
+          {rider ? (
+            <Box>
+              <Box>
+                <ListItem>
+                  <ListItemAvatar>
+                    <Avatar />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={
+                      <Typography variant="body1" fontWeight="bold">
+                        {rider.name}
+                      </Typography>
+                    }
+                    secondary={
+                      <Typography variant="subtitle2">{rider.title}</Typography>
+                    }
+                  />
+                </ListItem>
+              </Box>
+              <Box>
+                <Button variant="text" onClick={handleOpenDialog}>
+                  Change Rider
+                </Button>
+              </Box>
+            </Box>
+          ) : (
+            <Box>
+              <Typography variant="body1">Not set</Typography>
+              <Typography variant="subtitle2">
+                The rider for this order has not been set.
+              </Typography>
+              <Button
+                size="small"
+                onClick={handleOpenDialog}
+                variant="text"
+                sx={{ textTransform: "none" }}
+              >
+                Pick a rider
+              </Button>
+            </Box>
+          )}
         </Box>
       </Paper>
 

@@ -38,6 +38,7 @@ const DashboarSummeryTile = ({
             <Grid item>
               <Typography varaint="body1" fontWeight="bold">
                 {title}
+
                 <Typography
                   sx={{
                     display: "inline",
@@ -50,7 +51,6 @@ const DashboarSummeryTile = ({
                 </Typography>
               </Typography>
             </Grid>
-
             <Grid item>
               <Typography
                 varaint="subtitle1"

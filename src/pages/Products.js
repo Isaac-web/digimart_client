@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -20,16 +20,25 @@ import { Add } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 
 import { productTableColumns, items } from "../data/products";
-import { loadProducts } from "../store/reducers/entities/products";
+import {
+  clearSearch,
+  loadProducts,
+  searchProducts,
+} from "../store/reducers/entities/products";
 
 const Products = () => {
+  const [searchString, setSearchString] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
   const matchesMD = useMediaQuery(theme.breakpoints.down("md"));
-  const { data: products, loading } = useSelector(
-    (state) => state.entities.products
-  );
+  const {
+    data: products,
+    loading,
+    searchResults,
+    searching,
+  } = useSelector((state) => state.entities.products);
+  console.log(searching);
 
   const mapToViewModel = (data) => {
     return data?.map((p) => ({
@@ -37,7 +46,7 @@ const Products = () => {
       name: p.name,
       image: p?.image,
       category: p.category.name,
-      price: p.price,
+      price: `Ghc ${p.price.toFixed(2)}`,
       imageUri: p?.imageUri,
       status: p?.status,
     }));
@@ -45,10 +54,21 @@ const Products = () => {
 
   useEffect(() => {
     dispatch(loadProducts());
+
+    return () => {
+      dispatch(clearSearch());
+    };
   }, []);
 
   const handleRowSelect = (item) => {
     navigate(`/products/${item._id}`);
+  };
+
+  const handleSearch = (value, key) => {
+    setSearchString(value);
+    if (key === "Enter") {
+      dispatch(searchProducts(value));
+    }
   };
 
   if (loading)
@@ -73,7 +93,12 @@ const Products = () => {
       <Box sx={{ padding: "1em 0em" }}>
         <Grid container alignItems={"center"} justifyContent={"space-around"}>
           <Grid item xs={12} md={10}>
-            <SearchField placeholder="Search Products..." />
+            <SearchField
+              placeholder="Search Products..."
+              onClear={() => dispatch(clearSearch())}
+              onChange={handleSearch}
+              loading={searching}
+            />
           </Grid>
           <Grid
             item
@@ -106,7 +131,11 @@ const Products = () => {
           <AppTable
             rowKey={"_id"}
             columns={productTableColumns}
-            data={mapToViewModel(products)}
+            data={
+              searchResults.length
+                ? mapToViewModel(searchResults)
+                : mapToViewModel(products)
+            }
             onRowSelect={handleRowSelect}
           />
         </Box>

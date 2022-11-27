@@ -6,6 +6,8 @@ const slice = createSlice({
   name: "categories",
   initialState: {
     loading: false,
+    searching: false,
+    searchResults: [],
     data: [],
   },
   reducers: {
@@ -34,6 +36,18 @@ const slice = createSlice({
       );
       categories.data[index] = action.payload.data;
     },
+    categoriesSearched: (categories, action) => {
+      categories.searchResults = action.payload.data;
+    },
+    searchBegan: (categories) => {
+      categories.searching = true;
+    },
+    searchEnded: (categories) => {
+      categories.searching = false;
+    },
+    searchCleared: (categories) => {
+      categories.searchResults = [];
+    }
   },
 });
 
@@ -45,9 +59,25 @@ const {
   categoryUpdated,
   categoriesFetchedEnded,
   categoriesFetchedStarted,
+  searchBegan,
+  searchEnded,
+  categoriesSearched,
+  searchCleared
 } = slice.actions;
 
 const url = "/categories";
+export const searchCategories = (data) => (dispatch) => {
+  console.log(data);
+  dispatch(
+    apiRequest({
+      onBegin: searchBegan.type,
+      onEnd: searchEnded.type,
+      onSuccess: categoriesSearched.type,
+      url: `${url}/search?q=${data}`,
+    })
+  );
+};
+
 export const fetchCategories = () => (dispatch) => {
   dispatch(
     apiRequest({
@@ -89,3 +119,7 @@ export const deleteCategory = (id) => (dispatch) => {
     })
   );
 };
+
+export const clearSearch = () => dispatch => {
+  dispatch(searchCleared())
+}

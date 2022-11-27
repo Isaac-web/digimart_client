@@ -9,7 +9,6 @@ import {
   IconButton,
   InputAdornment,
   Paper,
-  Toolbar,
   Typography,
 } from "@mui/material";
 import { Done, FilterList } from "@mui/icons-material";
@@ -20,6 +19,7 @@ import AppTable from "../components/AppTable";
 import SearchField from "../components/SearchField";
 import { fetchOrders } from "../store/reducers/entities/orders";
 import { columns } from "../data/orders";
+import getDateTime from "../utils/getDateTime";
 
 const Orders = () => {
   const navigate = useNavigate();
@@ -35,14 +35,15 @@ const Orders = () => {
   }, []);
 
   const mapToViewModel = (data) => {
+    console.log(data);
     if (data.length) {
       return data.map((item) => ({
         _id: item._id,
         orderId: item._id,
         status: item.status.value,
         itemsCount: item.order_items.length,
-        total: item.total,
-        date: "N/A",
+        total: `Ghc${item.total?.toFixed(2)}`,
+        date: getDateTime(new Date(item.createdAt)).dateString,
         deliveryDate: "N/A",
       }));
     } else {
@@ -61,7 +62,7 @@ const Orders = () => {
         </Box>
 
         <Box>
-          <Toolbar
+          <Box
             sx={{
               padding: "1em 0",
               margin: "0",
@@ -93,7 +94,7 @@ const Orders = () => {
                 </Grid>
               </Grid>
             </Grid>
-          </Toolbar>
+          </Box>
         </Box>
         <Paper
           sx={(theme) => ({

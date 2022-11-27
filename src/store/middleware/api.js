@@ -22,6 +22,7 @@ const apiMiddleware =
     } = action.payload;
 
     next(action);
+    
 
     const api = axios.create({
       baseURL: "http://localhost:9000/api",
@@ -43,13 +44,14 @@ const apiMiddleware =
           },
         });
       }
-      
-      if(toggleOnSuccess) {
+
+      if (toggleOnSuccess) {
         dispatch(
           showSnackbar({
             message: "Success...",
             severity: "success",
-          }))
+          })
+        );
       }
 
       dispatch({
@@ -59,6 +61,7 @@ const apiMiddleware =
         },
       });
     } catch (err) {
+      console.log(err);
       if (onError) {
         if (err?.response) {
           dispatch({

@@ -23,6 +23,8 @@ import EditProduct from "../pages/EditProduct";
 import NewEmployee from "../pages/NewEmployee";
 import NewBranch from "../pages/NewBranch";
 import EditBranch from "../pages/EditBranch";
+import Login from "../pages/Login";
+import ProtectedRoute from "./ProtectedRoute";
 
 const Main = () => {
   const { drawerMargin } = useContext(AppContext);
@@ -38,28 +40,33 @@ const Main = () => {
     >
       <AppNavBar />
       <Routes>
-        <Route path="/products" element={<Products />} />
-        <Route path="/products/new" element={<NewProduct />} />
-        <Route path="/products/:id" element={<ProductDetails />} />
-        <Route path="/products/edit/:id" element={<EditProduct />} />
-        <Route path="/categories/new" element={<NewCategory />} />
-        <Route path="/categories/update/:id" element={<UpdateCategory />} />
-        <Route path="/categories" element={<Categories />} />
-        <Route path="/orders/:id" element={<OrderDetails />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/customers" element={<Customers />} />
-        <Route path="/employees/new" element={<NewEmployee />} />
-        <Route path="/employees" element={<Employees />} />
-        <Route path="/charts" element={<Charts />} />
-        <Route path="/calender" element={<Calender />} />
-        <Route path="/branches/edit/:id" element={<EditBranch />} />
-        <Route path="/branches/new" element={<NewBranch />} />
-        <Route path="/branches" element={<Branches />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/" element={<Navigate to="/home" />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/products" element={<Products />} />
+          <Route path="/products/new" element={<NewProduct />} />
+          <Route path="/products/:id" element={<ProductDetails />} />
+          <Route path="/products/edit/:id" element={<EditProduct />} />
+          <Route path="/categories/new" element={<NewCategory />} />
+          <Route path="/categories/update/:id" element={<UpdateCategory />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/orders/:id" element={<OrderDetails />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/customers" element={<Customers />} />
+          <Route path="/employees/new" element={<NewEmployee />} />
+          <Route path="/employees" element={<Employees />} />
+          <Route path="/charts" element={<Charts />} />
+          <Route path="/calender" element={<Calender />} />
+          <Route path="/branches/edit/:id" element={<EditBranch />} />
+          <Route path="/branches/new" element={<NewBranch />} />
+          <Route path="/branches" element={<Branches />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Navigate to="/home" />} />
+        </Route>
+        <Route path="/login" element={<Login />} />
       </Routes>
     </Box>
   );
 };
+
+
 
 export default Main;
