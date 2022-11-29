@@ -19,12 +19,25 @@ const setItem = (key, value) => {
   }
 };
 
+const removeItem = (key) => {
+  if (typeof key !== "string") throw new Error("key must be a string.");
+  try {
+    localStorage.removeItem(key);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const clear = () => {
   localStorage.clear();
 };
 
-export default {
+const methods =  {
   clear,
   getItem,
   setItem,
+  removeItem
 };
+
+
+export default methods;

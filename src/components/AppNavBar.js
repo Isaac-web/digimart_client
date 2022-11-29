@@ -11,12 +11,13 @@ import {
   ListItemAvatar,
   ListItemText,
   Paper,
+  Popover,
   Popper,
   Toolbar,
   Typography,
   useTheme,
 } from "@mui/material";
-import { Logout, Menu, Notifications } from "@mui/icons-material";
+import { Logout, Menu, Notifications, Settings } from "@mui/icons-material";
 
 import { AppContext } from "../context/AppContext";
 import { useDispatch } from "react-redux";
@@ -83,7 +84,12 @@ const AppNavBar = () => {
             )}
           </Grid>
         </Toolbar>
-        <ProfilePopper open={open} anchorEl={anchorEl} id={popperId} />
+        <ProfilePopper
+          open={open}
+          anchorEl={anchorEl}
+          id={popperId}
+          onClose={() => setOpen(false)}
+        />
       </AppBar>
       <Box sx={{ ...theme.mixins.toolbar, marginBottom: 2 }} />
     </div>
@@ -92,53 +98,101 @@ const AppNavBar = () => {
 
 export default AppNavBar;
 
-const ProfilePopper = ({ open, anchorEl, id }) => {
+const ProfilePopper = ({ open, anchorEl, id, onClose }) => {
   const dispatch = useDispatch();
   const token = storage.getItem("token");
   const user = token && jwtDecode(token);
-  
 
   const handleLogout = () => {
     dispatch(logout(() => (window.location = "/login")));
   };
 
-  if(!user) return null;
+  if (!user) return null;
 
   return (
-    <Popper id={id} anchorEl={anchorEl} open={open}>
+    <Popover
+      anchorOrigin={{
+        horizontal: "right",
+        vertical: "bottom",
+      }}
+      onClose={onClose}
+      id={id}
+      anchorEl={anchorEl}
+      open={open}
+      sx={{
+        "& .MuiPopover-paper": {
+          width: "18em",
+        },
+      }}
+    >
       <Box
         sx={(theme) => ({
           margin: "1.5em 0.8em",
         })}
       >
-        <Paper sx={(theme) => ({ padding: "1em", width: "15em" })}>
-          <Grid container spacing={2}>
-            <Grid item container spacing={2}>
+        {/* <Paper sx={(theme) => ({ padding: "1em", width: "15em" })}> */}
+        <Grid container spacing={2}>
+          <Grid
+            item
+            container
+            spacing={2}
+            direction="column"
+            alignItems="center"
+          >
+            {/* Avatar */}
+            <Grid item>
+              <Avatar
+                sx={{ width: "60px", height: "60px", borderRadius: "30px" }}
+              >
+                IT
+              </Avatar>
+            </Grid>
+            {/* Username text */}
+            <Grid item container alignItems="center" direction="column">
               <Grid item>
-                <ListItem>
-                  <ListItemAvatar>
-                  <Avatar />
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={user?.name}
-                    secondary={
-                      <Typography variant="subtitle2">
-                        {user?.designtionId}
-                      </Typography>
-                    }
-                  />
-                </ListItem>
+                <Typography align="center" fontWeight="bold" variant="body1">
+                  {user.name}
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography align="center" variant="subtitle2">
+                  {user.email}
+                </Typography>
               </Grid>
             </Grid>
-
-            <Grid item>
-              <Button size="small" endIcon={<Logout />} onClick={handleLogout}>
-                Logout
-              </Button>
-            </Grid>
           </Grid>
-        </Paper>
+
+          <Grid item xs={12}>
+            <Button size="small" variant="outlined" fullWidth>
+              View Profile
+            </Button>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Button
+              sx={{ textAlign: "left" }}
+              fullWidth
+              size="small"
+              variant="text"
+              startIcon={<Settings />}
+            >
+              Settings
+            </Button>
+          </Grid>
+
+          <Grid item>
+            <Button
+              size="small"
+              startIcon={<Logout sx={{ fontSize: "10px" }} />}
+              onClick={handleLogout}
+              variant="text"
+            >
+              Logout
+            </Button>
+          </Grid>
+        </Grid>
+        {/* </Paper> */}
       </Box>
-    </Popper>
+    </Popover>
   );
 };

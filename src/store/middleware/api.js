@@ -1,4 +1,5 @@
 import axios from "axios";
+import storage from "../../utils/storage";
 
 import { apiRequest, apiRequestError, apiRequestSuccess } from "../actions/api";
 import { showSnackbar } from "../reducers/utils/snackbar";
@@ -22,12 +23,15 @@ const apiMiddleware =
     } = action.payload;
 
     next(action);
-    
 
     const api = axios.create({
-      baseURL: "http://localhost:9000/api",
+      baseURL: process.env.REACT_APP_API_URI,
     });
 
+    api.interceptors.request.use((req) => {
+      req.headers["x-auth-token"] = storage.getItem("token");
+      return req;
+    });
     try {
       if (onBegin) dispatch({ type: onBegin });
       const response = await api.request({

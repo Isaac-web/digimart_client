@@ -12,13 +12,12 @@ export const uploadFile = async (image, upload_preset, callback) => {
     if (callback) callback(progress.loaded, progress.total);
   };
 
-  const cloudName = "don6m08ed";
   const config = { onUploadProgress: handleProgress };
   const payload = { url: null, uploaded: false };
 
   try {
     const result = await axios.post(
-      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      process.env.REACT_APP_CLOUDINARY_URL,
       formData,
       config
     );

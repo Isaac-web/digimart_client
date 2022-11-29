@@ -50,6 +50,8 @@ export const updateProduct = (id, data, callback) => async (dispatch) => {
       data,
       method: "patch",
       onSuccess: productUpdated.type,
+      toggleOnError: true,
+      toggleOnSuccess: true,
     })
   );
 

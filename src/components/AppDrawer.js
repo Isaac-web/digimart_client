@@ -17,30 +17,18 @@ import { Link, useLocation } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import drawerData from "../data/drawer";
 import logo from "../assets/logo.png";
-import storage from "../utils/storage";
+import useUser from "../customHooks/useUser";
 
 const AppDrawer = () => {
   const location = useLocation();
-  const token = storage.getItem("token");
+  const user = useUser();
 
   const categories = [];
   for (let item in drawerData) {
     categories.push(item);
   }
 
-  const {
-    drawerOpen,
-    setDrawerOpen,
-    drawerMargin: drawerWidth,
-    matchesMD,
-  } = useContext(AppContext);
-
-  const items = [
-    { id: "1", title: "Home", link: "/home" },
-    { id: "2", title: "Orders", link: "/orders" },
-    { id: "3", title: "Products", link: "/products" },
-    { id: "4", title: "Categories", link: "/categories" },
-  ];
+  const { drawerOpen, setDrawerOpen, matchesMD } = useContext(AppContext);
 
   return (
     <div>
@@ -77,20 +65,35 @@ const AppDrawer = () => {
         </DrawerHeader>
         <Divider />
         <List>
-          {categories.map((c, index) => (
-            <Box key={c}>
-              {index !== 0 && <Divider sx={{ margin: "1em 0" }} />}
-              {drawerData[c].map((item) => (
-                <DrawerListItem
-                  Icon={item.Icon}
-                  active={location.pathname.startsWith(item.link)}
-                  key={item.link}
-                  link={item.link}
-                  title={item.title}
-                />
-              ))}
-            </Box>
-          ))}
+          {categories.map((c, index) => {
+            //The conditional rendering below renders based on three conditions;
+            //1. If the user is a system user
+            //2. if the category has an auth property which should be an array
+            //3. if the desination of the user is found in the auth property of
+            //   the category(c)
+            if (
+              user &&
+              user?.userType !== "system" &&
+              drawerData[c]?.auth &&
+              drawerData[c]?.auth?.indexOf(user.designation) === -1
+            )
+              return null;
+
+            return (
+              <Box key={c}>
+                {index !== 0 && <Divider sx={{ margin: "1em 0" }} />}
+                {drawerData[c].entities.map((item) => (
+                  <DrawerListItem
+                    Icon={item.Icon}
+                    active={location.pathname.startsWith(item.link)}
+                    key={item.link}
+                    link={item.link}
+                    title={item.title}
+                  />
+                ))}
+              </Box>
+            );
+          })}
         </List>
       </Drawer>
     </div>

@@ -38,7 +38,6 @@ const Products = () => {
     searchResults,
     searching,
   } = useSelector((state) => state.entities.products);
-  console.log(searching);
 
   const mapToViewModel = (data) => {
     return data?.map((p) => ({

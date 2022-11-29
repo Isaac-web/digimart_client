@@ -62,14 +62,12 @@ const NewProduct = () => {
     setProgressDialogOpen(true);
     setProgressDialogError(false);
     if (image) {
-      const result = await uploadFile(image, "testing", handleUploadProgress);
+      const result = await uploadFile(image, "products", handleUploadProgress);
       if (!result.url) setProgressDialogError(true);
-      console.log(result);
       data.imageUri = result?.url;
       data.imagePublicId = result?.public_id;
     }
 
-    console.log("Creating...");
     dispatch(createProduct(data));
   };
 
@@ -98,7 +96,9 @@ const NewProduct = () => {
         <Container maxWidth="md" sx={{ padding: 5 }}>
           <Box style={{ padding: matchesMD ? "0px" : "0 6em" }}>
             <Box>
-              <Typography variant="h4">New Product</Typography>
+              <Typography variant="h5" fontWeight="bold">
+                New Product
+              </Typography>
               <Typography
                 gutterBottom
                 variant="subtitle2"
@@ -122,7 +122,24 @@ const NewProduct = () => {
               >
                 <Grid container spacing={2}>
                   <FormTextField autoFocus label="Name" name="name" />
-                  <FormTextField label="Price" type={"number"} name="price" />
+                  <FormTextField
+                    label="Price"
+                    type={"number"}
+                    name="price"
+                    InputProps={{
+                      startAdornment: (
+                        <Typography
+                          sx={(theme) => ({
+                            color: theme.palette.common.medium,
+                            fontSize: "0.7em",
+                            marginRight: "0.3em",
+                          })}
+                        >
+                          Ghc
+                        </Typography>
+                      ),
+                    }}
+                  />
                   <FormSelectField
                     xs={12}
                     name="categoryId"

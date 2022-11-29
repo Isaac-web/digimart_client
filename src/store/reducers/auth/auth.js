@@ -34,11 +34,11 @@ export default slice.reducer;
 const { userLoggedIn, userLoginBegan, userLoginEnded, userLoggedOut } =
   slice.actions;
 
-const url = "/employees/login";
+const url = "/users";
 export const login = (data, callback) => async (dispatch) => {
   await dispatch(
     apiRequest({
-      url,
+      url: `${url}/login`,
       data,
       method: "post",
       onSuccess: userLoggedIn.type,
@@ -52,7 +52,7 @@ export const login = (data, callback) => async (dispatch) => {
 };
 
 export const logout = (callback) => (dispatch) => {
-  // dispatch(userLoggedOut);
+  dispatch(userLoggedOut);
   localStorage.clear();
   if (callback) callback();
 };

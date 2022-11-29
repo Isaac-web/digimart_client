@@ -102,7 +102,9 @@ const EditProduct = () => {
         <Container maxWidth="md" sx={{ padding: 5 }}>
           <Box style={{ padding: matchesMD ? "0px" : "0 6em" }}>
             <Box>
-              <Typography variant="h4">Edit Product</Typography>
+              <Typography variant="h5" fontWeight="bold">
+                Edit Product
+              </Typography>
               <Typography
                 gutterBottom
                 variant="subtitle2"
@@ -126,7 +128,24 @@ const EditProduct = () => {
               >
                 <Grid container spacing={2}>
                   <FormTextField autoFocus label="Name" name="name" />
-                  <FormTextField label="Price" type={"number"} name="price" />
+                  <FormTextField
+                    label="Price"
+                    type={"number"}
+                    name="price"
+                    InputProps={{
+                      startAdornment: (
+                        <Typography
+                          sx={(theme) => ({
+                            color: theme.palette.common.medium,
+                            fontSize: "0.7em",
+                            marginRight: "0.3em",
+                          })}
+                        >
+                          Ghc
+                        </Typography>
+                      ),
+                    }}
+                  />
                   <FormSelectField
                     xs={12}
                     name="categoryId"

@@ -44,7 +44,6 @@ const Categories = () => {
     searching,
   } = useSelector((state) => state.entities.categories);
 
-  console.log(searchResults, searching);
   useEffect(() => {
     dispatch(fetchCategories());
   }, []);

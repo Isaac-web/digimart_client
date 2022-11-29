@@ -1,40 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { apiRequest } from "../../actions/api";
 
-const employees = [
-  {
-    _id: "1",
-    image: "",
-    name: "Employee 1",
-    salary: "Ghc 2000",
-    designation: "Rider",
-    lastSeen: "Just Now",
-  },
-  {
-    _id: "2",
-    image: "",
-    name: "Employee 2",
-    salary: "Ghc 5000",
-    designation: "Manager",
-    lastSeen: "Online",
-  },
-  {
-    _id: "3",
-    image: "",
-    name: "Employee 3",
-    salary: "Ghc 2000",
-    designation: "Rider",
-    lastSeen: "Just Now",
-  },
-  {
-    _id: "4",
-    image: "",
-    name: "Employee 1",
-    salary: "Ghc 2300",
-    designation: "Sales Person",
-    lastSeen: "Online",
-  },
-];
 
 const slice = createSlice({
   name: "employees",
@@ -81,19 +47,20 @@ const {
   employeeRemoved,
 } = slice.actions;
 
-const url = "/employees";
+const url = "/users";
 export const loadEmployees = () => async (dispatch) => {
   dispatch(
     apiRequest({
       onBegin: employeesLoadBegan.type,
       onEnd: employeesLoadEnded.type,
       onSuccess: employeesLoaded.type,
-      url,
+      url: `${url}?userType=employee`,
     })
   );
 };
 
-export const createEmployee = (data, callback) => async (dispatch) => {
+export const createEmployee = (data, options, callback) => async (dispatch) => {
+  console.log(data);
   await dispatch(
     apiRequest({
       data,
@@ -101,7 +68,9 @@ export const createEmployee = (data, callback) => async (dispatch) => {
       onBegin: employeeAddBegan.type,
       onEnd: employeeAddEnded.type,
       method: "post",
-      url: `${url}/new`,
+      url: `${url}/signup?userType${options.userType}`,
+      toggleOnError: "true",
+      toggleOnSuccess: "true",
     })
   );
 
@@ -115,6 +84,7 @@ export const deleteEmployee = (id) => (dispatch) => {
       method: "delete",
       onSuccess: employeeRemoved.type,
       toggleOnError: "true",
+      toggleOnSuccess: "true",
     })
   );
 };

@@ -21,6 +21,7 @@ const Employees = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const { data: employees, loading } = useSelector(
     (state) => state.entities.employees
   );
@@ -55,11 +56,11 @@ const Employees = () => {
       </Box>
 
       <Box sx={{ padding: "1em 0" }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={8}>
+        <Grid container spacing={2} justifyContent="space-between">
+          <Grid item xs={12} md={10}>
             <SearchField placeholder="Search by Name or email address" />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={2}>
             <Button onClick={() => navigate("/employees/new")}>
               New Employee
             </Button>

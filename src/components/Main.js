@@ -15,12 +15,10 @@ import ProductDetails from "../pages/ProductDetails";
 import OrderDetails from "../pages/OrderDetails";
 import Customers from "../pages/Customers";
 import Branches from "../pages/Branches";
-import Employees from "../pages/Employees";
-import Charts from "../pages/Charts";
-import Calender from "../pages/Calender";
+import User from "../pages/User";
 import UpdateCategory from "../pages/UpdateCategory";
 import EditProduct from "../pages/EditProduct";
-import NewEmployee from "../pages/NewEmployee";
+import NewUser from "../pages/NewUser";
 import NewBranch from "../pages/NewBranch";
 import EditBranch from "../pages/EditBranch";
 import Login from "../pages/Login";
@@ -51,10 +49,8 @@ const Main = () => {
           <Route path="/orders/:id" element={<OrderDetails />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/customers" element={<Customers />} />
-          <Route path="/employees/new" element={<NewEmployee />} />
-          <Route path="/employees" element={<Employees />} />
-          <Route path="/charts" element={<Charts />} />
-          <Route path="/calender" element={<Calender />} />
+          <Route path="/employees/new" element={<NewUser />} />
+          <Route path="/employees" element={<User />} />
           <Route path="/branches/edit/:id" element={<EditBranch />} />
           <Route path="/branches/new" element={<NewBranch />} />
           <Route path="/branches" element={<Branches />} />

@@ -35,7 +35,7 @@ const Orders = () => {
   }, []);
 
   const mapToViewModel = (data) => {
-    console.log(data);
+    return [];
     if (data.length) {
       return data.map((item) => ({
         _id: item._id,
@@ -57,7 +57,7 @@ const Orders = () => {
         <Box>
           <Typography variant="h4">Orders</Typography>
           <Typography variant="subtitle2" gutterBottom>
-            There are currently 20 pending orders
+            There are currently {mapToViewModel(orders.data)} pending orders
           </Typography>
         </Box>
 

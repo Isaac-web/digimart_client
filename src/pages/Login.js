@@ -32,7 +32,7 @@ const Login = () => {
           </Grid>
           <Grid item container spacing={3}>
             <Form
-              initialValues={{ email: "kanytakiy@gmail.com", password: "" }}
+              initialValues={{ email: "", password: "" }}
               onSubmit={handleSubmit}
             >
               <FormTextField autoFocus xs={12} name="email" label="Username" />

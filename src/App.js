@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ThemeProvider } from "@mui/material";
 import { Provider } from "react-redux";
 
@@ -9,9 +9,17 @@ import theme from "./theme";
 import configureReduxStore from "./store";
 import AppSnacbar from "./components/AppSnacbar";
 import DateTimeProvider from "./components/DateTimeProvider";
+import { io } from "socket.io-client";
 
 const App = () => {
   const store = configureReduxStore();
+  useEffect(() => {}, []);
+
+  // const socket = io("http://localhost:9000");
+  // console.log(socket);
+  // socket.on("connect", () => {
+  //   console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+  // });
 
   return (
     <Provider store={store}>
