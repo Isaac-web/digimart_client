@@ -72,11 +72,12 @@ const NewProduct = () => {
   };
 
   const validationSchema = Yup.object().shape({
-    name: Yup.string().min(3).max(50).required(),
-    price: Yup.number().min(0).max(10000).required(),
+    name: Yup.string().min(3).max(50).required().label("Product Name"),
+    price: Yup.number().min(0).max(10000).required().label("Price"),
+    unit: Yup.string().min(3).max(50).required().label("Unit"),
     categoryId: Yup.string().required().label("Category"),
     status: Yup.boolean(),
-    desc: Yup.string().max(500),
+    desc: Yup.string().max(500).label("Description"),
   });
 
   if (loading)
@@ -114,6 +115,7 @@ const NewProduct = () => {
                   name: "",
                   categoryId: "",
                   price: "",
+                  unit: "",
                   desc: "",
                   status: true,
                 }}
@@ -122,7 +124,15 @@ const NewProduct = () => {
               >
                 <Grid container spacing={2}>
                   <FormTextField autoFocus label="Name" name="name" />
+                  <FormSelectField
+                    name="categoryId"
+                    inputLabel={"Category"}
+                    menuItemLabelAttribute={"name"}
+                    menuItemValueAttribute={"_id"}
+                    items={data}
+                  />
                   <FormTextField
+                    xs={8}
                     label="Price"
                     type={"number"}
                     name="price"
@@ -140,14 +150,19 @@ const NewProduct = () => {
                       ),
                     }}
                   />
-                  <FormSelectField
-                    xs={12}
-                    name="categoryId"
-                    inputLabel={"Category"}
-                    menuItemLabelAttribute={"name"}
-                    menuItemValueAttribute={"_id"}
-                    items={data}
-                  />
+                  <FormTextField xs={4} label="Unit" name="unit" InputProps={{
+                      startAdornment: (
+                        <Typography
+                          sx={(theme) => ({
+                            color: theme.palette.common.medium,
+                            fontSize: "0.7em",
+                            marginRight: "0.3em",
+                          })}
+                        >
+                          Ghc
+                        </Typography>
+                      ),
+                    }} />
                   <FormTextField
                     label="Description"
                     name="desc"

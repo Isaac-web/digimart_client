@@ -9,7 +9,6 @@ import theme from "./theme";
 import configureReduxStore from "./store";
 import AppSnacbar from "./components/AppSnacbar";
 import DateTimeProvider from "./components/DateTimeProvider";
-import { io } from "socket.io-client";
 
 const App = () => {
   const store = configureReduxStore();

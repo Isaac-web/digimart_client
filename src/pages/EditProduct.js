@@ -80,6 +80,7 @@ const EditProduct = () => {
   const validationSchema = Yup.object().shape({
     name: Yup.string().min(3).max(50).required(),
     price: Yup.number().min(0).max(10000).required(),
+    unit: Yup.string().min(3).max(50).required().label("Unit"),
     categoryId: Yup.string().required().label("Category"),
     status: Yup.boolean(),
     desc: Yup.string().max(500),
@@ -120,6 +121,7 @@ const EditProduct = () => {
                   name: product.data.name,
                   categoryId: product.data.category._id,
                   price: product.data.price,
+                  unit: product.data.unit || "",
                   desc: product.data.desc,
                   status: true,
                 }}
@@ -128,7 +130,15 @@ const EditProduct = () => {
               >
                 <Grid container spacing={2}>
                   <FormTextField autoFocus label="Name" name="name" />
+                  <FormSelectField
+                    name="categoryId"
+                    inputLabel={"Category"}
+                    menuItemLabelAttribute={"name"}
+                    menuItemValueAttribute={"_id"}
+                    items={categories.data}
+                  />
                   <FormTextField
+                    xs={8}
                     label="Price"
                     type={"number"}
                     name="price"
@@ -146,14 +156,20 @@ const EditProduct = () => {
                       ),
                     }}
                   />
-                  <FormSelectField
-                    xs={12}
-                    name="categoryId"
-                    inputLabel={"Category"}
-                    menuItemLabelAttribute={"name"}
-                    menuItemValueAttribute={"_id"}
-                    items={categories.data}
-                  />
+                  <FormTextField xs={4} label="Unit" name="unit" InputProps={{
+                      startAdornment: (
+                        <Typography
+                          sx={(theme) => ({
+                            color: theme.palette.common.medium,
+                            fontSize: "0.7em",
+                            marginRight: "0.5em",
+                          })}
+                        >
+                          Per
+                        </Typography>
+                      ),
+                    }} />
+
                   <FormTextField
                     label="Description"
                     name="desc"
