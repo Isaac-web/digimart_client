@@ -150,7 +150,11 @@ const NewProduct = () => {
                       ),
                     }}
                   />
-                  <FormTextField xs={4} label="Unit" name="unit" InputProps={{
+                  <FormTextField
+                    xs={4}
+                    label="Unit"
+                    name="unit"
+                    InputProps={{
                       startAdornment: (
                         <Typography
                           sx={(theme) => ({
@@ -159,10 +163,11 @@ const NewProduct = () => {
                             marginRight: "0.3em",
                           })}
                         >
-                          Ghc
+                          Per
                         </Typography>
                       ),
-                    }} />
+                    }}
+                  />
                   <FormTextField
                     label="Description"
                     name="desc"
