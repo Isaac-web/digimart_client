@@ -77,6 +77,7 @@ export const createProduct = (data, callback) => async (dispatch) => {
       onEnd: productFetchEnded.type,
       method: "post",
       url,
+      toggleOnError: true,
     })
   );
 
@@ -91,6 +92,7 @@ export const deleteProduct = (id) => async (dispatch) => {
       toggleOnError: true,
       url: `${url}/${id}`,
       method: "delete",
+      toggleOnSuccess: true,
     })
   );
 };
