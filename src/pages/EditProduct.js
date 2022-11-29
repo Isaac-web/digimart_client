@@ -63,7 +63,7 @@ const EditProduct = () => {
     if (image) {
       setLoaded(0);
       setProgressDialogOpen(true);
-      const result = await uploadFile(image, "testing", trackUploadProgress);
+      const result = await uploadFile(image, "products", trackUploadProgress);
       console.log(result);
       if (!result.uploaded) return setProgressError(true);
       data.imageUri = result?.url;
