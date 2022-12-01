@@ -17,11 +17,14 @@ const slice = createSlice({
     orderFetchEnded: (orders, action) => {
       orders.loading = false;
     },
+    orderAppended: (orders, action) => {
+      orders.data.push(action.payload.data);
+    },
   },
 });
 
 export default slice.reducer;
-const { orderFetched, orderFetchStarted, orderFetchEnded } = slice.actions;
+const { orderFetched, orderFetchStarted, orderFetchEnded, orderAppended } = slice.actions;
 
 const url = "/orders";
 export const fetchOrders = () => (dispatch) => {
@@ -34,4 +37,8 @@ export const fetchOrders = () => (dispatch) => {
       onEnd: orderFetchEnded.type,
     })
   );
+};
+
+export const appendOrder = (order) => dispatch => {
+  dispatch(orderAppended({data: order}))
 };

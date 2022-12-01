@@ -26,7 +26,6 @@ import ProtectedRoute from "./ProtectedRoute";
 
 const Main = () => {
   const { drawerMargin } = useContext(AppContext);
-
   return (
     <Box
       sx={(theme) => ({

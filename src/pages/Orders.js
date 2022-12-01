@@ -35,7 +35,6 @@ const Orders = () => {
   }, []);
 
   const mapToViewModel = (data) => {
-    return [];
     if (data.length) {
       return data.map((item) => ({
         _id: item._id,
@@ -52,12 +51,12 @@ const Orders = () => {
   };
 
   return (
-    <Container>
+    <Container sx={{ paddingBottom: "2em" }}>
       <Box>
         <Box>
           <Typography variant="h4">Orders</Typography>
           <Typography variant="subtitle2" gutterBottom>
-            There are currently {mapToViewModel(orders.data)} pending orders
+            There are currently {orders.data.length} pending orders
           </Typography>
         </Box>
 
@@ -69,7 +68,7 @@ const Orders = () => {
             }}
           >
             <Grid container>
-              <Grid item xs={12} md={8}>
+              <Grid item xs={12}>
                 <SearchField
                   placeholder="Search by order Id"
                   endAdornment={
@@ -81,7 +80,7 @@ const Orders = () => {
                   }
                 />
               </Grid>
-              <Grid item xs={12} md={4}>
+              {/* <Grid item xs={12} md={4}>
                 <Grid
                   container
                   alignItems="center"
@@ -92,7 +91,7 @@ const Orders = () => {
                     <FilterMenu />
                   </Grid>
                 </Grid>
-              </Grid>
+              </Grid> */}
             </Grid>
           </Box>
         </Box>
