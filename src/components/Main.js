@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Box } from "@mui/material";
 
@@ -23,9 +23,25 @@ import NewBranch from "../pages/NewBranch";
 import EditBranch from "../pages/EditBranch";
 import Login from "../pages/Login";
 import ProtectedRoute from "./ProtectedRoute";
+import { subscribe } from "../utils/longPoll";
+import { fetchPendingOrders } from "../store/reducers/entities/orders";
+import { useDispatch } from "react-redux";
 
 const Main = () => {
   const { drawerMargin } = useContext(AppContext);
+  const dispatch = useDispatch();
+
+  const longPolling = useRef(false);
+  useEffect(() => {
+    if (!longPolling.current) {
+      subscribe(
+        `${process.env.REACT_APP_API_URI}/orders/branch/pending`,
+        (count) => dispatch(fetchPendingOrders(count))
+      );
+      longPolling.current = true;
+    }
+  }, []);
+
   return (
     <Box
       sx={(theme) => ({
@@ -36,6 +52,7 @@ const Main = () => {
       })}
     >
       <AppNavBar />
+
       <Routes>
         <Route element={<ProtectedRoute />}>
           <Route path="/products" element={<Products />} />
@@ -61,7 +78,5 @@ const Main = () => {
     </Box>
   );
 };
-
-
 
 export default Main;

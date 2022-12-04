@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Chip,
-  Menu,
-  MenuItem,
   Container,
   Grid,
   IconButton,
@@ -11,13 +9,15 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import { Done, FilterList } from "@mui/icons-material";
+import { FilterList, Refresh } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 import AppTable from "../components/AppTable";
 import SearchField from "../components/SearchField";
-import { fetchOrders } from "../store/reducers/entities/orders";
+import {
+  fetchBranchOrders,
+} from "../store/reducers/entities/orders";
 import { columns } from "../data/orders";
 import getDateTime from "../utils/getDateTime";
 
@@ -30,8 +30,13 @@ const Orders = () => {
     navigate(`/orders/${item._id}`);
   };
 
+  const handleFetchOrders = () => {
+    dispatch(fetchBranchOrders());
+  };
+
   useEffect(() => {
-    dispatch(fetchOrders());
+    handleFetchOrders();
+   
   }, []);
 
   const mapToViewModel = (data) => {
@@ -68,7 +73,7 @@ const Orders = () => {
             }}
           >
             <Grid container>
-              <Grid item xs={12}>
+              <Grid item xs={12} md={10} lg={9}>
                 <SearchField
                   placeholder="Search by order Id"
                   endAdornment={
@@ -80,18 +85,32 @@ const Orders = () => {
                   }
                 />
               </Grid>
-              {/* <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={2} lg={3}>
                 <Grid
                   container
+                  spacing={1}
                   alignItems="center"
                   justifyContent={"flex-end"}
                   sx={{ height: "100%" }}
                 >
                   <Grid item>
-                    <FilterMenu />
+                    <Chip
+                      label={`${orders.pendingCount || "No"} Pending Orders`}
+                      sx={(theme) => ({
+                        backgroundColor: !orders.pendingCount
+                          ? "rgba(0, 0, 0, 0.1)"
+                          : "lightgreen",
+                        color: "white",
+                      })}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <IconButton onClick={handleFetchOrders}>
+                      <Refresh />
+                    </IconButton>
                   </Grid>
                 </Grid>
-              </Grid> */}
+              </Grid>
             </Grid>
           </Box>
         </Box>
@@ -112,61 +131,6 @@ const Orders = () => {
         </Paper>
       </Box>
     </Container>
-  );
-};
-
-const FilterMenu = ({ onItemSelect }) => {
-  const items = [
-    { id: "1", label: "Today's Orders" },
-    { id: "2", label: "Pending Orders for the week" },
-    { id: "3", label: "Pending orders for the month" },
-  ];
-
-  const [open, setOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [currentItem, setcurrentItem] = useState(items[0]);
-
-  const raiseItemSelect = (item) => {
-    handleCloseMenu();
-    setcurrentItem(item);
-    onItemSelect(item);
-  };
-
-  const handleOpenMenu = (e) => {
-    setOpen(true);
-    setAnchorEl(e.target);
-  };
-
-  const handleCloseMenu = (e) => {
-    setOpen(false);
-    setAnchorEl(null);
-  };
-
-  return (
-    <>
-      <Chip
-        clickable
-        onClick={handleOpenMenu}
-        label={currentItem.label}
-        deleteIcon={<Done />}
-      />
-      <Menu
-        open={open}
-        onClose={handleCloseMenu}
-        anchorEl={anchorEl}
-        aria-label="Sort Menu"
-      >
-        {items.map((m) => (
-          <MenuItem
-            key={m.id}
-            sx={{ fontSize: "0.8em" }}
-            onClick={() => raiseItemSelect(m)}
-          >
-            {m.label}
-          </MenuItem>
-        ))}
-      </Menu>
-    </>
   );
 };
 

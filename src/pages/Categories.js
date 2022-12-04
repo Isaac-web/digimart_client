@@ -32,6 +32,7 @@ import {
 } from "../store/reducers/entities/categories";
 import SearchField from "../components/SearchField";
 import Empty from "../Empty";
+import useUser from "../customHooks/useUser";
 
 const Categories = () => {
   const { matchesMD } = useContext(AppContext);
@@ -122,6 +123,7 @@ const Categories = () => {
 const CategoryItem = ({ onDelete, onUpdate, subtitle, title }) => {
   const [anchorElement, setAnchorElement] = useState(null);
   const [open, setOpen] = useState(false);
+  const user = useUser();
 
   const menuItems = [
     { id: "1", title: "Edit", Icon: <ModeEdit /> },
@@ -178,24 +180,26 @@ const CategoryItem = ({ onDelete, onUpdate, subtitle, title }) => {
           primary={title}
           secondary={<Typography variant="subtitle2">{subtitle}</Typography>}
         />
-        <ListItemSecondaryAction>
-          <IconButton onClick={handleOpenMenu}>
-            <MoreVert />
-          </IconButton>
-          <Menu
-            aria-label="Options"
-            anchorEl={anchorElement}
-            open={open}
-            onClose={handleCloseMenu}
-          >
-            {menuItems.map((m) => (
-              <MenuItem key={m.id} onClick={() => handleMenuSelect(m)}>
-                <ListItemIcon>{m.Icon}</ListItemIcon>
-                <ListItemText>{m.title}</ListItemText>
-              </MenuItem>
-            ))}
-          </Menu>
-        </ListItemSecondaryAction>
+        {user.userType === "system" && (
+          <ListItemSecondaryAction>
+            <IconButton onClick={handleOpenMenu}>
+              <MoreVert />
+            </IconButton>
+            <Menu
+              aria-label="Options"
+              anchorEl={anchorElement}
+              open={open}
+              onClose={handleCloseMenu}
+            >
+              {menuItems.map((m) => (
+                <MenuItem key={m.id} onClick={() => handleMenuSelect(m)}>
+                  <ListItemIcon>{m.Icon}</ListItemIcon>
+                  <ListItemText>{m.title}</ListItemText>
+                </MenuItem>
+              ))}
+            </Menu>
+          </ListItemSecondaryAction>
+        )}
       </ListItem>
     </Paper>
   );
