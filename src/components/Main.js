@@ -33,13 +33,13 @@ const Main = () => {
 
   const longPolling = useRef(false);
   useEffect(() => {
-    if (!longPolling.current) {
-      subscribe(
-        `${process.env.REACT_APP_API_URI}/orders/branch/pending`,
-        (count) => dispatch(fetchPendingOrders(count))
-      );
-      longPolling.current = true;
-    }
+    // if (!longPolling.current) {
+    //   subscribe(
+    //     `${process.env.REACT_APP_API_URI}/orders/branch/pending`,
+    //     (count) => dispatch(fetchPendingOrders(count))
+    //   );
+    //   longPolling.current = true;
+    // }
   }, []);
 
   return (

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { ThemeProvider } from "@mui/material";
 import { Provider } from "react-redux";
 
@@ -10,10 +10,8 @@ import configureReduxStore from "./store";
 import AppSnacbar from "./components/AppSnacbar";
 import DateTimeProvider from "./components/DateTimeProvider";
 
-
 const App = () => {
   const store = configureReduxStore();
-
   return (
     <Provider store={store}>
       <AppContext>

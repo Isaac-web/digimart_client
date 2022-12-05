@@ -6,10 +6,21 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  TableFooter,
+  TablePagination,
 } from "@mui/material";
 import _ from "lodash";
 
-const AppTable = ({ columns, data, onRowSelect, rowKey, columnKey }) => {
+const AppTable = ({
+  columns,
+  data,
+  onRowSelect,
+  rowKey,
+  count,
+  rowsPerPage,
+  page,
+  onPageChange,
+}) => {
   const renderCell = (item, column) => {
     if (column.render) return column.render(item);
 
@@ -18,6 +29,13 @@ const AppTable = ({ columns, data, onRowSelect, rowKey, columnKey }) => {
 
   const raiseRowSelect = (item) => {
     if (typeof onRowSelect === "function") onRowSelect(item);
+  };
+
+  const raiseChangePage = (e, newPage) => {
+    const page = parseInt(newPage);
+    const direction = newPage < 0 ? "prev" : "next";
+
+    if (onPageChange) onPageChange(page, direction);
   };
 
   return (
@@ -44,6 +62,14 @@ const AppTable = ({ columns, data, onRowSelect, rowKey, columnKey }) => {
             </TableRow>
           ))}
         </TableBody>
+        <TableFooter>
+          <TablePagination
+            count={count}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={raiseChangePage}
+          />
+        </TableFooter>
       </Table>
     </Box>
   );

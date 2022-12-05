@@ -40,6 +40,8 @@ const apiMiddleware =
         data,
       });
 
+      console.log(response.data);
+
       if (onSuccess) {
         dispatch({
           type: onSuccess,

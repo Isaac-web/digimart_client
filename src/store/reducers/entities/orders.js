@@ -6,11 +6,18 @@ const slice = createSlice({
   initialState: {
     loading: false,
     pendingCount: 0,
-    data: [],
+    data: {
+      items: [],
+      totalItemsCount: 0,
+      currentPage: 0,
+      pageSize: 10,
+    },
   },
   reducers: {
     orderFetched: (orders, action) => {
-      orders.data = action.payload.data;
+      orders.data.items = action.payload.data.orders;
+      orders.data.totalItemsCount = action.payload.data.ordersCount;
+      orders.data.currentPage = action.payload.data.currentPage;
     },
     orderFetchStarted: (orders) => {
       orders.loading = true;
@@ -19,7 +26,7 @@ const slice = createSlice({
       orders.loading = false;
     },
     pendingOrdersFetched: (orders, action) => {
-      const diff = action.payload.data - orders.data.length ;
+      const diff = action.payload.data.items - orders.data.orders.length;
       orders.pendingCount = diff;
     },
   },
@@ -47,10 +54,15 @@ export const fetchOrders = () => (dispatch) => {
   );
 };
 
-export const fetchBranchOrders = () => (dispatch) => {
+export const fetchBranchOrders = (options) => (dispatch) => {
+  const { pageSize, currentPage } = options || {};
+  console.log(currentPage);
+
   dispatch(
     apiRequest({
-      url: `${url}/branch`,
+      url: `${url}/branch?pageSize=${pageSize || 10}&currentPage=${
+        currentPage || 0
+      }`,
       onSuccess: orderFetched.type,
       toggleOnError: true,
       onBegin: orderFetchStarted.type,
@@ -58,6 +70,7 @@ export const fetchBranchOrders = () => (dispatch) => {
     })
   );
 };
+
 export const fetchPendingOrders = (data) => (dispatch) => {
   dispatch(pendingOrdersFetched({ data: data.pendingOrders }));
 };
