@@ -45,7 +45,6 @@ const Main = () => {
   return (
     <Box
       sx={(theme) => ({
-        backgroundColor: theme.palette.common.light,
         marginLeft: `${drawerMargin}px`,
         minHeight: "100vh",
         transition: theme.transitions.create(["margin"]),

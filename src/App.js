@@ -1,5 +1,5 @@
 import React from "react";
-import { ThemeProvider } from "@mui/material";
+import { Box, ThemeProvider } from "@mui/material";
 import { Provider } from "react-redux";
 
 import AppContext from "./context/AppContext";
@@ -17,11 +17,13 @@ const App = () => {
       <AppContext>
         <DateTimeProvider>
           <ThemeProvider theme={theme}>
-            <div>
+            <Box
+              sx={(theme) => ({ backgroundColor: theme.palette.common.light })}
+            >
               <AppSnacbar />
               <Drawer />
               <Main />
-            </div>
+            </Box>
           </ThemeProvider>
         </DateTimeProvider>
       </AppContext>
