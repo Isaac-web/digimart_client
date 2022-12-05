@@ -1,7 +1,7 @@
 import React from "react";
 import { CircularProgress, Container, Grid, Typography } from "@mui/material";
 
-const AppCircurlarProgress = ({ subtitle, title = "Loading", ...rest }) => {
+const AppCircurlarProgress = ({ subtitle, size, title, ...rest }) => {
   return (
     <Container>
       <Grid
@@ -13,7 +13,7 @@ const AppCircurlarProgress = ({ subtitle, title = "Loading", ...rest }) => {
         sx={{ padding: 3 }}
       >
         <Grid item>
-          <CircularProgress />
+          <CircularProgress size={size} />
         </Grid>
         <Grid item>
           <Grid container direction="column">

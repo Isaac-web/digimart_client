@@ -8,6 +8,7 @@ import {
   InputAdornment,
   Paper,
   Tab,
+  TablePagination,
   Tabs,
   Toolbar,
   Typography,
@@ -27,8 +28,6 @@ const Orders = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.entities.orders);
-  const [currentPage, setCurrentPage] = useState(0);
-
   const [currentTab, setCurrentTab] = useState(0);
   const tabs = [
     { label: "New", Icon: "" },
@@ -36,27 +35,23 @@ const Orders = () => {
     { label: "Dispatched", Icon: "" },
     { label: "Delivered", Icon: "" },
   ];
+  const rowsPerPage = 25;
 
   const handleRowSelect = (item) => {
     navigate(`/orders/${item._id}`);
   };
 
   const handleFetchOrders = () => {
-    dispatch(fetchBranchOrders());
+    dispatch(fetchBranchOrders({ currentPage: 0, pageSize: 25 }));
   };
 
   const handleChangeTab = (e, value) => {
     setCurrentTab(value);
   };
 
-  const handlePageChange = (page, direction) => {
-    if (direction === "prev")  {
-      if (currentPage != 0) setCurrentPage(currentPage - 1);
-    } else setCurrentPage(currentPage + 1);
-    dispatch(fetchBranchOrders({ currentPage }));
+  const handlePageChange = (e, page) => {
+    dispatch(fetchBranchOrders({ currentPage: page, pageSize: 25 }));
   };
-
-  // console.log(currentPage);
 
   const mapToViewModel = (data) => {
     if (data.length) {
@@ -78,6 +73,8 @@ const Orders = () => {
     handleFetchOrders();
   }, []);
 
+  const ordersCount = orders.data.totalItemsCount;
+  const currentPage = orders.data.currentPage;
   return (
     <Container sx={{ paddingBottom: "2em" }}>
       <Box>
@@ -91,7 +88,18 @@ const Orders = () => {
           })}
           variant="outlined"
         >
-          {renderTabs(tabs, currentTab, handleChangeTab)}
+          <Grid container justifyContent="space-between">
+            <Grid item>{renderTabs(tabs, currentTab, handleChangeTab)}</Grid>
+            <Grid item>
+              {renderTablePagination({
+                count: ordersCount,
+                rowsPerPage,
+                page: currentPage,
+                onPageChange: handlePageChange,
+              })}
+            </Grid>
+          </Grid>
+
           <TabContext value={currentTab}>
             <TabPanel value={0}>
               <AppTable
@@ -99,10 +107,9 @@ const Orders = () => {
                 columns={columns}
                 data={mapToViewModel(orders.data.items)}
                 onRowSelect={handleRowSelect}
-                rowsPerPage={orders.data.pageSize}
+                rowsPerPage={rowsPerPage}
                 count={orders.data.totalItemsCount}
                 page={parseInt(orders.data.currentPage)}
-                onPageChange={handlePageChange}
               />
             </TabPanel>
             <TabPanel value={1}>One</TabPanel>
@@ -197,6 +204,26 @@ const renderTabs = (tabs, currentTab, handleChangeTab) => {
           />
         ))}
       </Tabs>
+    </Toolbar>
+  );
+};
+
+const renderTablePagination = (props) => {
+  const { count, rowsPerPage, page, onPageChange } = props;
+  // if (!count) throw new Error("count is required.");
+  // if (!rowsPerPage) throw new Error("rowsPerPage is required.");
+  // if (!page) throw new Error("page is required.");
+  // if (!onPageChange) throw new Error("onPageChange be a function");
+
+  return (
+    <Toolbar>
+      <TablePagination
+        count={count}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        rowsPerPageOptions={[25]}
+        onPageChange={onPageChange}
+      />
     </Toolbar>
   );
 };

@@ -6,12 +6,20 @@ const slice = createSlice({
   initialState: {
     loading: false,
     searching: false,
-    data: [],
+    data: {
+      count: 0,
+      currentPage: 0,
+      pageSize: 0,
+      items: [],
+    },
     searchResults: [],
   },
   reducers: {
     productsFetched: (products, action) => {
-      products.data = action.payload.data;
+      products.data.items = action.payload.data.products;
+      products.data.count = action.payload.data.count;
+      products.data.currentPage = action.payload.data.currentPage;
+      products.data.pageSize = action.payload.data.pageSize;
     },
     productAdded: (products, action) => {
       products.data?.unshift(action.payload.data);
@@ -52,16 +60,15 @@ const {
   searchResultsFetched,
   searchBegan,
   searchEnded,
-  searchCleared
+  searchCleared,
 } = slice.actions;
 
 const url = "/products";
-export const loadProducts = (data) => (dispatch) => {
-  dispatch(productsFetched({ data }));
-
+export const loadProducts = (params) => (dispatch) => {
   dispatch(
     apiRequest({
       onBegin: productFetchBegan.type,
+      params,
       onSuccess: productsFetched.type,
       onEnd: productFetchEnded.type,
       url,

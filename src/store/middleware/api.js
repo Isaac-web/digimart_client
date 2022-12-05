@@ -13,6 +13,7 @@ const apiMiddleware =
     const {
       data,
       method,
+      params,
       url,
       onSuccess,
       onError,
@@ -38,6 +39,7 @@ const apiMiddleware =
         url,
         method,
         data,
+        params,
       });
 
       console.log(response.data);

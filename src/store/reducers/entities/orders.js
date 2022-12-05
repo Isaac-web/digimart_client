@@ -16,8 +16,8 @@ const slice = createSlice({
   reducers: {
     orderFetched: (orders, action) => {
       orders.data.items = action.payload.data.orders;
-      orders.data.totalItemsCount = action.payload.data.ordersCount;
-      orders.data.currentPage = action.payload.data.currentPage;
+      orders.data.totalItemsCount = parseInt(action.payload.data.ordersCount);
+      orders.data.currentPage = parseInt(action.payload.data.currentPage);
     },
     orderFetchStarted: (orders) => {
       orders.loading = true;
@@ -37,7 +37,6 @@ const {
   orderFetched,
   orderFetchStarted,
   orderFetchEnded,
-  orderAppended,
   pendingOrdersFetched,
 } = slice.actions;
 
@@ -56,13 +55,15 @@ export const fetchOrders = () => (dispatch) => {
 
 export const fetchBranchOrders = (options) => (dispatch) => {
   const { pageSize, currentPage } = options || {};
-  console.log(currentPage);
+  const params = {
+    pageSize,
+    currentPage,
+  };
 
   dispatch(
     apiRequest({
-      url: `${url}/branch?pageSize=${pageSize || 10}&currentPage=${
-        currentPage || 0
-      }`,
+      url: `${url}/branch`,
+      params,
       onSuccess: orderFetched.type,
       toggleOnError: true,
       onBegin: orderFetchStarted.type,
@@ -76,10 +77,6 @@ export const fetchPendingOrders = (data) => (dispatch) => {
 };
 
 
-
-
-
-
-export const appendOrder = (order) => dispatch => {
-  dispatch(orderAppended({data: order}))
-};
+const changePageSize = (pageSize) => {
+  
+}

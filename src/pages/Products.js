@@ -8,6 +8,10 @@ import {
   Typography,
   useTheme,
   useMediaQuery,
+  Toolbar,
+  TablePagination,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -19,12 +23,14 @@ import SearchField from "../components/SearchField";
 import { Add } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 
-import { productTableColumns, items } from "../data/products";
+import { productTableColumns } from "../data/products";
 import {
   clearSearch,
   loadProducts,
   searchProducts,
 } from "../store/reducers/entities/products";
+import AppSelectField from "../AppSelectField";
+import { fetchCategories } from "../store/reducers/entities/categories";
 
 const Products = () => {
   const [searchString, setSearchString] = useState("");
@@ -32,12 +38,15 @@ const Products = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const matchesMD = useMediaQuery(theme.breakpoints.down("md"));
+  const [categoryId, setCategoryId] = useState("none");
+
   const {
     data: products,
     loading,
     searchResults,
     searching,
   } = useSelector((state) => state.entities.products);
+  const categories = useSelector((state) => state.entities.categories);
 
   const mapToViewModel = (data) => {
     return data?.map((p) => ({
@@ -52,7 +61,8 @@ const Products = () => {
   };
 
   useEffect(() => {
-    dispatch(loadProducts());
+    dispatch(loadProducts({ currentPage: 0, categoryId: "none" }));
+    dispatch(fetchCategories());
 
     return () => {
       dispatch(clearSearch());
@@ -70,7 +80,19 @@ const Products = () => {
     }
   };
 
-  if (loading)
+  const pageSize = products.pageSize;
+  const handlePageChange = (e, page) => {
+    if (page < 0) return;
+
+    dispatch(loadProducts({ currentPage: page, pageSize: 25 }));
+  };
+
+  const handleSelectCategory = ({ target: input }) => {
+    setCategoryId(input.value);
+    dispatch(loadProducts({ categoryId: input.value }));
+  };
+
+  if (loading && !products?.items?.length)
     return (
       <AppProgress
         title="Loading"
@@ -78,7 +100,7 @@ const Products = () => {
       />
     );
 
-  return products?.length ? (
+  return (
     <Container sx={{ paddingBottom: "2em" }}>
       <Box>
         <Typography fontWeight={"semibold"} variant="h4">
@@ -127,22 +149,35 @@ const Products = () => {
         variant="outlined"
       >
         <Box>
+          <Grid container justifyContent={"flex-start"}>
+            <Grid item xs={8} sm={6} md={2}>
+              <Toolbar>
+                <AppSelectField
+                  // disabled={!categories?.data?.length}
+                  inputLabel={"Filter by:"}
+                  fullWidth
+                  items={[{ name: "All", _id: "none" }, ...categories.data]}
+                  menuItemLabelAttribute="name"
+                  menuItemValueAttribute="_id"
+                  onChange={handleSelectCategory}
+                  value={categoryId}
+                />
+              </Toolbar>
+            </Grid>
+          </Grid>
           <AppTable
+            loading={loading && products?.items?.length}
             rowKey={"_id"}
             columns={productTableColumns}
             data={
               searchResults.length
                 ? mapToViewModel(searchResults)
-                : mapToViewModel(products)
+                : mapToViewModel(products.items)
             }
             onRowSelect={handleRowSelect}
           />
         </Box>
       </Paper>
-    </Container>
-  ) : (
-    <Container>
-      <Empty CustomComponent={<NoProductComponent />} />
     </Container>
   );
 };
@@ -173,5 +208,6 @@ const NoProductComponent = () => {
     </Box>
   );
 };
+
 
 export default Products;
