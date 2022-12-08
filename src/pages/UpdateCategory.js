@@ -20,8 +20,6 @@ const UpdateCategory = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { data, loading } = useSelector((state) => state.details.category);
-  console.log(data.name);
-  console.log(data.desc);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().min(3).max(50).required().label("Category Name"),

@@ -41,10 +41,11 @@ const {
 } = slice.actions;
 
 const url = "/orders";
-export const fetchOrders = () => (dispatch) => {
+export const fetchOrders = (params) => (dispatch) => {
   dispatch(
     apiRequest({
       url,
+      params,
       onSuccess: orderFetched.type,
       toggleOnError: true,
       onBegin: orderFetchStarted.type,

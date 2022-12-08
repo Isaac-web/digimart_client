@@ -31,6 +31,7 @@ import { uploadFile } from "../utils/uploader";
 
 const EditProduct = () => {
   const [image, setImage] = useState(null);
+  
   const [loaded, setLoaded] = useState(0);
   const [progressDialogOpen, setProgressDialogOpen] = useState(0);
   const [progressDone, setProgressDone] = useState(false);
@@ -43,6 +44,8 @@ const EditProduct = () => {
   const navigate = useNavigate();
   const categories = useSelector((state) => state.entities.categories);
   const product = useSelector((state) => state.details.product);
+  const [available, setAvailable] = useState(product.data?.status);
+  const [priceFixed, setPriceFixed] = useState(product.data?.priceFixed);
 
   useEffect(() => {
     dispatch(fetchProduct(productId));
@@ -70,12 +73,17 @@ const EditProduct = () => {
       data.imagePublicId = result?.public_id;
     }
 
+    data.status = available;
+    data.priceFixed = priceFixed;
     dispatch(
       updateProduct(productId, data, () =>
         navigate(`/products/${productId}`, { replace: true })
       )
     );
   };
+
+  const handleSwitchChange = ({ target }) => setAvailable(target.checked);
+  const handleSetPriceFixed = ({ target }) => setPriceFixed(target.checked);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().min(3).max(50).required(),
@@ -93,6 +101,8 @@ const EditProduct = () => {
         subtitle="We are getting the necessary data"
       />
     );
+
+  console.log(product.data);
 
   return (
     <Container sx={{ paddingBottom: "1em" }}>
@@ -156,7 +166,11 @@ const EditProduct = () => {
                       ),
                     }}
                   />
-                  <FormTextField xs={4} label="Unit" name="unit" InputProps={{
+                  <FormTextField
+                    xs={4}
+                    label="Unit"
+                    name="unit"
+                    InputProps={{
                       startAdornment: (
                         <Typography
                           sx={(theme) => ({
@@ -168,7 +182,8 @@ const EditProduct = () => {
                           Per
                         </Typography>
                       ),
-                    }} />
+                    }}
+                  />
 
                   <FormTextField
                     label="Description"
@@ -185,7 +200,25 @@ const EditProduct = () => {
                     <Tooltip title="Indicate whether product is available">
                       <FormControlLabel
                         label="Available"
-                        control={<Switch checked={"checked"} />}
+                        control={
+                          <Switch
+                            checked={available}
+                            onChange={handleSwitchChange}
+                          />
+                        }
+                        labelPlacement="start"
+                      />
+                    </Tooltip>
+
+                    <Tooltip title="Indicate whether product has a fixed price">
+                      <FormControlLabel
+                        label="Price Fixed"
+                        control={
+                          <Switch
+                            checked={priceFixed}
+                            onChange={handleSetPriceFixed}
+                          />
+                        }
                         labelPlacement="start"
                       />
                     </Tooltip>

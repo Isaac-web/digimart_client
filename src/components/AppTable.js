@@ -42,7 +42,7 @@ const AppTable = ({
     if (onPageChange) onPageChange(newPage);
   };
 
-  if (!data.length)
+  if (!data?.length)
     return (
       <Container>
         <Empty />

@@ -26,9 +26,12 @@ import FormSelectField from "../components/form/FormSelectField";
 import AppProgress from "../components/AppProgress";
 import { uploadFile } from "../utils/uploader";
 import ProgressDialog from "../components/ProgressDialog";
+import FormSwitch from "../components/form/FormSwitch";
 
 const NewProduct = () => {
   const [image, setImage] = useState(null);
+  const [available, setAvailable] = useState(true);
+  const [priceFixed, setPriceFixed] = useState(false);
   const [progressDialogOpen, setProgressDialogOpen] = useState(false);
   const [progressDialogError, setProgressDialogError] = useState(false);
   const [progressDone, setProgressDone] = useState(false);
@@ -59,17 +62,24 @@ const NewProduct = () => {
   };
 
   const handleSubmit = async (data) => {
-    setProgressDialogOpen(true);
-    setProgressDialogError(false);
+    if (!image) return;
     if (image) {
+      setProgressDialogError(false);
+      setProgressDialogOpen(true);
       const result = await uploadFile(image, "products", handleUploadProgress);
       if (!result.url) setProgressDialogError(true);
       data.imageUri = result?.url;
       data.imagePublicId = result?.public_id;
     }
 
+    data.status = available;
+    data.priceFixed = priceFixed;
+    
     dispatch(createProduct(data));
   };
+
+  const handleSwitchChange = ({ target }) => setAvailable(target.checked);
+  const handleSetPriceFixed = ({ target }) => setPriceFixed(target.checked);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().min(3).max(50).required().label("Product Name"),
@@ -183,7 +193,25 @@ const NewProduct = () => {
                     <Tooltip title="Indicate whether product is available">
                       <FormControlLabel
                         label="Available"
-                        control={<Switch checked={true} />}
+                        control={
+                          <Switch
+                            checked={available}
+                            onChange={handleSwitchChange}
+                          />
+                        }
+                        labelPlacement="start"
+                      />
+                    </Tooltip>
+
+                    <Tooltip title="Indicate whether product has a fixed price">
+                      <FormControlLabel
+                        label="Price Fixed"
+                        control={
+                          <Switch
+                            checked={priceFixed}
+                            onChange={handleSetPriceFixed}
+                          />
+                        }
                         labelPlacement="start"
                       />
                     </Tooltip>

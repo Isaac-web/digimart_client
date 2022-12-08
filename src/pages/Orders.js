@@ -20,11 +20,16 @@ import { useSelector, useDispatch } from "react-redux";
 
 import AppTable from "../components/AppTable";
 import SearchField from "../components/SearchField";
-import { fetchBranchOrders } from "../store/reducers/entities/orders";
+import {
+  fetchBranchOrders,
+  fetchOrders,
+} from "../store/reducers/entities/orders";
 import { columns } from "../data/orders";
 import getDateTime from "../utils/getDateTime";
+import useUser from "../customHooks/useUser";
 
 const Orders = () => {
+  const user = useUser();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.entities.orders);
@@ -42,7 +47,9 @@ const Orders = () => {
   };
 
   const handleFetchOrders = () => {
-    dispatch(fetchBranchOrders({ currentPage: 0, pageSize: 25 }));
+    if (user.userType === "system")
+      dispatch(fetchOrders({ currentPage: 0, pageSize: 25 }));
+    else dispatch(fetchBranchOrders({ currentPage: 0, pageSize: 25 }));
   };
 
   const handleChangeTab = (e, value) => {
@@ -50,7 +57,9 @@ const Orders = () => {
   };
 
   const handlePageChange = (e, page) => {
-    dispatch(fetchBranchOrders({ currentPage: page, pageSize: 25 }));
+    if (user.userType === "system")
+      dispatch(fetchOrders({ currentPage: page, pageSize: 25 }));
+    else dispatch(fetchBranchOrders({ currentPage: page, pageSize: 25 }));
   };
 
   const mapToViewModel = (data) => {
@@ -127,7 +136,7 @@ const renderTitle = (orders) => {
     <Box>
       <Typography variant="h4">Orders</Typography>
       <Typography variant="subtitle2">
-        There are currently {orders.data.items.length} pending orders
+        There are currently {orders.data.items?.length} pending orders
       </Typography>
     </Box>
   );

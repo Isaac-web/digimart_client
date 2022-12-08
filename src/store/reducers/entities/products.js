@@ -25,10 +25,10 @@ const slice = createSlice({
       products.data?.unshift(action.payload.data);
     },
     productRemoved: (products, action) => {
-      const index = products.data.findIndex(
+      const index = products.data.items.findIndex(
         (item) => item._id === action.payload._id
       );
-      products.data.splice(index, 1);
+      products.data.items.splice(index, 1);
     },
     productFetchBegan: (products, action) => {
       products.loading = true;

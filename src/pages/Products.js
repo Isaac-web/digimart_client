@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -9,9 +9,6 @@ import {
   useTheme,
   useMediaQuery,
   Toolbar,
-  TablePagination,
-  Menu,
-  MenuItem,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -107,7 +104,8 @@ const Products = () => {
           Products
         </Typography>
         <Typography variant="subtitle1">
-          There are currently {products?.length} products in the database.
+          There are currently {products?.items?.length} products in the
+          database.
         </Typography>
       </Box>
 
@@ -209,5 +207,4 @@ const NoProductComponent = () => {
   );
 };
 
-
-export default Products;
+export default memo(Products);

@@ -91,7 +91,7 @@ const AppNavBar = () => {
           onClose={() => setOpen(false)}
         />
       </AppBar>
-      <Box sx={{ ...theme.mixins.toolbar, marginBottom: 2 }} />
+      <Box sx={{ ...theme.mixins.toolbar, marginBottom: 1 }} />
     </div>
   );
 };

@@ -91,20 +91,37 @@ const ProductDetails = () => {
             </Box>
 
             <Box>
-              <Typography gutterBottom variant="h4" sx={{ fontWeight: "500" }}>
+              <Typography variant="h4" sx={{ fontWeight: "500" }}>
                 Ghc {product.price.toFixed(2)}
+              </Typography>
+              <Typography gutterBottom variant="subtitle2">
+                per {product.unit}
+              </Typography>
+            </Box>
+
+            <Box sx={{ marginBottom: "0em" }}>
+              <Typography gutterBottom variant="subtitle2">
+                <Typography
+                  sx={{ display: "inline", fontWeight: "bold" }}
+                  variant="inherit"
+                >
+                  Status:
+                </Typography>{" "}
+                {product.status ? "Available" : "Unavailable"}
               </Typography>
             </Box>
 
             <Box sx={{ marginBottom: "5em" }}>
               <Typography gutterBottom variant="subtitle2">
                 <Typography
-                  sx={{ display: "inline", fontWeight: "500" }}
+                  sx={{ display: "inline", fontWeight: "bold" }}
                   variant="inherit"
                 >
-                  Status:
+                  Pricing:
                 </Typography>{" "}
-                {product.status ? "Available" : "Unavailable"}
+                {product.priceFixed
+                  ? "Fixed"
+                  : `Starting at Ghc${product.price?.toFixed(2)}`}
               </Typography>
             </Box>
 

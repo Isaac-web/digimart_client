@@ -31,7 +31,7 @@ const sections = {
   },
   media: {
     entities: [
-      { title: "Recepies", Icon: <CiYoutube />, link: "/recipies" },
+      { title: "Recepies", Icon: <CiYoutube />, link: "/recipes" },
       {
         title: "Cooking Tips",
         Icon: <MdTipsAndUpdates />,

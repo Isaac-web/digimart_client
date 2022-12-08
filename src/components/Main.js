@@ -26,6 +26,8 @@ import ProtectedRoute from "./ProtectedRoute";
 import { subscribe } from "../utils/longPoll";
 import { fetchPendingOrders } from "../store/reducers/entities/orders";
 import { useDispatch } from "react-redux";
+import Recipes from "../pages/Recipes";
+import EditRecipe from "../pages/EditRecipe";
 
 const Main = () => {
   const { drawerMargin } = useContext(AppContext);
@@ -70,6 +72,8 @@ const Main = () => {
           <Route path="/branches/new" element={<NewBranch />} />
           <Route path="/branches" element={<Branches />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/recipes/new" element={<EditRecipe />} />
+          <Route path="/recipes" element={<Recipes />} />
           <Route path="/" element={<Navigate to="/home" />} />
         </Route>
         <Route path="/login" element={<Login />} />
