@@ -26,7 +26,16 @@ const theme = createTheme({
     },
     MuiDialog: {
       defaultProps: {
-        PaperProps: { variant: "outlined", sx: { borderRadius: 3 } },
+        PaperProps: {
+          variant: "outlined",
+          elevation: 0,
+          sx: { borderRadius: 3 },
+        },
+      },
+    },
+    MuiTab: {
+      defaultProps: {
+        disableRipple: true,
       },
     },
     MuiTable: {

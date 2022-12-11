@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Chip,
@@ -48,12 +48,18 @@ const Orders = () => {
 
   const handleFetchOrders = () => {
     if (user.userType === "system")
-      dispatch(fetchOrders({ currentPage: 0, pageSize: 25 }));
-    else dispatch(fetchBranchOrders({ currentPage: 0, pageSize: 25 }));
+      dispatch(
+        fetchOrders({ currentPage: 0, pageSize: 25, status: currentTab })
+      );
+    else
+      dispatch(
+        fetchBranchOrders({ currentPage: 0, pageSize: 25, status: currentTab })
+      );
   };
 
-  const handleChangeTab = (e, value) => {
+  const handleChangeTab = (_, value) => {
     setCurrentTab(value);
+    fetchBranchOrders({ currentPage: 0, pageSize: 25, status: currentTab });
   };
 
   const handlePageChange = (e, page) => {
@@ -66,7 +72,7 @@ const Orders = () => {
     if (data.length) {
       return data.map((item) => ({
         _id: item._id,
-        orderId: item._id,
+        orderId: item.orderId,
         status: item.status.value,
         itemsCount: item.order_items.length,
         total: `Ghc${item.total?.toFixed(2)}`,
@@ -78,8 +84,12 @@ const Orders = () => {
     }
   };
 
+  const apiCalled = useRef(false);
   useEffect(() => {
-    handleFetchOrders();
+    if (!apiCalled.current) {
+      handleFetchOrders();
+      apiCalled.current = true;
+    }
   }, []);
 
   const ordersCount = orders.data.totalItemsCount;
@@ -109,8 +119,8 @@ const Orders = () => {
             </Grid>
           </Grid>
 
-          <TabContext value={currentTab}>
-            <TabPanel value={0}>
+          <TabContext value={currentTab.toString()}>
+            <Box sx={{ padding: "1.0em" }}>
               <AppTable
                 rowKey={"_id"}
                 columns={columns}
@@ -120,10 +130,7 @@ const Orders = () => {
                 count={orders.data.totalItemsCount}
                 page={parseInt(orders.data.currentPage)}
               />
-            </TabPanel>
-            <TabPanel value={1}>One</TabPanel>
-            <TabPanel value={2}>Two</TabPanel>
-            <TabPanel value={3}>Three</TabPanel>
+            </Box>
           </TabContext>
         </Paper>
       </Box>

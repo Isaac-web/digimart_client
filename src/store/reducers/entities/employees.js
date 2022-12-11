@@ -7,7 +7,12 @@ const slice = createSlice({
   initialState: {
     loading: false,
     posting: false,
-    data: [],
+    search: {
+      loading: false,
+      active: false,
+      data: { items: [], count: 0, currentPage: 0, pageSize: null },
+    },
+    data: { items: [], count: 0, currentPage: 0, pageSize: null },
   },
   reducers: {
     employeesLoadBegan: (employees) => {
@@ -17,7 +22,27 @@ const slice = createSlice({
       employees.loading = false;
     },
     employeesLoaded: (employees, action) => {
-      employees.data = action.payload;
+      employees.data.items = action.payload.data.users;
+      employees.data.count = action.payload.data.count;
+      employees.data.currentPage = action.payload.data.currentPage;
+      employees.data.pageSize = action.payload.data.pageSize;
+    },
+    employeesSearched: (employees, action) => {
+      employees.search.active = true;
+      employees.search.data.items = action.payload.data.users;
+      employees.search.data.count = action.payload.data.count;
+      employees.search.data.currentPage = action.payload.data.currentPage;
+      employees.search.data.pageSize = action.payload.data.pageSize;
+    },
+    employeeSearchBegan: (employees) => {
+      employees.search.loading = true;
+    },
+    employeeSearchCleared: (employees) => {
+      employees.search.active = false;
+      employees.search.data.items = [];
+    },
+    employeeSearchEnded: (employees) => {
+      employees.search.loading = false;
     },
     employeeAddBegan: (employees) => {
       employees.posting = true;
@@ -26,10 +51,10 @@ const slice = createSlice({
       employees.posting = false;
     },
     employeeAdded: (employees, action) => {
-      employees.data.push(action.payload.data);
+      employees.data.items.push(action.payload.data);
     },
     employeeRemoved: (employees, action) => {
-      employees.data = employees.data.filter(
+      employees.data.items = employees.data.items.filter(
         (e) => e._id !== action.payload.data._id
       );
     },
@@ -45,13 +70,18 @@ const {
   employeeAddEnded,
   employeeAdded,
   employeeRemoved,
+  employeesSearched,
+  employeeSearchBegan,
+  employeeSearchEnded,
+  employeeSearchCleared,
 } = slice.actions;
 
 const url = "/users";
-export const loadEmployees = () => async (dispatch) => {
+export const loadEmployees = (params) => async (dispatch) => {
   dispatch(
     apiRequest({
       onBegin: employeesLoadBegan.type,
+      params,
       onEnd: employeesLoadEnded.type,
       onSuccess: employeesLoaded.type,
       url: `${url}?userType=employee`,
@@ -59,8 +89,23 @@ export const loadEmployees = () => async (dispatch) => {
   );
 };
 
+export const searchEmployees = (params) => async (dispatch) => {
+  dispatch(
+    apiRequest({
+      onBegin: employeeSearchBegan.type,
+      params,
+      onEnd: employeeSearchEnded.type,
+      onSuccess: employeesSearched.type,
+      url: `${url}?userType=employee`,
+    })
+  );
+};
+
+export const clearSearch = () => async (dispatch) => {
+  dispatch(employeeSearchCleared());
+};
+
 export const createEmployee = (data, options, callback) => async (dispatch) => {
-  console.log(data);
   await dispatch(
     apiRequest({
       data,
@@ -88,3 +133,6 @@ export const deleteEmployee = (id) => (dispatch) => {
     })
   );
 };
+
+
+

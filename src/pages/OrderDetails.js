@@ -8,7 +8,6 @@ import {
   Paper,
   Box,
   useTheme,
-  Chip,
 } from "@mui/material";
 import { Receipt, Send } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,40 +16,35 @@ import AppTable from "../components/AppTable";
 import {
   columns,
   getOrderAddress,
-  getOrderSummery,
-  orderAddress,
+  getOrderSummary,
 } from "../data/orderDetails";
-import RiderPicker from "../components/RiderPicker";
+import EmployeePicker from "../components/EmployeePicker";
 import ProductListAccordion from "../components/ProductListAccordion";
 import {
-  dispatchOrder,
+  clearOrder,
   fetchOrder,
   setRider,
+  setShopper,
   unclearOrderItem,
-  updateOnOpen,
+  updateOrder,
 } from "../store/reducers/details/order";
 import { useNavigate, useParams } from "react-router-dom";
 import AppProgress from "../components/AppProgress";
 import StatusIndicator from "../components/StatusIndicator";
+import { fetchDesignations } from "../store/reducers/entities/designations";
 
 const OrderDetails = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const { id: orderId } = useParams();
   const order = useSelector((state) => state.details.order);
+  const designations = useSelector((state) => state.entities.designations);
   const navigate = useNavigate();
-
-  const orderSummery = [
-    { id: "1", title: "Order Created", value: "Sun May 7, 2022" },
-    { id: "2", title: "Order Time", value: "06:24 AM" },
-    { id: "3", title: "Sub Total", value: 120 },
-    { id: "4", title: "Delivery Fee", value: order?.deliveryFee },
-  ];
 
   const mapToItemsTable = (data) => {
     if (data?.order_items?.length) {
       const items = data.order_items.map((item) => ({
-        _id: item.product,
+        _id: item.productId,
         productName: item.productName,
         unitPrice: item.unitPrice,
         imageUri: item.imageUri,
@@ -62,12 +56,10 @@ const OrderDetails = () => {
     } else return [];
   };
 
-  const mapToRider = (rider) => {
-    if (rider) return { name: rider.name, title: rider.designation };
+  const mapToEmployee = (employee) => {
+    if (employee) return { name: employee.name, title: employee.designation };
     else return null;
   };
-
-  const rider = mapToRider(order.data?.rider);
 
   const mapToDetailsList = (order) => {
     if (order) {
@@ -81,7 +73,6 @@ const OrderDetails = () => {
           title: "Payment method",
           value: order?.payment_method?.name || "Cash",
         },
-        // { title: "Delivery Date", value: "1st Dec, 2022" },
         { title: "Note", value: order?.comment },
       ];
     }
@@ -91,22 +82,40 @@ const OrderDetails = () => {
     dispatch(setRider(rider));
   };
 
+  const handleShopperSelect = (shopper) => {
+    dispatch(setShopper(shopper));
+  };
+
+  const getDesignationId = (designations, value) => {
+    if (designations) {
+      const results = designations?.filter((d) => d.value === value);
+
+      if (results) return results[0]?._id;
+      else return null;
+    }
+  };
+
+  const handleUpdateOrder = () => {
+    const data = {
+      shopperId: order.data.shopper._id,
+      riderId: order.data.rider._id,
+    };
+
+    dispatch(updateOrder(orderId, data, () => navigate("/orders")));
+  };
+
   const apiCalled = useRef(false);
   useEffect(() => {
     if (!apiCalled.current) {
       dispatch(fetchOrder(orderId));
-      dispatch(updateOnOpen(orderId));
+      dispatch(fetchDesignations());
       apiCalled.current = true;
     }
-  }, []);
 
-  const handleDispatch = () => {
-    const data = {
-      riderId: order.data.rider._id,
-      orderId,
+    return () => {
+      dispatch(clearOrder());
     };
-    dispatch(dispatchOrder(data, () => navigate("/orders")));
-  };
+  }, []);
 
   if (order.loading) return <AppProgress subtitle="Fetching order data..." />;
 
@@ -114,7 +123,7 @@ const OrderDetails = () => {
     <Container sx={{ padding: "2em" }}>
       <Box>
         <Typography gutterBottom variant="h6" fontWeight={"bold"}>
-          Order Id: *************
+          Order Id: {order.data.orderId}
         </Typography>
       </Box>
 
@@ -131,7 +140,7 @@ const OrderDetails = () => {
             >
               <Box sx={{ padding: "1.5em" }}>
                 <Box sx={{ padding: "1em" }}>
-                  <Typography variant="h5">Items Summery</Typography>
+                  <Typography variant="h5">Items Summary</Typography>
                 </Box>
                 <Box sx={{ marginBottom: 1 }}>
                   <AppTable
@@ -169,7 +178,7 @@ const OrderDetails = () => {
                 <Box>
                   {mapToDetailsList(order.data)?.map((item, index) => (
                     <Box key={index.toString()} sx={{ marginBottom: "2em" }}>
-                      <OrderSummeryListItem
+                      <OrderSummaryListItem
                         title={item.title}
                         value={item.value}
                       />
@@ -183,12 +192,32 @@ const OrderDetails = () => {
           {/* Left side of screen */}
           <Grid item xs={12} md={4}>
             <Grid container direction="column" spacing={3}>
-              {/* Rider Picker */}
               <Grid item>
-                <RiderPicker rider={rider} onRiderChange={handleRiderSelect} />
+                <EmployeePicker
+                  employee={mapToEmployee(order.data?.shopper)}
+                  emptyContentTitle="Search Shoppers"
+                  onEmployeeChange={handleShopperSelect}
+                  placeholder="Search shoppers..."
+                  designationId={getDesignationId(designations.data, "shopper")}
+                  title="Shopper Details"
+                  text="Shopper for this order has not been set set."
+                />
               </Grid>
 
-              {/* Order Summery */}
+              <Grid item>
+                <EmployeePicker
+                  employee={mapToEmployee(order.data?.rider)}
+                  emptyContentTitle="Search Riders"
+                  emptyContentSubTitle={"Subtitle"}
+                  onEmployeeChange={handleRiderSelect}
+                  placeholder="Search riders..."
+                  designationId={getDesignationId(designations.data, "rider")}
+                  title="Rider Details"
+                  text="Rider for this order has not been set yet."
+                />
+              </Grid>
+
+              {/* Order Summary */}
               <Grid item>
                 <Paper
                   variant="outlined"
@@ -202,7 +231,7 @@ const OrderDetails = () => {
                       sx={{ marginBottom: "2em" }}
                     >
                       <Grid item>
-                        <Typography variant="h6">Order Summery</Typography>
+                        <Typography variant="h6">Order Summary</Typography>
                       </Grid>
                       <Grid item>
                         <StatusIndicator
@@ -213,8 +242,8 @@ const OrderDetails = () => {
                     </Grid>
 
                     <Grid container spacing={2}>
-                      {getOrderSummery(order?.data).map((s, index) => (
-                        <OrderSummeryListItem
+                      {getOrderSummary(order?.data).map((s, index) => (
+                        <OrderSummaryListItem
                           key={index.toString()}
                           title={s.title}
                           value={s.value}
@@ -231,7 +260,7 @@ const OrderDetails = () => {
                   sx={{ borderRadius: theme.rounded.medium }}
                 >
                   <Box sx={{ padding: "1.5em" }}>
-                    <OrderSummeryListItem
+                    <OrderSummaryListItem
                       title="Total"
                       value={`Ghc ${order?.data?.total?.toFixed(2)}`}
                     />
@@ -251,7 +280,7 @@ const OrderDetails = () => {
                     <Box>
                       <Grid container>
                         {getOrderAddress(order.data).map((item, index) => (
-                          <OrderSummeryListItem
+                          <OrderSummaryListItem
                             key={index.toString()}
                             title={item.title}
                             value={item.value}
@@ -276,12 +305,14 @@ const OrderDetails = () => {
                 </Grid>
                 <Grid item xs={6}>
                   <Button
-                    onClick={handleDispatch}
+                    onClick={handleUpdateOrder}
                     fullWidth
                     endIcon={<Send size="small" />}
-                    disabled={!order.data.rider}
+                    disabled={!order.data.shopper || !order.data.rider}
                   >
-                    Dispatch Order
+                    {order.data.status?.value === 0
+                      ? "Update Order"
+                      : "Dispatch Order"}
                   </Button>
                 </Grid>
               </Grid>
@@ -293,7 +324,7 @@ const OrderDetails = () => {
   );
 };
 
-const OrderSummeryListItem = ({ title, value }) => {
+const OrderSummaryListItem = ({ title, value }) => {
   return (
     <Grid item container justifyContent={"space-between"}>
       <Grid item>

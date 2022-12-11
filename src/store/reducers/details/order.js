@@ -13,6 +13,11 @@ const slice = createSlice({
     clearedItems: [],
   },
   reducers: {
+    orderCleared: (order) => {
+      order.data = {
+        order_items: [],
+      }
+    },
     orderFetched: (order, action) => {
       order.data = action.payload.data;
     },
@@ -40,21 +45,14 @@ const slice = createSlice({
     riderSet: (order, action) => {
       order.data.rider = action.payload;
     },
+    shopperSet: (order, action) => {
+      order.data.shopper = action.payload;
+    },
     orderDispatchBegan: (order) => {
       order.updating = true;
     },
     orderDispatchEnded: (order) => {
       order.updating = false;
-    },
-    orderOpened: (order, action) => {
-      order.data.status = action.payload.data;
-      console.log(order.data.status);
-    },
-    orderOpenBegan: (order) => {
-      order.updatingStatus = true;
-    },
-    orderOpenEnded: (order) => {
-      order.updatingStatus = false;
     },
   },
 });
@@ -69,9 +67,8 @@ const {
   riderSet,
   orderDispatchBegan,
   orderDispatchEnded,
-  orderOpened,
-  orderOpenBegan,
-  orderOpenEnded,
+  shopperSet,
+  orderCleared
 } = slice.actions;
 
 const url = "/orders";
@@ -98,6 +95,27 @@ export const setRider = (rider) => (dispatch) => {
   dispatch(riderSet(rider));
 };
 
+export const setShopper = (shopper) => (dispatch) => {
+  dispatch(shopperSet(shopper));
+};
+
+export const updateOrder = (id, data, callback) => async (dispatch) => {
+  await dispatch(
+    apiRequest({
+      url: `${url}/${id}/shopper`,
+      data,
+      method: "patch",
+      toggleOnSuccess: true,
+      toggleOnError: true,
+    })
+  );
+
+  if (callback) callback();
+};
+
+
+export const clearOrder = () => dispatch => { dispatch(orderCleared())}
+
 export const dispatchOrder = (data, callback) => async (dispatch) => {
   await dispatch(
     apiRequest({
@@ -114,18 +132,6 @@ export const dispatchOrder = (data, callback) => async (dispatch) => {
   if (callback) callback();
 };
 
-export const updateOnOpen = (id) => (dispatch) => {
-  dispatch(
-    apiRequest({
-      url: `${url}/${id}/opened`,
-      method: "patch",
-      toggleOnError: true,
-      onSuccess: orderOpened.type,
-      onBegin: orderOpenBegan.type,
-      onEnd: orderOpenEnded.type,
-    })
-  );
-};
 
 
 

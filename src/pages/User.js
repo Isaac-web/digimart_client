@@ -15,7 +15,7 @@ import { tableColumns } from "../data/employees";
 import SearchField from "../components/SearchField";
 import AppProgress from "../components/AppProgress";
 import { loadEmployees } from "../store/reducers/entities/employees";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Employees = () => {
   const theme = useTheme();
@@ -26,10 +26,13 @@ const Employees = () => {
     (state) => state.entities.employees
   );
 
+
+  
   useEffect(() => {
     dispatch(loadEmployees());
   }, []);
 
+  
   const mapToViewModel = (items) => {
     if (items?.length) {
       return items.map((item) => ({
@@ -51,7 +54,7 @@ const Employees = () => {
       <Box>
         <Typography variant="h4">Employees</Typography>
         <Typography gutterBottom variant="subtitle2">
-          Showing {employees?.data?.length} number of employees
+          Showing {employees?.data?.items?.length} number of employees
         </Typography>
       </Box>
 
@@ -75,7 +78,7 @@ const Employees = () => {
         <AppTable
           rowKey="_id"
           columns={tableColumns}
-          data={mapToViewModel(employees.data)}
+          data={mapToViewModel(employees.items)}
         />
       </Paper>
     </Container>

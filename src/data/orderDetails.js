@@ -27,8 +27,20 @@ export const columns = [
     key: "productName",
   },
   { id: "3", label: "Quantity", dataIndex: "quantity", key: "quantity" },
-  { id: "4", label: "Unit Price", dataIndex: "unitPrice", key: "unitPrice" },
-  { id: "5", label: "Subtotal", dataIndex: "subtotal", key: "subtotal" },
+  {
+    id: "4",
+    label: "Price",
+    dataIndex: "unitPrice",
+    key: "unitPrice",
+    render: (item) => `Ghc ${item.unitPrice}`,
+  },
+  {
+    id: "5",
+    label: "Subtotal",
+    dataIndex: "subtotal",
+    key: "subtotal",
+    render: (item) => `Ghc ${item.subtotal}`,
+  },
   {
     id: "6",
     label: "",
@@ -84,16 +96,16 @@ export const items = [
   },
 ];
 
-export const orderSummery = [
+export const orderSummary = [
   { id: "1", title: "Order Created", value: "_" },
   { id: "2", title: "Order Time", value: "_" },
   { id: "3", title: "Sub Total", value: "_" },
   { id: "4", title: "Delivery Fee", value: "_" },
 ];
 
-export const getOrderSummery = (order) => {
+export const getOrderSummary = (order) => {
   if (!order) {
-    return orderSummery;
+    return orderSummary;
   } else {
     const dateTime = getDateTime(new Date(order.createdAt));
     return [

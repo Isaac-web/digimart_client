@@ -6,7 +6,6 @@ import products from "./products";
 import categories from "./categories";
 import branches from "./branches";
 import designations from "./designations";
-import riders from "./riders";
 import recipeCategories from "./recipeCategories";
 import recipes from "./recipes";
 
@@ -18,7 +17,6 @@ const entities = combineReducers({
   products,
   branches,
   designations,
-  riders,
   recipeCategories,
   recipes,
 });

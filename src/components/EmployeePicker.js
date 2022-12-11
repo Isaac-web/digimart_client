@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { memo, useState } from "react";
 import {
   Paper,
   Box,
@@ -17,17 +17,31 @@ import {
   InputAdornment,
   List,
   ListItemSecondaryAction,
+  CircularProgress,
 } from "@mui/material";
-import { Cyclone, Search } from "@mui/icons-material";
+import { Search } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchRiders } from "../store/reducers/entities/riders";
+import {
+  clearSearch,
+  searchEmployees,
+} from "../store/reducers/entities/employees";
+import useUser from "../customHooks/useUser";
 
-const RiderPicker = ({ rider, onRiderChange }) => {
+const EmployeePicker = ({
+  employee,
+  onEmployeeChange,
+  emptyContentTitle,
+  emptyContentSubtitle,
+  placeholder,
+  designationId,
+  title,
+  text,
+}) => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
-  const apiCalled = useRef(false);
+  const user = useUser();
 
-  const riders = useSelector((state) => state.entities.riders);
+  const employeeData = useSelector((state) => state.entities.employees);
 
   const handleOpenDialog = () => {
     setOpen(true);
@@ -35,6 +49,7 @@ const RiderPicker = ({ rider, onRiderChange }) => {
 
   const handleCloseDialog = () => {
     setOpen(false);
+    dispatch(clearSearch());
   };
 
   const mapToViewModel = (data) => {
@@ -49,20 +64,27 @@ const RiderPicker = ({ rider, onRiderChange }) => {
     return [];
   };
 
-  const employees = mapToViewModel(riders.data);
-
-  const raiseRiderSelect = (rider) => {
+  const raiseEmployeeSelect = (employee) => {
+    onEmployeeChange(employee);
     handleCloseDialog();
-    onRiderChange(rider);
   };
 
-  useEffect(() => {
-    if (!apiCalled.current) {
-      dispatch(fetchRiders());
-      apiCalled.current = true;
-    }
-  }, []);
+  const handleSearch = (value) => {
+    dispatch(
+      searchEmployees({
+        q: value.trim(),
+        pageSize: 10,
+        designationId,
+        branchId: user.branchId || null,
+      })
+    );
+  };
 
+  const handleClearSearch = () => {
+    dispatch(clearSearch());
+  };
+
+  const employees = mapToViewModel(employeeData.search.data?.items);
   return (
     <>
       <Paper
@@ -72,9 +94,9 @@ const RiderPicker = ({ rider, onRiderChange }) => {
       >
         <Box sx={{ padding: "1.5em" }}>
           <Box>
-            <Typography variant="h6">Rider Details</Typography>
+            <Typography variant="h6">{title || "Employee Details"}</Typography>
           </Box>
-          {rider ? (
+          {employee ? (
             <Box>
               <Box>
                 <ListItem>
@@ -84,11 +106,13 @@ const RiderPicker = ({ rider, onRiderChange }) => {
                   <ListItemText
                     primary={
                       <Typography variant="body1" fontWeight="bold">
-                        {rider.name}
+                        {employee.name}
                       </Typography>
                     }
                     secondary={
-                      <Typography variant="subtitle2">{rider.title}</Typography>
+                      <Typography variant="subtitle2">
+                        {employee.title}
+                      </Typography>
                     }
                   />
                 </ListItem>
@@ -103,7 +127,7 @@ const RiderPicker = ({ rider, onRiderChange }) => {
             <Box>
               <Typography variant="body1">Not set</Typography>
               <Typography variant="subtitle2">
-                The rider for this order has not been set.
+                {text || "The employee for this order has not been set."}
               </Typography>
               <Button
                 size="small"
@@ -120,16 +144,11 @@ const RiderPicker = ({ rider, onRiderChange }) => {
 
       <Dialog open={open} maxWidth={"sm"} fullWidth onClose={handleCloseDialog}>
         <DialogTitle sx={{}}>
-          <InputBase
-            fullWidth
-            placeholder="Search Riders"
-            startAdornment={
-              <InputAdornment position="start" sx={{ padding: "0 0.5em" }}>
-                <Search color="primary" />
-              </InputAdornment>
-            }
-            sx={{ padding: "0.3em" }}
-            autoFocus
+          <DialogSearch
+            onSearch={handleSearch}
+            onClear={handleClearSearch}
+            searching={employeeData.search.loading}
+            placeholder={placeholder}
           />
         </DialogTitle>
         <Box sx={{ padding: "0.5em 1.2em" }}>
@@ -139,10 +158,13 @@ const RiderPicker = ({ rider, onRiderChange }) => {
           {employees.length ? (
             <EmployeeList
               list={employees}
-              onEmployeeSelect={raiseRiderSelect}
+              onEmployeeSelect={raiseEmployeeSelect}
             />
           ) : (
-            <EmptySearch />
+            <EmptySearch
+              title={emptyContentTitle}
+              subtitle={emptyContentSubtitle}
+            />
           )}
         </DialogContent>
 
@@ -160,24 +182,24 @@ const RiderPicker = ({ rider, onRiderChange }) => {
   );
 };
 
-const EmptySearch = () => {
+const EmptySearch = memo(({ title, subtitle }) => {
   return (
     <Box sx={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Typography variant="h5" align="center">
-        Search Riders
+        {title || "Search Employees"}
       </Typography>
-      <Typography varaint="subtitle1" align="center">
-        Search riders by name in the search box
+      <Typography varaint="subtitle2" align="center" sx={{ fontSize: "0.9em" }}>
+        {subtitle || "Search by firstname, lastname or email address"}
       </Typography>
     </Box>
   );
-};
+});
 
-const EmployeeList = ({ list, onEmployeeSelect }) => {
+const EmployeeList = memo(({ list, onEmployeeSelect }) => {
   return (
     <List>
-      {list?.map((e) => (
-        <ListItem>
+      {list?.map((e, index) => (
+        <ListItem key={index.toString()}>
           <ListItemText
             primary={e.name}
             secondary={
@@ -199,6 +221,38 @@ const EmployeeList = ({ list, onEmployeeSelect }) => {
       ))}
     </List>
   );
-};
+});
 
-export default RiderPicker;
+const DialogSearch = memo(
+  ({ onSearch, onClear, loading = false, placeholder }) => {
+    const raiseClear = ({ target }) => {
+      if (!target.value) if (onClear) onClear();
+    };
+
+    const raiseSearch = ({ key, target }) => {
+      if (key === "Enter") if (onSearch) onSearch(target.value);
+    };
+
+    return (
+      <InputBase
+        fullWidth
+        placeholder={placeholder || "Search Employees"}
+        onKeyPress={raiseSearch}
+        onChange={raiseClear}
+        startAdornment={
+          <InputAdornment position="start" sx={{ padding: "0 0.5em" }}>
+            {loading ? (
+              <CircularProgress size={"1em"} />
+            ) : (
+              <Search color="primary" />
+            )}
+          </InputAdornment>
+        }
+        sx={{ padding: "0.3em" }}
+        autoFocus
+      />
+    );
+  }
+);
+
+export default memo(EmployeePicker);

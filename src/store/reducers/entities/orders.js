@@ -54,13 +54,7 @@ export const fetchOrders = (params) => (dispatch) => {
   );
 };
 
-export const fetchBranchOrders = (options) => (dispatch) => {
-  const { pageSize, currentPage } = options || {};
-  const params = {
-    pageSize,
-    currentPage,
-  };
-
+export const fetchBranchOrders = (params) => (dispatch) => {
   dispatch(
     apiRequest({
       url: `${url}/branch`,
