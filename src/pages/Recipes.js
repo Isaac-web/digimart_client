@@ -4,6 +4,10 @@ import {
   Box,
   Button,
   CardMedia,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Grid,
   IconButton,
   List,
@@ -21,23 +25,34 @@ import { Container } from "@mui/system";
 import { useRef } from "react";
 import RecipeCategories from "../components/RecipeCategories";
 import { deleteRecipe, fetchRecipes } from "../store/reducers/entities/recipes";
+import { addCategory } from "../store/reducers/entities/recipeCategories";
+import AppProgress from "../components/AppProgress";
+
 import { MoreVertOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import Form from "../components/form/Form";
+import FormTextField from "../components/form/FormTextField";
+import FormSubmitButton from "../components/form/FormSubmitButton";
 
 const Recipes = () => {
   const [tab, setTab] = useState(0);
   const navigate = useNavigate();
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleTabChange = (e, value) => {
     setTab(value);
   };
 
   const addRecipeCategory = () => {
-    console.log("Adding category...");
+    setDialogOpen(true);
   };
 
   const handleAddRecipe = () => {
     navigate("/recipes/new");
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
   };
 
   const handles = [handleAddRecipe, addRecipeCategory];
@@ -68,6 +83,10 @@ const Recipes = () => {
           </TabPanel>
           <TabPanel value={"1"}>
             <RecipeCategories />
+            <RecipeCategoryDialog
+              open={dialogOpen}
+              onClose={handleCloseDialog}
+            />
           </TabPanel>
         </TabContext>
       </Container>
@@ -101,6 +120,29 @@ const RecipesList = memo(() => {
       apiCalled.current = true;
     }
   }, []);
+
+  if (!recipes.data?.items?.length)
+    return (
+      <Grid container justifyContent={"center"} alignItems="center">
+        <Grid item>
+          <Typography align="center" variant="h6">
+            No Recipes
+          </Typography>
+          <Typography align="center" variant="subtitle2">
+            Click the 'Add New' button to add
+          </Typography>
+        </Grid>
+      </Grid>
+    );
+
+  if (recipes.loading)
+    return (
+      <Grid container justifyContent={"center"} alignItems="center">
+        <Grid item>
+          <AppProgress size={"0.8em"} />
+        </Grid>
+      </Grid>
+    );
 
   return (
     <Box>
@@ -223,5 +265,30 @@ const RecipeListItem = ({
         </IconButton>
       </ListItemSecondaryAction>
     </ListItem>
+  );
+};
+
+const RecipeCategoryDialog = ({ open, onClose }) => {
+  const dispatch = useDispatch();
+
+  const handleSubmit = (data) => {
+    dispatch(addCategory(data, onClose));
+  };
+
+  return (
+    <Dialog open={open} fullWidth maxWidth={"xs"}>
+      <Form initialValues={{ name: "" }} onSubmit={handleSubmit}>
+        <DialogTitle>New Category</DialogTitle>
+        <DialogContent>
+          <FormTextField autoFocus label="Category Name" name="name" />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose} variant="text">
+            Cancel
+          </Button>
+          <FormSubmitButton>Save</FormSubmitButton>
+        </DialogActions>
+      </Form>
+    </Dialog>
   );
 };

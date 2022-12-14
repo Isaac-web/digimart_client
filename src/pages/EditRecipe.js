@@ -45,7 +45,9 @@ const validationSchema = Yup.object().shape({
   name: Yup.string().required().label("Recipe name"),
   categoryId: Yup.string().required().label("Category"),
   description: Yup.string().required().label("Description"),
-  yield: Yup.number().required().min(0),
+  yield: Yup.number("Yield must be an integer")
+    .required("Yield is a required field")
+    .min(0),
   prepTime: Yup.number().required().min(0),
   cookingTime: Yup.number().required().min(1).label("Cooking Time"),
   cookingMethod: Yup.string().required().label("Cooking method"),
