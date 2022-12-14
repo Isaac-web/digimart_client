@@ -1,59 +1,141 @@
-import React, { useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import {
-  AppBar,
+  ButtonBase,
   Container,
+  Divider,
   Grid,
   List,
   Paper,
-  TextField,
   Typography,
 } from "@mui/material";
-
+import * as Yup from "yup";
+import AppListItem from "../components/AppListItem";
+import AppImagePicker from "../components/AppImagePicker";
 import Form from "../components/form/Form";
 import FormTextField from "../components/form/FormTextField";
 import FormSelectField from "../components/form/FormSelectField";
 import SubmitButton from "../components/form/FormSubmitButton";
 import SearchField from "../components/SearchField";
+import ProgressDialog from "../components/ProgressDialog";
 import { Box } from "@mui/system";
-import AppListItem from "../components/AppListItem";
 import { useDispatch, useSelector } from "react-redux";
 import {
   clearSearch,
   searchProducts,
 } from "../store/reducers/entities/products";
+import { fetchCategories } from "../store/reducers/entities/recipeCategories";
+import { addRecipe } from "../store/reducers/entities/recipes";
+import { uploadFile } from "../utils/uploader";
+import { useNavigate } from "react-router-dom";
+import FormRecipeSteps from "../components/form/FormRecipeSteps";
 
 const data = {
   name: "",
   categoryId: "",
   description: "",
-  ingredients: "",
   yield: "",
-  prepTime: "",
-  cookingTime: "",
+  prepTime: 0,
+  cookingTime: 0,
   cookingMethod: "",
   suitableFor: "",
-  procedure: "",
-  videoUrl: "",
-  imageUrl: "",
+  procedure: [],
 };
+
+const validationSchema = Yup.object().shape({
+  name: Yup.string().required().label("Recipe name"),
+  categoryId: Yup.string().required().label("Category"),
+  description: Yup.string().required().label("Description"),
+  yield: Yup.number().required().min(0),
+  prepTime: Yup.number().required().min(0),
+  cookingTime: Yup.number().required().min(1).label("Cooking Time"),
+  cookingMethod: Yup.string().required().label("Cooking method"),
+  suitableFor: Yup.string().required(),
+  procedure: Yup.array().min(1).required().label("Procedure"),
+});
+
 const EditRecipe = () => {
-  const handleSubmit = (data) => {
-    console.log(data);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [image, setImage] = useState(null);
+  const [progress, setProgress] = useState(0);
+  const [open, setOpen] = useState(false);
+
+  const categories = useSelector((state) => state.entities.recipeCategories);
+
+  const handleUploadProgress = (loaded, total) => {
+    setProgress(Math.floor(loaded / total) * 100);
   };
+
+  const handleSubmit = async (data) => {
+    if (image) {
+      setProgress(0);
+      setOpen(true);
+      const { uploaded, url, public_id } = await uploadFile(
+        image,
+        "recipe_images",
+        handleUploadProgress
+      );
+      if (uploaded) {
+        data.imageUrl = url;
+        data.imagePublicId = public_id;
+      }
+    }
+
+    data.ingredients = [{ product: "637a0e9fae4b464ec9896bb9" }];
+
+    dispatch(addRecipe(data));
+  };
+
+  const handleChangeImage = (file) => {
+    if (file) setImage(file);
+  };
+
+  const handleUploadDone = () => {
+    navigate("/recipes");
+  };
+
+  const handleCloseImageUploadDialog = () => {
+    setOpen(false);
+  };
+
+  const apiCalled = useRef(false);
+  useEffect(() => {
+    if (!apiCalled.current) {
+      dispatch(fetchCategories());
+      apiCalled.current = true;
+    }
+  }, []);
 
   return (
     <Container maxWidth="md">
-      <Box>
+      <Box sx={{ paddingBottom: "3em" }}>
         <Paper sx={{ padding: "2em" }}>
-          <Typography variant="h5" gutterBottom>
+          <Typography variant="h5" gutterBottom fontWeight={"bold"}>
             New Recipe
           </Typography>
           <Box>
-            <IngredientList />
-            {/* <Form initialValues={data} onSubmit={handleSubmit}>
+            <Form
+              initialValues={data}
+              onSubmit={handleSubmit}
+              validationSchema={validationSchema}
+            >
               <Grid container spacing={3}>
+                <Grid
+                  item
+                  xs={12}
+                  sx={{ paddingBottom: "1em" }}
+                >
+                  <Divider>Basic Info</Divider>
+                </Grid>
+
                 <FormTextField autoFocus name={"name"} label="Name Of Recipe" />
-                <FormTextField name={"categoryId"} label="Recipe Category" />
+                <FormSelectField
+                  name="categoryId"
+                  inputLabel="Recipe Category"
+                  items={categories.data.items}
+                  menuItemLabelAttribute={"name"}
+                  menuItemValueAttribute={"_id"}
+                />
                 <FormTextField
                   xs={12}
                   multiline
@@ -61,16 +143,53 @@ const EditRecipe = () => {
                   name={"description"}
                   label="Description"
                 />
-                <FormTextField name={"ingredients"} label="Ingredients" />
+                <FormTextField name={"cookingMethod"} label="Cooking Method" />
                 <FormTextField name={"yield"} label="Yield" />
-                <FormTextField name={"prepTime"} label="Prep Time" />
-                <FormTextField name={"cookingTime"} label="Cooking Time" />
+                <FormTextField
+                  name={"prepTime"}
+                  label="Prep Time"
+                  type="number"
+                />
+                <FormTextField
+                  name={"cookingTime"}
+                  label="Cooking Time"
+                  type="number"
+                />
                 <FormTextField
                   xs={12}
                   name={"suitableFor"}
                   label="Suitable For"
                 />
               </Grid>
+
+              <Grid
+                item
+                xs={12}
+                sx={{ paddingBottom: "2em", marginTop: "5em" }}
+              >
+                <Divider>Recipe Image</Divider>
+              </Grid>
+              <Grid item>
+                <AppImagePicker
+                  label={"Recipe Image"}
+                  onChange={handleChangeImage}
+                />
+                <ProgressDialog
+                  open={open}
+                  loaded={progress}
+                  onDone={handleUploadDone}
+                  onClose={handleCloseImageUploadDialog}
+                  done={progress === 100}
+                />
+              </Grid>
+
+              <Grid item xs={12} sx={{ paddingBottom: "1em", marginTop: "5em" }}>
+                <Divider>Procedure</Divider>
+              </Grid>
+              <Grid item container direction="column" sx={{ padding: "2em 0",  }}>
+                <FormRecipeSteps name="procedure" />
+              </Grid>
+
               <Grid
                 container
                 sx={{ padding: "1em 0" }}
@@ -78,7 +197,7 @@ const EditRecipe = () => {
               >
                 <SubmitButton>Submit</SubmitButton>
               </Grid>
-            </Form> */}
+            </Form>
           </Box>
         </Paper>
       </Box>
@@ -93,6 +212,12 @@ const IngredientList = () => {
   const handleChange = (value, key) => {
     setSearchValue(value);
     if (searchValue && key === "Enter") dispatch(searchProducts(value));
+  };
+
+  const ingredients = [];
+  const handleSelectItem = (item) => {
+    ingredients.push(item);
+    console.log(ingredients);
   };
 
   return (
@@ -116,25 +241,37 @@ const IngredientList = () => {
                 }}
               >
                 <List>
-                  {products.searchResults?.map((p) => (
-                    <AppListItem key={p._id} avatarShown title={p.name} />
-                  ))}
+                  {products.searchResults?.map((p) => {
+                    return (
+                      <ButtonBase
+                        disableRipple
+                        key={p._id}
+                        onClick={() => handleSelectItem(p)}
+                        sx={(theme) => ({
+                          width: "100%",
+                          "&:hover": {
+                            backgroundColor: theme.palette.common.light,
+                          },
+                        })}
+                      >
+                        <AppListItem
+                          avatarUrl={p.image.url}
+                          avatarShown
+                          title={p.name}
+                        />
+                      </ButtonBase>
+                    );
+                  })}
                 </List>
               </Paper>
             )}
           </Box>
         </Box>
       </Box>
-      <List>
-        <AppListItem
-          avatarShown
-          title="Baking Flour"
-          subtitle="2 Cups"
-          secondaryButtonShown
-        />
-      </List>
+
+      {console.log(ingredients)}
     </Box>
   );
 };
 
-export default EditRecipe;
+export default memo(EditRecipe);

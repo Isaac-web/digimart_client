@@ -114,7 +114,7 @@ const RecipesList = memo(() => {
                 prepTime={r.prepTime}
                 cookingTime={r.cookingTime}
                 recipeYield={r.yield}
-                difficulty="Easy"
+                difficulty={"Easy"}
                 onDelete={() => handleDelete(r)}
                 onUpdate={() => console.log(r)}
               />

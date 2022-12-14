@@ -12,6 +12,12 @@ const slice = createSlice({
     },
   },
   reducers: {
+    categoriesFetchBegan: (categories) => {
+      categories.loading = true;
+    },
+    categoriesFetchEnded: (categories) => {
+      categories.loading = false;
+    },
     categoriesFetched: (categories, action) => {
       categories.data.count = action.payload.data.count;
       categories.data.items = action.payload.data.categories;
@@ -22,14 +28,21 @@ const slice = createSlice({
 });
 
 export default slice.reducer;
-const { categoriesFetched } = slice.actions;
+const { categoriesFetched, categoriesFetchBegan, categoriesFetchEnded } =
+  slice.actions;
 
 const url = "/recipe_categories";
 export const fetchCategories = () => (dispatch) => {
   dispatch(
     apiRequest({
       url,
+      toggleOnError: true,
+      onBegin: categoriesFetchBegan.type,
+      onEnd: categoriesFetchEnded.type,
       onSuccess: categoriesFetched.type,
     })
   );
 };
+
+
+

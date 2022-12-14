@@ -125,7 +125,7 @@ const EmployeePicker = ({
             </Box>
           ) : (
             <Box>
-              <Typography variant="body1">Not set</Typography>
+              <Typography variant="body1">No Info</Typography>
               <Typography variant="subtitle2">
                 {text || "The employee for this order has not been set."}
               </Typography>

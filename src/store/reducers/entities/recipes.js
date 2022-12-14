@@ -5,6 +5,7 @@ const slice = createSlice({
   name: "recipes",
   initialState: {
     loading: false,
+    posting: true,
     data: {
       count: 0,
       currentPage: 0,
@@ -31,12 +32,28 @@ const slice = createSlice({
       );
       recipes.data.items.splice(index, 1);
     },
+    recipeAdded: (recipes, action) => {
+      recipes.data.items.push(action.payload.data);
+    },
+    recipeAddBegan: (recipes) => {
+      recipes.posting = true;
+    },
+    recipeAddEnded: (recipes) => {
+      recipes.posting = false;
+    },
   },
 });
 
 export default slice.reducer;
-const { recipesFetched, recipesFetchEnded, recipesFetchBegan, recipeDeleted } =
-  slice.actions;
+const {
+  recipesFetched,
+  recipesFetchEnded,
+  recipesFetchBegan,
+  recipeDeleted,
+  recipeAddBegan,
+  recipeAdded,
+  recipeAddEnded,
+} = slice.actions;
 
 const url = "/recipes";
 export const fetchRecipes = (params) => (dispatch) => {
@@ -60,6 +77,20 @@ export const deleteRecipe = (id) => (dispatch) => {
       method: "delete",
       toggleOnError: true,
       toggleOnSuccess: true,
+    })
+  );
+};
+
+export const addRecipe = (data) => (dispatch) => {
+  dispatch(
+    apiRequest({
+      url,
+      data,
+      method: "post",
+      toggleOnError: true,
+      onSuccess: recipeAdded.type,
+      onBegin: recipeAddBegan.type,
+      onEnd: recipeAddEnded.type,
     })
   );
 };

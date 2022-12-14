@@ -199,8 +199,8 @@ const OrderDetails = () => {
                   onEmployeeChange={handleShopperSelect}
                   placeholder="Search shoppers..."
                   designationId={getDesignationId(designations.data, "shopper")}
-                  title="Shopper Details"
-                  text="Shopper for this order has not been set set."
+                  title=""
+                  text="Shopper for this order is not set."
                 />
               </Grid>
 
@@ -213,7 +213,7 @@ const OrderDetails = () => {
                   placeholder="Search riders..."
                   designationId={getDesignationId(designations.data, "rider")}
                   title="Rider Details"
-                  text="Rider for this order has not been set yet."
+                  text="Rider for this order is not set."
                 />
               </Grid>
 

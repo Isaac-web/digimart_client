@@ -4,7 +4,7 @@ import { CircularProgress, Chip } from "@mui/material";
 const StatusIndicator = ({ value = 0, loading }) => {
   const labels = {
     0: { label: "Pending", color: "gray" },
-    1: { label: "Processing", color: "yellow" },
+    1: { label: "Processing", color: "gold" },
     2: { label: "Dispatched", color: "Pink" },
     3: { label: "Delivered", color: "blue" },
     4: { label: "Order Confirmed", color: "Green" },

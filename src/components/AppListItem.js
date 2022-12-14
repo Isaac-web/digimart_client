@@ -22,7 +22,7 @@ const AppListItem = ({
     <ListItem>
       {(avatarShown || avatarUrl) && (
         <ListItemAvatar>
-          <Avatar />
+          <Avatar src={avatarUrl} />
         </ListItemAvatar>
       )}
       <ListItemText
