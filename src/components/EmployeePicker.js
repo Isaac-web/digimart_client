@@ -32,6 +32,8 @@ const EmployeePicker = ({
   onEmployeeChange,
   emptyContentTitle,
   emptyContentSubtitle,
+  pickEmployeeButtonTitle,
+  changeEmployeeButtonTitle,
   placeholder,
   designationId,
   title,
@@ -119,7 +121,7 @@ const EmployeePicker = ({
               </Box>
               <Box>
                 <Button variant="text" onClick={handleOpenDialog}>
-                  Change Rider
+                  {changeEmployeeButtonTitle || "Change Employee"}
                 </Button>
               </Box>
             </Box>
@@ -135,7 +137,7 @@ const EmployeePicker = ({
                 variant="text"
                 sx={{ textTransform: "none" }}
               >
-                Pick a rider
+                {pickEmployeeButtonTitle || "Set Employee"}
               </Button>
             </Box>
           )}

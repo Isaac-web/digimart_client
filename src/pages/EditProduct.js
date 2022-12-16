@@ -102,8 +102,6 @@ const EditProduct = () => {
       />
     );
 
-  console.log(product.data);
-
   return (
     <Container sx={{ paddingBottom: "1em" }}>
       <Paper

@@ -106,6 +106,7 @@ const RecipeTabs = memo(({ tab, onTabChange }) => {
 });
 
 const RecipesList = memo(() => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const recipes = useSelector((state) => state.entities.recipes);
 
@@ -149,7 +150,11 @@ const RecipesList = memo(() => {
       <Container maxWidth="md">
         <List>
           {recipes.data.items.map((r) => (
-            <Paper key={r._id} sx={{ padding: "0.5em 0", marginBottom: "1em" }}>
+            <Paper
+              key={r._id}
+              sx={{ padding: "0.5em 0", marginBottom: "1em" }}
+              onClick={() => navigate(`/recipes/${r._id}`)}
+            >
               <RecipeListItem
                 title={r.name}
                 imageUrl={r?.image?.url || "none"}
@@ -227,11 +232,13 @@ const RecipeListItem = ({
             <Grid item>
               <Grid container spacing={2}>
                 <Grid item>
-                  <Typography variant="body2">Prep Time: {prepTime}</Typography>
+                  <Typography variant="body2">
+                    Prep Time: {prepTime}mins
+                  </Typography>
                 </Grid>
                 <Grid item>
                   <Typography variant="body2">
-                    Cooking Time: {cookingTime}
+                    Cooking Time: {cookingTime}mins
                   </Typography>
                 </Grid>
               </Grid>

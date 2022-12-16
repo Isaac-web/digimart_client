@@ -28,6 +28,7 @@ import { fetchPendingOrders } from "../store/reducers/entities/orders";
 import { useDispatch } from "react-redux";
 import Recipes from "../pages/Recipes";
 import EditRecipe from "../pages/EditRecipe";
+import RecipeDetails from "../pages/RecipeDetails";
 
 const Main = () => {
   const { drawerMargin } = useContext(AppContext);
@@ -73,6 +74,7 @@ const Main = () => {
           <Route path="/branches" element={<Branches />} />
           <Route path="/home" element={<Home />} />
           <Route path="/recipes/new" element={<EditRecipe />} />
+          <Route path="/recipes/:id" element={<RecipeDetails />} />
           <Route path="/recipes" element={<Recipes />} />
           <Route path="/" element={<Navigate to="/home" />} />
         </Route>

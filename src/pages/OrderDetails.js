@@ -199,8 +199,10 @@ const OrderDetails = () => {
                   onEmployeeChange={handleShopperSelect}
                   placeholder="Search shoppers..."
                   designationId={getDesignationId(designations.data, "shopper")}
-                  title=""
+                  title="Shopper Details"
                   text="Shopper for this order is not set."
+                  pickEmployeeButtonTitle={"Pick a shopper"}
+                  changeEmployeeButtonTitle={"Change shopper"}
                 />
               </Grid>
 
@@ -214,6 +216,8 @@ const OrderDetails = () => {
                   designationId={getDesignationId(designations.data, "rider")}
                   title="Rider Details"
                   text="Rider for this order is not set."
+                  pickEmployeeButtonTitle={"Pick a rider"}
+                  changeEmployeeButtonTitle={"Change rider"}
                 />
               </Grid>
 

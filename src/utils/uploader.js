@@ -1,11 +1,12 @@
 import axios from "axios";
 
-export const uploadFile = async (image, upload_preset, callback) => {
-  if (!image) throw new Error("Image is not provided");
+export const uploadFile = async (file, upload_preset, callback) => {
+  if (!file) throw new Error("File is not provided");
   if (!upload_preset) throw new Error("upload_preset is not provided.");
 
   const formData = new FormData();
-  formData.append("file", image);
+  formData.append("file", file);
+  formData.append("resource_type", "video");
   formData.append("upload_preset", upload_preset);
 
   const handleProgress = (progress) => {

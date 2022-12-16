@@ -1,5 +1,6 @@
-import { DeleteOutline } from "@mui/icons-material";
+import { ConstructionOutlined, DeleteOutline } from "@mui/icons-material";
 import {
+  Container,
   IconButton,
   List,
   ListItem,
@@ -21,8 +22,11 @@ const RecipeSteps = ({ steps, onStepsChange, errorMessage, ...rest }) => {
   const raiseAddStep = ({ key, target: input }) => {
     if (key === "Enter" && input.value.trim()) {
       if (typeof onStepsChange === "function") {
+        const step_found = steps.findIndex(item => item.text ===  input.value.trim())
+  
+        console.log(step_found)
         onStepsChange([...steps, { text: input.value }]);
-        input.value = "";
+        input.value = "".trim();
       }
     }
   };
@@ -31,7 +35,7 @@ const RecipeSteps = ({ steps, onStepsChange, errorMessage, ...rest }) => {
     <>
       <TextField
         multiline
-        rows={3}
+        rows={2}
         fullWidth
         onKeyPress={raiseAddStep}
         helperText={errorMessage || "Input the step and hit return..."}
@@ -39,27 +43,29 @@ const RecipeSteps = ({ steps, onStepsChange, errorMessage, ...rest }) => {
         label={"Step"}
         {...rest}
       />
-      {steps.length ? (
-        <List>
-          {steps.map((item, index) => (
-            <StepListItem
-              key={index.toString()}
-              stepNumber={index + 1}
-              title={item.text}
-              onDelete={() => handleDelete(item)}
-            />
-          ))}
-        </List>
-      ) : (
-        <Box sx={{ padding: "3em" }}>
-          <Typography align="center" variant="h6">
-            No Procedure Added
-          </Typography>
-          <Typography align="center" variant="subtitle2">
-            Please add procedures for the recipe
-          </Typography>
-        </Box>
-      )}
+      <Container maxWidth="md">
+        {steps.length ? (
+          <List>
+            {steps.map((item, index) => (
+              <StepListItem
+                key={index.toString()}
+                stepNumber={index + 1}
+                title={item.text}
+                onDelete={() => handleDelete(item)}
+              />
+            ))}
+          </List>
+        ) : (
+          <Box sx={{ padding: "3em" }}>
+            <Typography align="center" variant="h6">
+              No Procedure Added
+            </Typography>
+            <Typography align="center" variant="subtitle2">
+              Please add procedures for the recipe
+            </Typography>
+          </Box>
+        )}
+      </Container>
     </>
   );
 };
@@ -70,14 +76,15 @@ const StepListItem = ({ stepNumber, title, onDelete }) => {
       <ListItemAvatar>
         <Box
           sx={(theme) => ({
-            height: "2.5em",
-            width: "2.5em",
+            height: "2.2em",
+            width: "2.2em",
             color: theme.palette.common.white,
             backgroundColor: theme.palette.success.light,
             borderRadius: "1.5em",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            fontSize: "0.6em",
           })}
         >
           {stepNumber}

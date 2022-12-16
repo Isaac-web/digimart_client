@@ -1,9 +1,11 @@
 import React, { memo, useEffect, useRef, useState } from "react";
 import {
+  Button,
   ButtonBase,
   Container,
   Divider,
   Grid,
+  InputAdornment,
   List,
   Paper,
   Typography,
@@ -28,6 +30,8 @@ import { addRecipe } from "../store/reducers/entities/recipes";
 import { uploadFile } from "../utils/uploader";
 import { useNavigate } from "react-router-dom";
 import FormRecipeSteps from "../components/form/FormRecipeSteps";
+import { useFormikContext } from "formik";
+import VideoPicker from "../components/VideoPicker";
 
 const data = {
   name: "",
@@ -39,6 +43,7 @@ const data = {
   cookingMethod: "",
   suitableFor: "",
   procedure: [],
+  ingredients: [],
 };
 
 const validationSchema = Yup.object().shape({
@@ -53,12 +58,14 @@ const validationSchema = Yup.object().shape({
   cookingMethod: Yup.string().required().label("Cooking method"),
   suitableFor: Yup.string().required(),
   procedure: Yup.array().min(1).required().label("Procedure"),
+  ingredients: Yup.array().min(1).required().label("Ingredients"),
 });
 
 const EditRecipe = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [image, setImage] = useState(null);
+  const [video, setVideo] = useState(null);
   const [progress, setProgress] = useState(0);
   const [open, setOpen] = useState(false);
 
@@ -82,14 +89,17 @@ const EditRecipe = () => {
         data.imagePublicId = public_id;
       }
     }
-
-    data.ingredients = [{ product: "637a0e9fae4b464ec9896bb9" }];
+   
 
     dispatch(addRecipe(data));
   };
 
   const handleChangeImage = (file) => {
     if (file) setImage(file);
+  };
+
+  const handleChangeVideo = (video) => {
+    setVideo(video);
   };
 
   const handleUploadDone = () => {
@@ -100,6 +110,14 @@ const EditRecipe = () => {
     setOpen(false);
   };
 
+
+  const handleUploadVideo = async () => {
+    if (video) {
+    const result = await uploadFile(video, "recipe_videos");
+    console.log(result);
+    }
+  }
+
   const apiCalled = useRef(false);
   useEffect(() => {
     if (!apiCalled.current) {
@@ -109,117 +127,154 @@ const EditRecipe = () => {
   }, []);
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="lg">
       <Box sx={{ paddingBottom: "3em" }}>
         <Paper sx={{ padding: "2em" }}>
-          <Typography variant="h5" gutterBottom fontWeight={"bold"}>
-            New Recipe
-          </Typography>
-          <Box>
-            <Form
-              initialValues={data}
-              onSubmit={handleSubmit}
-              validationSchema={validationSchema}
-            >
-              <Grid container spacing={3}>
+          <Container maxWidth="md">
+            <Typography variant="h5" gutterBottom fontWeight={"bold"}>
+              New Recipe
+            </Typography>
+            <Box>
+              <Form
+                initialValues={data}
+                onSubmit={handleSubmit}
+                validationSchema={validationSchema}
+              >
+                <Grid container spacing={3}>
+                  <Grid item xs={12} sx={{ paddingBottom: "1em" }}>
+                    <Divider>Basic Info</Divider>
+                  </Grid>
+
+                  <FormTextField
+                    autoFocus
+                    name={"name"}
+                    label="Name Of Recipe"
+                  />
+                  <FormSelectField
+                    name="categoryId"
+                    inputLabel="Recipe Category"
+                    items={categories.data.items}
+                    menuItemLabelAttribute={"name"}
+                    menuItemValueAttribute={"_id"}
+                  />
+                  <FormTextField
+                    xs={12}
+                    multiline
+                    rows={4}
+                    name={"description"}
+                    label="Description"
+                  />
+                  <FormTextField
+                    name={"cookingMethod"}
+                    label="Cooking Method"
+                  />
+                  <FormTextField name={"yield"} label="Yield" />
+                  <FormTextField
+                    name={"prepTime"}
+                    label="Prep Time"
+                    type="number"
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">mins</InputAdornment>,
+                    }}
+                  />
+                  <FormTextField
+                    name={"cookingTime"}
+                    label="Cooking Time"
+                    type="number"
+                    InputProps={{
+                      endAdornment: <InputAdornment position="end">mins</InputAdornment>,
+                    }}
+                  />
+                  <FormTextField
+                    xs={12}
+                    name={"suitableFor"}
+                    label="Suitable For"
+                  />
+                </Grid>
+
                 <Grid
                   item
                   xs={12}
-                  sx={{ paddingBottom: "1em" }}
+                  sx={{ paddingBottom: "2em", marginTop: "5em" }}
                 >
-                  <Divider>Basic Info</Divider>
+                  <Divider>Recipe Image</Divider>
+                </Grid>
+                <Grid item>
+                  <AppImagePicker
+                    label={"Recipe Image"}
+                    onChange={handleChangeImage}
+                  />
+                  <ProgressDialog
+                    open={open}
+                    loaded={progress}
+                    onDone={handleUploadDone}
+                    onClose={handleCloseImageUploadDialog}
+                    done={progress === 100}
+                  />
                 </Grid>
 
-                <FormTextField autoFocus name={"name"} label="Name Of Recipe" />
-                <FormSelectField
-                  name="categoryId"
-                  inputLabel="Recipe Category"
-                  items={categories.data.items}
-                  menuItemLabelAttribute={"name"}
-                  menuItemValueAttribute={"_id"}
-                />
-                <FormTextField
+                <Grid
+                  item
                   xs={12}
-                  multiline
-                  rows={4}
-                  name={"description"}
-                  label="Description"
-                />
-                <FormTextField name={"cookingMethod"} label="Cooking Method" />
-                <FormTextField name={"yield"} label="Yield" />
-                <FormTextField
-                  name={"prepTime"}
-                  label="Prep Time"
-                  type="number"
-                />
-                <FormTextField
-                  name={"cookingTime"}
-                  label="Cooking Time"
-                  type="number"
-                />
-                <FormTextField
-                  xs={12}
-                  name={"suitableFor"}
-                  label="Suitable For"
-                />
-              </Grid>
+                  sx={{ paddingBottom: "1em", marginTop: "5em" }}
+                >
+                  <Divider>Procedure</Divider>
+                </Grid>
+                <Grid
+                  item
+                  container
+                  direction="column"
+                  sx={{ padding: "2em 0" }}
+                >
+                  <FormRecipeSteps name="procedure" />
+                </Grid>
 
-              <Grid
-                item
-                xs={12}
-                sx={{ paddingBottom: "2em", marginTop: "5em" }}
-              >
-                <Divider>Recipe Image</Divider>
-              </Grid>
-              <Grid item>
-                <AppImagePicker
-                  label={"Recipe Image"}
-                  onChange={handleChangeImage}
-                />
-                <ProgressDialog
-                  open={open}
-                  loaded={progress}
-                  onDone={handleUploadDone}
-                  onClose={handleCloseImageUploadDialog}
-                  done={progress === 100}
-                />
-              </Grid>
+                <Grid item sx={{ marginBottom: "5em" }}>
+                  <IngredientList name="ingredients" />
+                </Grid>
 
-              <Grid item xs={12} sx={{ paddingBottom: "1em", marginTop: "5em" }}>
-                <Divider>Procedure</Divider>
-              </Grid>
-              <Grid item container direction="column" sx={{ padding: "2em 0",  }}>
-                <FormRecipeSteps name="procedure" />
-              </Grid>
+                <Grid item>
+                  <VideoPicker onChange={handleChangeVideo} />
+                  <Box>
+                    <Button variant="text" onClick={handleUploadVideo}>Upload</Button>
+                  </Box>
+                </Grid>
 
-              <Grid
-                container
-                sx={{ padding: "1em 0" }}
-                justifyContent="flex-end"
-              >
-                <SubmitButton>Submit</SubmitButton>
-              </Grid>
-            </Form>
-          </Box>
+                <Grid
+                  container
+                  sx={{ padding: "1em 0" }}
+                  justifyContent="flex-end"
+                >
+                  <SubmitButton>Submit</SubmitButton>
+                </Grid>
+              </Form>
+            </Box>
+          </Container>
         </Paper>
       </Box>
     </Container>
   );
 };
 
-const IngredientList = () => {
+const IngredientList = ({ name }) => {
   const [searchValue, setSearchValue] = useState("");
+  const [productItems, setProductItems] = useState([]);
+  const [formatedProducts, setFormatedProducts] = useState([]);
   const dispatch = useDispatch();
+  const { setFieldValue } = useFormikContext();
+
   const products = useSelector((state) => state.entities.products);
+
   const handleChange = (value, key) => {
     setSearchValue(value);
     if (searchValue && key === "Enter") dispatch(searchProducts(value));
   };
 
-  const ingredients = [];
   const handleSelectItem = (item) => {
-    ingredients.push(item);
-    console.log(ingredients);
+    setProductItems([...productItems, item]);
+    setFormatedProducts([...formatedProducts, { product: item._id }]);
+    setFieldValue(name, formatedProducts);
+    dispatch(clearSearch());
   };
 
   return (
@@ -268,10 +323,29 @@ const IngredientList = () => {
               </Paper>
             )}
           </Box>
+
+          <Box>
+            {productItems?.length ? (
+              <List>
+                {productItems.map((item) => (
+                  <AppListItem
+                    key={item._id}
+                    avatarShown
+                    avatarUrl={item.image.url}
+                    title={item.name}
+                  />
+                ))}
+              </List>
+            ) : (
+              <Box sx={{ padding: "1em 0" }}>
+                <Typography variant="subtitle2" align="center">
+                  Please select at least one ingredient
+                </Typography>
+              </Box>
+            )}
+          </Box>
         </Box>
       </Box>
-
-      {console.log(ingredients)}
     </Box>
   );
 };
