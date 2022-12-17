@@ -38,6 +38,7 @@ const EmployeePicker = ({
   designationId,
   title,
   text,
+  disabled,
 }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
@@ -136,6 +137,7 @@ const EmployeePicker = ({
                 onClick={handleOpenDialog}
                 variant="text"
                 sx={{ textTransform: "none" }}
+                disabled={disabled}
               >
                 {pickEmployeeButtonTitle || "Set Employee"}
               </Button>

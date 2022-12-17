@@ -203,6 +203,7 @@ const OrderDetails = () => {
                   text="Shopper for this order is not set."
                   pickEmployeeButtonTitle={"Pick a shopper"}
                   changeEmployeeButtonTitle={"Change shopper"}
+                  disabled={order.data.status?.value}
                 />
               </Grid>
 
@@ -218,6 +219,7 @@ const OrderDetails = () => {
                   text="Rider for this order is not set."
                   pickEmployeeButtonTitle={"Pick a rider"}
                   changeEmployeeButtonTitle={"Change rider"}
+                  disabled={order.data.status?.value}
                 />
               </Grid>
 

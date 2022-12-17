@@ -26,8 +26,7 @@ const slice = createSlice({
       orders.loading = false;
     },
     pendingOrdersFetched: (orders, action) => {
-      const diff = action.payload.data.items - orders.data.orders.length;
-      orders.pendingCount = diff;
+      orders.pendingCount = action.payload.data;
     },
   },
 });

@@ -1,5 +1,6 @@
-import React, { createContext, useState } from "react";
+import React, { useEffect, createContext, useState, useRef } from "react";
 import { useTheme, useMediaQuery } from "@mui/material";
+import { subscribe } from "../utils/longPoll";
 
 import storage from "../utils/storage";
 export const AppContext = createContext(null);

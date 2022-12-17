@@ -188,11 +188,15 @@ const RecipeListItem = ({
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleOpenMenu = (e) => {
+    e.stopPropagation();
+
     setAnchorEl(e.target);
     setOpen(true);
   };
 
-  const handleCloseMenu = () => {
+  const handleCloseMenu = (e) => {
+    e.stopPropagation();
+
     setOpen(false);
     setAnchorEl(null);
   };

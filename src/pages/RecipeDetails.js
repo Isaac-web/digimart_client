@@ -30,7 +30,7 @@ const RecipeDetails = () => {
     }
   }, []);
 
-  if (recipe.loading) return null;
+  return null;
 
   return (
     <Container sx={{ paddingBottom: "4em" }}>
@@ -87,7 +87,7 @@ const RecipeDetails = () => {
             </Typography>
 
             <List>
-              {recipe.data.recipe.procedure.map((item, index) => (
+              {recipe.data.recipe.procedure?.map((item, index) => (
                 <StepListItem number={index + 1} title={item.text} />
               ))}
             </List>

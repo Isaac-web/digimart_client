@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import {
   Box,
   Chip,
@@ -11,10 +11,11 @@ import {
   TablePagination,
   Tabs,
   Toolbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { FilterList, Refresh } from "@mui/icons-material";
-import { TabContext, TabPanel } from "@mui/lab";
+import { TabContext } from "@mui/lab";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -37,7 +38,6 @@ const Orders = () => {
   const tabs = [
     { label: "New", Icon: "" },
     { label: "Processing", Icon: "" },
-    { label: "Dispatched", Icon: "" },
     { label: "Delivered", Icon: "" },
   ];
   const rowsPerPage = 25;
@@ -59,7 +59,23 @@ const Orders = () => {
 
   const handleChangeTab = (_, value) => {
     setCurrentTab(value);
-    fetchBranchOrders({ currentPage: 0, pageSize: 25, status: currentTab });
+
+    if (user.userType === "system")
+      dispatch(
+        fetchOrders({
+          currentPage: 0,
+          pageSize: 25,
+          status: value === 2 ? 4 : value,
+        })
+      );
+    else
+      dispatch(
+        fetchBranchOrders({
+          currentPage: 0,
+          pageSize: 25,
+          status: value === 2 ? 4 : value,
+        })
+      );
   };
 
   const handlePageChange = (e, page) => {
@@ -179,11 +195,12 @@ const renderSearchToolbar = (orders, handleFetchOrders) => {
               justifyContent={"flex-end"}
               sx={{ height: "100%" }}
             >
+              
               <Grid item>
                 <Chip
-                  label={`${orders.pendingCount || "No"} Pending Orders`}
+                  label={`Pending Orders: ${orders.pendingCount}`}
                   sx={(theme) => ({
-                    backgroundColor: !orders.pendingCount
+                    backgroundColor: (parseInt(orders.pendingCount) === 0)
                       ? "rgba(0, 0, 0, 0.1)"
                       : "lightgreen",
                     color: "white",
@@ -191,9 +208,11 @@ const renderSearchToolbar = (orders, handleFetchOrders) => {
                 />
               </Grid>
               <Grid item>
-                <IconButton onClick={handleFetchOrders}>
-                  <Refresh />
-                </IconButton>
+                <Tooltip title="Refresh">
+                  <IconButton onClick={handleFetchOrders}>
+                    <Refresh />
+                  </IconButton>
+                </Tooltip>
               </Grid>
             </Grid>
           </Grid>

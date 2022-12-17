@@ -13,11 +13,9 @@ const slice = createSlice({
       recipe.data = action.payload.data;
     },
     recipeFetchBegan: (recipe) => {
-      console.log(true);
       recipe.loading = true;
     },
     recipeFetchEnded: (recipe) => {
-      console.log(false);
       recipe.loading = true;
     },
   },
@@ -28,6 +26,8 @@ const { recipeFetchBegan, recipeFetched, recipeFetchEnded } = slice.actions;
 
 const url = "/recipes";
 export const fetchRecipe = (id) => async (dispatch) => {
+  console.log(id);
+  return;
   dispatch(
     apiRequest({
       url: `${url}/${id}`,
