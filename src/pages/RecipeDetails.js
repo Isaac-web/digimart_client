@@ -30,7 +30,15 @@ const RecipeDetails = () => {
     }
   }, []);
 
-  return null;
+  
+  if (recipe.loading)
+    return (
+      <Grid container justifyContent={"center"} alignItems="center">
+        <Grid item>
+          <AppProgress size={"0.8em"} />
+        </Grid>
+      </Grid>
+    );
 
   return (
     <Container sx={{ paddingBottom: "4em" }}>
@@ -87,20 +95,24 @@ const RecipeDetails = () => {
             </Typography>
 
             <List>
-              {recipe.data.recipe.procedure?.map((item, index) => (
-                <StepListItem number={index + 1} title={item.text} />
+              {recipe.data?.recipe?.procedure?.map((item, index) => (
+                <StepListItem
+                  key={index.toString()}
+                  number={index + 1}
+                  title={item.text}
+                />
               ))}
             </List>
           </Box>
 
           <Box sx={{ padding: "2em 0" }}>
             <Typography gutterBottom>
-              Switable for: {recipe.data.recipe.suitableFor}
+              Switable for: {recipe?.data?.recipe?.suitableFor}
             </Typography>
           </Box>
 
           <Box sx={{ padding: "5em 0" }}>
-            <Typography variant="h5">Estimate Price: Ghc40.80</Typography>
+            <Typography variant="h5">Estimate Price: N/A</Typography>
           </Box>
 
           {/* <div>related recipes</div> */}

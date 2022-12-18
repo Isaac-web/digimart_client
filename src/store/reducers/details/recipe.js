@@ -10,13 +10,14 @@ const slice = createSlice({
   },
   reducers: {
     recipeFetched: (recipe, action) => {
+      console.log(action.payload.data);
       recipe.data = action.payload.data;
     },
     recipeFetchBegan: (recipe) => {
       recipe.loading = true;
     },
     recipeFetchEnded: (recipe) => {
-      recipe.loading = true;
+      recipe.loading = false;
     },
   },
 });
@@ -25,15 +26,17 @@ export default slice.reducer;
 const { recipeFetchBegan, recipeFetched, recipeFetchEnded } = slice.actions;
 
 const url = "/recipes";
-export const fetchRecipe = (id) => async (dispatch) => {
+export const fetchRecipe = (id) => async (dispatch, getStore) => {
   console.log(id);
-  return;
   dispatch(
     apiRequest({
       url: `${url}/${id}`,
-      onSuccess: recipeFetched.type,
       onBegin: recipeFetchBegan.type,
       onEnd: recipeFetchEnded.type,
+      onSuccess: recipeFetched.type,
     })
   );
+
+  const store = getStore();
+  console.log(store);
 };
