@@ -93,6 +93,4 @@ export const addRecipe = (data, callback) => async (dispatch) => {
       onEnd: recipeAddEnded.type,
     })
   );
-
-  if (typeof callback === "function") callback();
 };

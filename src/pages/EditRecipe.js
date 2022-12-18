@@ -1,6 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from "react";
 import {
-  Button,
   ButtonBase,
   Container,
   Divider,
@@ -86,13 +85,16 @@ const EditRecipe = () => {
         "recipe_images",
         handleUploadProgress
       );
+
+      if (!uploaded) return console.log("Something went wrong.");
+
       if (uploaded) {
         data.imageUrl = url;
         data.imagePublicId = public_id;
       }
     }
 
-    dispatch(addRecipe(data, () => navigate("/recipes")));
+    dispatch(addRecipe(data));
   };
 
   const handleChangeImage = (file) => {
