@@ -92,7 +92,7 @@ const EditRecipe = () => {
       }
     }
 
-    dispatch(addRecipe(data));
+    dispatch(addRecipe(data, () => navigate("/recipes")));
   };
 
   const handleChangeImage = (file) => {
@@ -159,6 +159,7 @@ const EditRecipe = () => {
                   />
                   <FormTextField
                     xs={3}
+                    type="number"
                     name={"yieldValue"}
                     label="Yield Value"
                   />

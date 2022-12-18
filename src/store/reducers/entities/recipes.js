@@ -81,8 +81,8 @@ export const deleteRecipe = (id) => (dispatch) => {
   );
 };
 
-export const addRecipe = (data) => (dispatch) => {
-  dispatch(
+export const addRecipe = (data, callback) => async (dispatch) => {
+  await dispatch(
     apiRequest({
       url,
       data,
@@ -93,4 +93,6 @@ export const addRecipe = (data) => (dispatch) => {
       onEnd: recipeAddEnded.type,
     })
   );
+
+  if (typeof callback === "function") callback();
 };
