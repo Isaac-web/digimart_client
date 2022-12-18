@@ -24,10 +24,12 @@ import SearchField from "../components/SearchField";
 import {
   fetchBranchOrders,
   fetchOrders,
+  fetchPendingOrders,
 } from "../store/reducers/entities/orders";
 import { columns } from "../data/orders";
 import getDateTime from "../utils/getDateTime";
 import useUser from "../customHooks/useUser";
+import { subscribe } from "../utils/longPoll";
 
 const Orders = () => {
   const user = useUser();
@@ -107,6 +109,17 @@ const Orders = () => {
       apiCalled.current = true;
     }
   }, []);
+
+  // const longPolling = useRef(false);
+  // useEffect(() => {
+  //   if (!longPolling.current) {
+  //     subscribe(
+  //       `${process.env.REACT_APP_API_URI}/orders/branch/pending?status=0`,
+  //       (count) => dispatch(fetchPendingOrders(count))
+  //     );
+  //     longPolling.current = true;
+  //   }
+  // }, []);
 
   const ordersCount = orders.data.totalItemsCount;
   const currentPage = orders.data.currentPage;

@@ -6,7 +6,6 @@ export const uploadFile = async (file, upload_preset, callback) => {
 
   const formData = new FormData();
   formData.append("file", file);
-  formData.append("resource_type", "video");
   formData.append("upload_preset", upload_preset);
 
   const handleProgress = (progress) => {

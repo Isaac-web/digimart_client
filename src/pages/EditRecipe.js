@@ -32,15 +32,15 @@ import FormRecipeSteps from "../components/form/FormRecipeSteps";
 import { useFormikContext } from "formik";
 
 const data = {
-  name: "",
+  name: "test",
   categoryId: "",
-  description: "",
-  yieldValue: "",
-  yieldLabel: "",
-  prepTime: 0,
-  cookingTime: 0,
-  cookingMethod: "",
-  suitableFor: "",
+  description: "testing",
+  yieldValue: "1",
+  yieldLabel: "plate",
+  prepTime: 10,
+  cookingTime: 10,
+  cookingMethod: "frying",
+  suitableFor: "all",
   procedure: [],
   ingredients: [],
   videoUrl: "",
@@ -86,7 +86,7 @@ const EditRecipe = () => {
         handleUploadProgress
       );
 
-      if (!uploaded) return console.log("Something went wrong.");
+      if (!uploaded) return;
 
       if (uploaded) {
         data.imageUrl = url;

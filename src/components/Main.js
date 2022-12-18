@@ -34,16 +34,7 @@ const Main = () => {
   const { drawerMargin } = useContext(AppContext);
   const dispatch = useDispatch();
 
-  const longPolling = useRef(false);
-  useEffect(() => {
-    if (!longPolling.current) {
-      subscribe(
-        `${process.env.REACT_APP_API_URI}/orders/branch/pending?status=0`,
-        (count) => dispatch(fetchPendingOrders(count))
-      );
-      longPolling.current = true;
-    }
-  }, []);
+
 
   return (
     <Box
