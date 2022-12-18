@@ -15,8 +15,9 @@ export const uploadFile = async (file, upload_preset, callback) => {
   const config = { onUploadProgress: handleProgress };
   const payload = { url: null, uploaded: false };
 
+  const api = axios.create();
   try {
-    const result = await axios.post(
+    const result = await api.post(
       process.env.REACT_APP_CLOUDINARY_URL,
       formData,
       config

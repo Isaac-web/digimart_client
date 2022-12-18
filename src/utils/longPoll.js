@@ -4,15 +4,16 @@ import storage from "./storage";
 export const subscribe = async (url, callback) => {
   if (typeof url !== "string") throw new Error("url is must be a string.");
 
+  const api = axios.create();
   const token = storage.getItem("token");
   if (token) {
-    axios.interceptors.request.use((req) => {
+    api.interceptors.request.use((req) => {
       req.headers["x-auth-token"] = token;
       return req;
     });
   }
 
-  const res = await axios.get(url);
+  const res = await api.get(url);
   if (res.status === 502) {
     await subscribe(url, callback);
   } else if (res.status === 200) {

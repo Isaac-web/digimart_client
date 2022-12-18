@@ -32,15 +32,15 @@ import FormRecipeSteps from "../components/form/FormRecipeSteps";
 import { useFormikContext } from "formik";
 
 const data = {
-  name: "test",
+  name: "",
   categoryId: "",
-  description: "testing",
-  yieldValue: "1",
-  yieldLabel: "plate",
-  prepTime: 10,
-  cookingTime: 10,
-  cookingMethod: "frying",
-  suitableFor: "all",
+  description: "",
+  yieldValue: 0,
+  yieldLabel: "",
+  prepTime: 0,
+  cookingTime: 0,
+  cookingMethod: "",
+  suitableFor: "",
   procedure: [],
   ingredients: [],
   videoUrl: "",
