@@ -54,14 +54,19 @@ const RecipeDetails = () => {
 
         <Container maxWidth="md">
           <Typography variant="h4">{recipe.data?.recipe?.name}</Typography>
-          {/* <Box sx={{ padding: "2em 0" }}>
+          <Box sx={{ padding: "2em 0" }}>
             <Grid container spacing={3}>
-              <Grid item>Prep time: {recipe.data?.recipe.prepTime}mins</Grid>
-              <Grid item>Cooking time: {recipe.data?.recipe.prepTime}mins</Grid>
-              <Grid item>Yield: {recipe.data.recipe.yield}</Grid>
+              <Grid item>Prep time: {recipe.data?.recipe?.prepTime}mins</Grid>
+              <Grid item>
+                Cooking time: {recipe.data?.recipe?.prepTime}mins
+              </Grid>
+              <Grid item>
+                Yield:{" "}
+                {`${recipe.data?.recipe?.yield.value} ${recipe.data?.recipe?.yield.label}`}
+              </Grid>
               <Grid item>Difficulty: {recipe.data.difficulty || "N/A"}</Grid>
             </Grid>
-          </Box> */}
+          </Box>
 
           <Box
             sx={(theme) => ({

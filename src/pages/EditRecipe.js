@@ -31,41 +31,43 @@ import { uploadFile } from "../utils/uploader";
 import { useNavigate } from "react-router-dom";
 import FormRecipeSteps from "../components/form/FormRecipeSteps";
 import { useFormikContext } from "formik";
-import VideoPicker from "../components/VideoPicker";
 
 const data = {
   name: "",
   categoryId: "",
   description: "",
-  yield: "",
+  yieldValue: "",
+  yieldLabel: "",
   prepTime: 0,
   cookingTime: 0,
   cookingMethod: "",
   suitableFor: "",
   procedure: [],
   ingredients: [],
+  videoUrl: "",
 };
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required().label("Recipe name"),
   categoryId: Yup.string().required().label("Category"),
   description: Yup.string().required().label("Description"),
-  yield: Yup.number("Yield must be an integer")
+  yieldValue: Yup.number("Yield must be an integer")
     .required("Yield is a required field")
     .min(0),
+  yieldLabel: Yup.string().required("Yield is a required field"),
   prepTime: Yup.number().required().min(0),
   cookingTime: Yup.number().required().min(1).label("Cooking Time"),
   cookingMethod: Yup.string().required().label("Cooking method"),
   suitableFor: Yup.string().required(),
   procedure: Yup.array().min(1).required().label("Procedure"),
   ingredients: Yup.array().min(1).required().label("Ingredients"),
+  videoUrl: Yup.string().max(1024),
 });
 
 const EditRecipe = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [image, setImage] = useState(null);
-  const [video, setVideo] = useState(null);
   const [progress, setProgress] = useState(0);
   const [open, setOpen] = useState(false);
 
@@ -89,17 +91,12 @@ const EditRecipe = () => {
         data.imagePublicId = public_id;
       }
     }
-   
 
     dispatch(addRecipe(data));
   };
 
   const handleChangeImage = (file) => {
     if (file) setImage(file);
-  };
-
-  const handleChangeVideo = (video) => {
-    setVideo(video);
   };
 
   const handleUploadDone = () => {
@@ -109,14 +106,6 @@ const EditRecipe = () => {
   const handleCloseImageUploadDialog = () => {
     setOpen(false);
   };
-
-
-  const handleUploadVideo = async () => {
-    if (video) {
-    const result = await uploadFile(video, "recipe_videos");
-    console.log(result);
-    }
-  }
 
   const apiCalled = useRef(false);
   useEffect(() => {
@@ -168,13 +157,24 @@ const EditRecipe = () => {
                     name={"cookingMethod"}
                     label="Cooking Method"
                   />
-                  <FormTextField name={"yield"} label="Yield" />
+                  <FormTextField
+                    xs={3}
+                    name={"yieldValue"}
+                    label="Yield Value"
+                  />
+                  <FormTextField
+                    xs={3}
+                    name={"yieldLabel"}
+                    label="Yield Label"
+                  />
                   <FormTextField
                     name={"prepTime"}
                     label="Prep Time"
                     type="number"
                     InputProps={{
-                      endAdornment: <InputAdornment position="end">mins</InputAdornment>,
+                      endAdornment: (
+                        <InputAdornment position="end">mins</InputAdornment>
+                      ),
                     }}
                   />
                   <FormTextField
@@ -182,7 +182,9 @@ const EditRecipe = () => {
                     label="Cooking Time"
                     type="number"
                     InputProps={{
-                      endAdornment: <InputAdornment position="end">mins</InputAdornment>,
+                      endAdornment: (
+                        <InputAdornment position="end">mins</InputAdornment>
+                      ),
                     }}
                   />
                   <FormTextField
@@ -234,10 +236,7 @@ const EditRecipe = () => {
                 </Grid>
 
                 <Grid item>
-                  <VideoPicker onChange={handleChangeVideo} />
-                  <Box>
-                    <Button variant="text" onClick={handleUploadVideo}>Upload</Button>
-                  </Box>
+                  <FormTextField name={"videoUrl"} label="Video Url" />
                 </Grid>
 
                 <Grid
@@ -273,8 +272,9 @@ const IngredientList = ({ name }) => {
   const handleSelectItem = (item) => {
     setProductItems([...productItems, item]);
     setFormatedProducts([...formatedProducts, { product: item._id }]);
-    setFieldValue(name, formatedProducts);
+    setFieldValue(name, [...formatedProducts, { product: item._id }]);
     dispatch(clearSearch());
+    setSearchValue("");
   };
 
   return (

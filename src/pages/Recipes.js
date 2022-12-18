@@ -160,7 +160,7 @@ const RecipesList = memo(() => {
                 imageUrl={r?.image?.url || "none"}
                 prepTime={r.prepTime}
                 cookingTime={r.cookingTime}
-                recipeYield={r.yield}
+                recipeYield={`${r.yield.value} ${r.yield.label}`}
                 difficulty={"Easy"}
                 onDelete={() => handleDelete(r)}
                 onUpdate={() => console.log(r)}

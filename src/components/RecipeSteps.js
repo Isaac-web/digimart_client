@@ -35,7 +35,7 @@ const RecipeSteps = ({ steps, onStepsChange, errorMessage, ...rest }) => {
     <>
       <TextField
         multiline
-        rows={2}
+        maxRows={2}
         fullWidth
         onKeyPress={raiseAddStep}
         helperText={errorMessage || "Input the step and hit return..."}
