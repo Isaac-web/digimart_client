@@ -50,13 +50,8 @@ const Orders = () => {
 
   const handleFetchOrders = () => {
     if (user.userType === "system")
-      dispatch(
-        fetchOrders({ currentPage: 0, pageSize: 25, status: currentTab })
-      );
-    else
-      dispatch(
-        fetchBranchOrders({ currentPage: 0, pageSize: 25, status: currentTab })
-      );
+      dispatch(fetchOrders({ currentPage: 0, status: currentTab }));
+    else dispatch(fetchBranchOrders({ currentPage: 0, status: currentTab }));
   };
 
   const handleChangeTab = (_, value) => {
@@ -66,7 +61,6 @@ const Orders = () => {
       dispatch(
         fetchOrders({
           currentPage: 0,
-          // pageSize: 25,
           status: value === 2 ? 4 : value,
         })
       );
@@ -74,7 +68,6 @@ const Orders = () => {
       dispatch(
         fetchBranchOrders({
           currentPage: 0,
-          // pageSize: 25,
           status: value === 2 ? 4 : value,
         })
       );
@@ -172,7 +165,7 @@ const renderTitle = (orders) => {
     <Box>
       <Typography variant="h4">Orders</Typography>
       <Typography variant="subtitle2">
-        There are currently {orders.data.items?.length} pending orders
+        There are currently {orders.data.items?.length} in total in the database
       </Typography>
     </Box>
   );
