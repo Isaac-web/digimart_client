@@ -66,7 +66,7 @@ const Orders = () => {
       dispatch(
         fetchOrders({
           currentPage: 0,
-          pageSize: 25,
+          // pageSize: 25,
           status: value === 2 ? 4 : value,
         })
       );
@@ -74,7 +74,7 @@ const Orders = () => {
       dispatch(
         fetchBranchOrders({
           currentPage: 0,
-          pageSize: 25,
+          // pageSize: 25,
           status: value === 2 ? 4 : value,
         })
       );
@@ -138,14 +138,14 @@ const Orders = () => {
         >
           <Grid container justifyContent="space-between">
             <Grid item>{renderTabs(tabs, currentTab, handleChangeTab)}</Grid>
-            <Grid item>
+            {/* <Grid item>
               {renderTablePagination({
                 count: ordersCount,
                 rowsPerPage,
                 page: currentPage,
                 onPageChange: handlePageChange,
               })}
-            </Grid>
+            </Grid> */}
           </Grid>
 
           <TabContext value={currentTab.toString()}>
@@ -155,9 +155,9 @@ const Orders = () => {
                 columns={columns}
                 data={mapToViewModel(orders.data.items)}
                 onRowSelect={handleRowSelect}
-                rowsPerPage={rowsPerPage}
-                count={orders.data.totalItemsCount}
-                page={parseInt(orders.data.currentPage)}
+                // rowsPerPage={rowsPerPage}
+                // count={orders.data.totalItemsCount}
+                // page={parseInt(orders.data.currentPage)}
               />
             </Box>
           </TabContext>
