@@ -31,6 +31,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import FormRecipeSteps from "../components/form/FormRecipeSteps";
 import { useFormikContext } from "formik";
 import recipe, {
+  clearRecipe,
   fetchRecipe,
   updateRecipe,
 } from "../store/reducers/details/recipe";
@@ -324,7 +325,11 @@ const IngredientList = ({ name, list = [] }) => {
   };
 
   useEffect(() => {
-    setFormatedProducts(productItems.map(item => ({product: item._id})));
+    setFormatedProducts(productItems.map((item) => ({ product: item._id })));
+
+    return () => {
+      dispatch(clearRecipe());
+    };
   }, []);
   return (
     <Box>
