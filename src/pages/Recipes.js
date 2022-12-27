@@ -163,7 +163,7 @@ const RecipesList = memo(() => {
                 recipeYield={`${r.yield.value} ${r.yield.label}`}
                 difficulty={"Easy"}
                 onDelete={() => handleDelete(r)}
-                onUpdate={() => console.log(r)}
+                onUpdate={() => navigate(`/recipes/edit/${r._id}`)}
               />
             </Paper>
           ))}
@@ -188,14 +188,14 @@ const RecipeListItem = ({
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleOpenMenu = (e) => {
-    e.stopPropagation();
+    e?.stopPropagation();
 
     setAnchorEl(e.target);
     setOpen(true);
   };
 
   const handleCloseMenu = (e) => {
-    e.stopPropagation();
+    e?.stopPropagation();
 
     setOpen(false);
     setAnchorEl(null);
@@ -262,7 +262,10 @@ const RecipeListItem = ({
         {menuItems.map((item, index) => (
           <MenuItem
             key={index.toString()}
-            onClick={() => handleChoseMenu(item)}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleChoseMenu(item);
+            }}
           >
             {item.label}
           </MenuItem>

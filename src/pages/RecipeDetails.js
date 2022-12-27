@@ -10,15 +10,18 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
+  IconButton,
 } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AppListItem from "../components/AppListItem";
 import { fetchRecipe } from "../store/reducers/details/recipe";
 import { useDispatch, useSelector } from "react-redux";
 import AppProgress from "../components/AppProgress";
+import { Edit } from "@mui/icons-material";
 
 const RecipeDetails = () => {
   const { id: recipeId } = useParams();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const apiCalled = useRef(false);
 
@@ -30,7 +33,6 @@ const RecipeDetails = () => {
     }
   }, []);
 
-  
   if (recipe.loading)
     return (
       <Grid container justifyContent={"center"} alignItems="center">
@@ -65,6 +67,11 @@ const RecipeDetails = () => {
                 {`${recipe.data?.recipe?.yield.value} ${recipe.data?.recipe?.yield.label}`}
               </Grid>
               <Grid item>Difficulty: {recipe.data.difficulty || "N/A"}</Grid>
+            </Grid>
+            <Grid item>
+              <IconButton onClick={() => navigate(`/recipes/edit/${recipeId}`)}>
+                <Edit />
+              </IconButton>
             </Grid>
           </Box>
 

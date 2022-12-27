@@ -10,7 +10,6 @@ const slice = createSlice({
   },
   reducers: {
     recipeFetched: (recipe, action) => {
-      console.log(action.payload.data);
       recipe.data = action.payload.data;
     },
     recipeFetchBegan: (recipe) => {
@@ -27,7 +26,6 @@ const { recipeFetchBegan, recipeFetched, recipeFetchEnded } = slice.actions;
 
 const url = "/recipes";
 export const fetchRecipe = (id) => async (dispatch, getStore) => {
-  console.log(id);
   dispatch(
     apiRequest({
       url: `${url}/${id}`,
@@ -39,4 +37,18 @@ export const fetchRecipe = (id) => async (dispatch, getStore) => {
 
   const store = getStore();
   console.log(store);
+};
+
+export const updateRecipe = (id, data, callback) => async (dispatch) => {
+  dispatch(
+    apiRequest({
+      url: `${url}/${id}`,
+      data,
+      method: "put",
+      toggleOnError: true,
+      toggleOnSuccess: true,
+    })
+  );
+
+  if (typeof callback === "function") callback();
 };

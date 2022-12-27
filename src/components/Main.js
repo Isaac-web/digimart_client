@@ -65,6 +65,7 @@ const Main = () => {
           <Route path="/branches" element={<Branches />} />
           <Route path="/home" element={<Home />} />
           <Route path="/recipes/new" element={<EditRecipe />} />
+          <Route path="/recipes/edit/:id" element={<EditRecipe />} />
           <Route path="/recipes/:id" element={<RecipeDetails />} />
           <Route path="/recipes" element={<Recipes />} />
           <Route path="/" element={<Navigate to="/home" />} />

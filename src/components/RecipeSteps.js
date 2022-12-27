@@ -13,7 +13,7 @@ import {
 import { Box } from "@mui/system";
 import React from "react";
 
-const RecipeSteps = ({ steps, onStepsChange, errorMessage, ...rest }) => {
+const RecipeSteps = ({ steps = [], onStepsChange, errorMessage, ...rest }) => {
   const handleDelete = (item) => {
     const newList = steps.filter((s) => s.text !== item.text);
     onStepsChange(newList);
@@ -22,14 +22,19 @@ const RecipeSteps = ({ steps, onStepsChange, errorMessage, ...rest }) => {
   const raiseAddStep = ({ key, target: input }) => {
     if (key === "Enter" && input.value.trim()) {
       if (typeof onStepsChange === "function") {
-        const step_found = steps.findIndex(item => item.text ===  input.value.trim())
-  
-        console.log(step_found)
+        const step_found = steps.findIndex(
+          (item) => item.text === input.value.trim()
+        );
+
+        // if (step_found) return;
+
         onStepsChange([...steps, { text: input.value }]);
         input.value = "".trim();
       }
     }
   };
+
+  const mapToViewModel = (items) => items.map((item) => ({ text: item.text }));
 
   return (
     <>
@@ -46,7 +51,7 @@ const RecipeSteps = ({ steps, onStepsChange, errorMessage, ...rest }) => {
       <Container maxWidth="md">
         {steps.length ? (
           <List>
-            {steps.map((item, index) => (
+            {mapToViewModel(steps).map((item, index) => (
               <StepListItem
                 key={index.toString()}
                 stepNumber={index + 1}

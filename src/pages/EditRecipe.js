@@ -27,9 +27,15 @@ import {
 import { fetchCategories } from "../store/reducers/entities/recipeCategories";
 import { addRecipe } from "../store/reducers/entities/recipes";
 import { uploadFile } from "../utils/uploader";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import FormRecipeSteps from "../components/form/FormRecipeSteps";
 import { useFormikContext } from "formik";
+import recipe, {
+  fetchRecipe,
+  updateRecipe,
+} from "../store/reducers/details/recipe";
+import categories from "../store/reducers/entities/categories";
+import AppCircurlarProgress from "../components/AppProgress";
 
 const data = {
   name: "",
@@ -66,11 +72,17 @@ const validationSchema = Yup.object().shape({
 const EditRecipe = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { id: recipeId } = useParams();
   const [image, setImage] = useState(null);
   const [progress, setProgress] = useState(0);
   const [open, setOpen] = useState(false);
 
   const categories = useSelector((state) => state.entities.recipeCategories);
+  const recipe = useSelector((state) => state.details.recipe);
+
+  const loadRecipeData = async () => {
+    dispatch(fetchRecipe(recipeId));
+  };
 
   const handleUploadProgress = (loaded, total) => {
     setProgress(Math.floor(loaded / total) * 100);
@@ -94,7 +106,9 @@ const EditRecipe = () => {
       }
     }
 
-    dispatch(addRecipe(data));
+    if (recipeId && recipe) {
+      dispatch(updateRecipe(recipeId, data, () => navigate("/recipes")));
+    } else dispatch(addRecipe(data));
   };
 
   const handleChangeImage = (file) => {
@@ -109,13 +123,37 @@ const EditRecipe = () => {
     setOpen(false);
   };
 
+  const mapRecipeDataToInputs = (recipe) => {
+    if (recipe) {
+      data.name = recipe?.data?.recipe?.name;
+      data.categoryId = recipe?.data?.recipe?.category;
+      data.description = recipe?.data?.recipe?.description;
+      data.yieldValue = recipe?.data?.recipe?.yield?.value;
+      data.yieldLabel = recipe?.data?.recipe?.yield?.label;
+      data.prepTime = recipe?.data?.recipe?.prepTime;
+      data.cookingTime = recipe?.data?.recipe?.cookingTime;
+      data.cookingMethod = recipe?.data?.recipe?.cookingMethod;
+      data.suitableFor = recipe?.data?.recipe?.suitableFor;
+      data.ingredients = recipe?.data?.recipe?.ingredients;
+      data.procedure = recipe?.data?.recipe?.procedure;
+      data.videoUrl = recipe?.data?.recipe?.video?.url;
+    }
+  };
+
   const apiCalled = useRef(false);
   useEffect(() => {
     if (!apiCalled.current) {
+      if (recipeId) loadRecipeData();
+
       dispatch(fetchCategories());
       apiCalled.current = true;
     }
   }, []);
+
+  if (categories.loading || recipe?.loading)
+    return <AppCircurlarProgress size="1em" />;
+
+  if (recipe) mapRecipeDataToInputs(recipe);
 
   return (
     <Container maxWidth="lg">
@@ -235,7 +273,10 @@ const EditRecipe = () => {
                 </Grid>
 
                 <Grid item sx={{ marginBottom: "5em" }}>
-                  <IngredientList name="ingredients" />
+                  <IngredientList
+                    name="ingredients"
+                    list={recipe?.data?.ingredientList}
+                  />
                 </Grid>
 
                 <Grid item>
@@ -247,7 +288,9 @@ const EditRecipe = () => {
                   sx={{ padding: "1em 0" }}
                   justifyContent="flex-end"
                 >
-                  <SubmitButton>Submit</SubmitButton>
+                  <SubmitButton>
+                    {Boolean(recipe) ? "Update" : "Submit"}
+                  </SubmitButton>
                 </Grid>
               </Form>
             </Box>
@@ -258,9 +301,9 @@ const EditRecipe = () => {
   );
 };
 
-const IngredientList = ({ name }) => {
+const IngredientList = ({ name, list = [] }) => {
   const [searchValue, setSearchValue] = useState("");
-  const [productItems, setProductItems] = useState([]);
+  const [productItems, setProductItems] = useState(list);
   const [formatedProducts, setFormatedProducts] = useState([]);
   const dispatch = useDispatch();
   const { setFieldValue } = useFormikContext();
@@ -280,6 +323,9 @@ const IngredientList = ({ name }) => {
     setSearchValue("");
   };
 
+  useEffect(() => {
+    setFormatedProducts(productItems.map(item => ({product: item._id})));
+  }, []);
   return (
     <Box>
       <Box>
