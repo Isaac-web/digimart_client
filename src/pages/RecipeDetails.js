@@ -95,6 +95,7 @@ const RecipeDetails = () => {
                   key={item._id}
                   avatarShown
                   title={item.name}
+                  subtitle={`Quantity: ${item.quantity} x ${item.unit}`}
                   avatarUrl={item?.image?.url}
                 />
               ))}

@@ -1,12 +1,19 @@
 import React, { memo, useEffect, useRef, useState } from "react";
 import {
+  Button,
   ButtonBase,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
+  IconButton,
   InputAdornment,
   List,
   Paper,
+  TextField,
   Typography,
 } from "@mui/material";
 import * as Yup from "yup";
@@ -36,6 +43,7 @@ import recipe, {
 } from "../store/reducers/details/recipe";
 import categories from "../store/reducers/entities/categories";
 import AppCircurlarProgress from "../components/AppProgress";
+import { Delete, Edit } from "@mui/icons-material";
 
 const data = {
   name: "",
@@ -305,6 +313,8 @@ const IngredientList = ({ name, list = [] }) => {
   const [searchValue, setSearchValue] = useState("");
   const [productItems, setProductItems] = useState(list);
   const [formatedProducts, setFormatedProducts] = useState([]);
+  const [currentIngredient, setCurrentIngredient] = useState(null);
+  const [ingredientDialogOpen, setIngredientDialogOpen] = useState(false);
   const dispatch = useDispatch();
   const { setFieldValue } = useFormikContext();
 
@@ -317,14 +327,48 @@ const IngredientList = ({ name, list = [] }) => {
 
   const handleSelectItem = (item) => {
     setProductItems([...productItems, item]);
-    setFormatedProducts([...formatedProducts, { product: item._id }]);
-    setFieldValue(name, [...formatedProducts, { product: item._id }]);
+    setFormatedProducts([
+      ...formatedProducts,
+      { product: item._id, quantity: item.quantity },
+    ]);
+    setFieldValue(name, [
+      ...formatedProducts,
+      { product: item._id, quantity: item.quantity },
+    ]);
     dispatch(clearSearch());
     setSearchValue("");
   };
 
+  const handleDeleteItem = (item) => {
+    setProductItems(productItems.filter((i) => i._id !== item._id));
+    const remainingFomattedProducts = formatedProducts.filter(
+      (i) => i.product !== item._id
+    );
+    setFormatedProducts(remainingFomattedProducts);
+    setFieldValue(name, remainingFomattedProducts);
+  };
+
+  const openEditDialog = (item) => {
+    setCurrentIngredient(item);
+    setIngredientDialogOpen(true);
+  };
+
+  const handleIngredientEditSave = (item) => {
+    const index = productItems.findIndex((p) => p._id === item._id);
+    const clonedProducts = [...productItems];
+    clonedProducts[index] = item;
+    setProductItems(clonedProducts);
+
+    const formatted = clonedProducts.map((item) => ({
+      product: item._id,
+      quantity: item.quantity,
+    }));
+
+    setFieldValue(name, formatted);
+  };
+
   useEffect(() => {
-    setFormatedProducts(productItems.map(item => ({product: item._id})));
+    setFormatedProducts(productItems.map((item) => ({ product: item._id })));
   }, []);
   return (
     <Box>
@@ -377,12 +421,36 @@ const IngredientList = ({ name, list = [] }) => {
             {productItems?.length ? (
               <List>
                 {productItems.map((item) => (
-                  <AppListItem
-                    key={item._id}
-                    avatarShown
-                    avatarUrl={item.image.url}
-                    title={item.name}
-                  />
+                  <Grid
+                    container
+                    justifyContent="space-between"
+                    alignItems={"center"}
+                  >
+                    <Grid item>
+                      <AppListItem
+                        key={item._id}
+                        avatarShown
+                        avatarUrl={item.image.url}
+                        title={item.name}
+                        subtitle={`Quantity: ${item.quantity || ""}`}
+                      />
+                    </Grid>
+
+                    <Grid item>
+                      <Grid container>
+                        <Grid item>
+                          <IconButton onClick={() => openEditDialog(item)}>
+                            <Edit sx={{ fontSize: "0.8em" }} />
+                          </IconButton>
+                        </Grid>
+                        <Grid item>
+                          <IconButton onClick={() => handleDeleteItem(item)}>
+                            <Delete sx={{ fontSize: "0.8em" }} />
+                          </IconButton>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
                 ))}
               </List>
             ) : (
@@ -393,9 +461,65 @@ const IngredientList = ({ name, list = [] }) => {
               </Box>
             )}
           </Box>
+          <IngredientEditDialog
+            open={ingredientDialogOpen}
+            onClose={() => setIngredientDialogOpen(false)}
+            onSave={(value) => handleIngredientEditSave(value)}
+            item={currentIngredient}
+          />
         </Box>
       </Box>
     </Box>
+  );
+};
+
+const IngredientEditDialog = ({ open, onClose, item, onSave }) => {
+  const [ingredient, setIngredient] = useState(null);
+
+  const raiseSave = (item) => {
+    onSave(ingredient);
+    onClose();
+  };
+
+  const handleChange = ({ target: input }) => {
+    const editedItem = Object.assign({}, item, {
+      quantity: Number(input.value),
+    });
+    item = editedItem;
+    setIngredient(item);
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
+      <DialogTitle>Edit Ingredient</DialogTitle>
+      <DialogContent>
+        <Box>
+          <AppListItem
+            avatarShown
+            avatarUrl={item?.image?.url || "none"}
+            title={item?.name || ""}
+          />
+        </Box>
+
+        <Box>
+          <Grid container justifyContent={"flex-end"}>
+            <TextField
+              onChange={handleChange}
+              label="Quantity"
+              type="number"
+              placeholder="Input new value..."
+            />
+          </Grid>
+        </Box>
+      </DialogContent>
+
+      <DialogActions>
+        <Button onClick={onClose} variant="text">
+          Cancel
+        </Button>
+        <Button onClick={raiseSave}>Save</Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

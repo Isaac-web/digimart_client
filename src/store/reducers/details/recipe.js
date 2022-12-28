@@ -34,9 +34,6 @@ export const fetchRecipe = (id) => async (dispatch, getStore) => {
       onSuccess: recipeFetched.type,
     })
   );
-
-  const store = getStore();
-  console.log(store);
 };
 
 export const updateRecipe = (id, data, callback) => async (dispatch) => {
