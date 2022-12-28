@@ -18,11 +18,17 @@ const slice = createSlice({
     recipeFetchEnded: (recipe) => {
       recipe.loading = false;
     },
+    recipeCleared: (recipe) => {
+      recipe.data = {};
+      recipe.loading = false;
+      recipe.errorMessage = "";
+    },
   },
 });
 
 export default slice.reducer;
-const { recipeFetchBegan, recipeFetched, recipeFetchEnded } = slice.actions;
+const { recipeFetchBegan, recipeFetched, recipeFetchEnded, recipeCleared } =
+  slice.actions;
 
 const url = "/recipes";
 export const fetchRecipe = (id) => async (dispatch, getStore) => {
@@ -48,4 +54,8 @@ export const updateRecipe = (id, data, callback) => async (dispatch) => {
   );
 
   if (typeof callback === "function") callback();
+};
+
+export const clearRecipe = () => (dispatch) => {
+  dispatch(recipeCleared());
 };
