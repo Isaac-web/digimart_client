@@ -145,7 +145,7 @@ const CouponsTable = ({ items }) => {
     handleCloseDeleteDialog();
   };
 
-  if (!items.length)
+  if (!items?.length)
     return (
       <Box sx={{ padding: "3em 0" }}>
         <Empty
