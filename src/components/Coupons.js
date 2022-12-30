@@ -11,9 +11,11 @@ import { deleteCoupon, fetchCoupons } from "../store/reducers/entities/coupons";
 import getDateTime from "../utils/getDateTime";
 import CouponDeleteDialog from "./CouponDeleteDialog";
 import Empty from "../Empty";
+import useUser from "../customHooks/useUser";
 
 const Coupons = () => {
   const dispatch = useDispatch();
+  const user = useUser();
   const [couponDialogOpen, setCouponDialogOpen] = useState(false);
 
   const coupons = useSelector((state) => state.entities.coupons);
@@ -33,6 +35,8 @@ const Coupons = () => {
       apiCalled.current = true;
     }
   }, []);
+
+  if (user.userType !== "system" && user.designation !== "admin") return null;
 
   return (
     <>
