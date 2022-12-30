@@ -102,7 +102,7 @@ const CouponsTable = ({ items }) => {
       key: "5",
       label: "Used",
       dataIndex: "used",
-      render: (item) => `${item.usedBy.length || 0}`,
+      render: (item) => `${item.usedBy?.length || 0}`,
     },
     {
       align: "center",
