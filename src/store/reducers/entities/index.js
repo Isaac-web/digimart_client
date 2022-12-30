@@ -8,6 +8,7 @@ import branches from "./branches";
 import designations from "./designations";
 import recipeCategories from "./recipeCategories";
 import recipes from "./recipes";
+import coupons from "./coupons";
 
 const entities = combineReducers({
   categories,
@@ -19,6 +20,7 @@ const entities = combineReducers({
   designations,
   recipeCategories,
   recipes,
+  coupons,
 });
 
 export default entities;

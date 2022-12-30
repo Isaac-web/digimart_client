@@ -39,8 +39,8 @@ const DashboarSummeryTile = ({
               <Typography varaint="body1" fontWeight="bold">
                 {title}
 
-                <Typography
-                  sx={{
+                <span
+                  style={{
                     display: "inline",
                     fontWeight: "300",
                     marginLeft: "1em",
@@ -48,7 +48,7 @@ const DashboarSummeryTile = ({
                   variant="inherit"
                 >
                   {xData}
-                </Typography>
+                </span>
               </Typography>
             </Grid>
             <Grid item>

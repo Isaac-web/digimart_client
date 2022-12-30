@@ -1,8 +1,9 @@
 import React from "react";
-import { Box, Grid, Typography, Container, Paper } from "@mui/material";
+import { Box, Grid, Typography, Container } from "@mui/material";
 
 import { dashboardData } from "../data/dashboard";
 import DashboardSummeryTile from "../components/DashboardSummeryTile";
+import Coupons from "../components/Coupons";
 
 const Home = () => {
   return (
@@ -13,7 +14,7 @@ const Home = () => {
         </Typography>
       </Box>
 
-      <Box>
+      <Box sx={{ marginBottom: "1.5em" }}>
         <Grid container spacing={3}>
           {dashboardData.map((item, index) => (
             <DashboardSummeryTile
@@ -27,6 +28,10 @@ const Home = () => {
             />
           ))}
         </Grid>
+      </Box>
+
+      <Box>
+        <Coupons />
       </Box>
     </Container>
   );

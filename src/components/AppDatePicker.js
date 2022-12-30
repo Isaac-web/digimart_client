@@ -7,12 +7,7 @@ const AppDatePicker = ({ onChange, error, helperText, ...rest }) => {
     <DatePicker
       onChange={(newDate) => onChange(new Date(newDate))}
       renderInput={(params) => (
-        <TextField
-          error={error}
-          fullWidth
-          helperText={helperText}
-          {...params}
-        />
+        <TextField error={true} fullWidth helperText={helperText} {...params} />
       )}
       {...rest}
     />
