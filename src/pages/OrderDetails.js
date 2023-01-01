@@ -73,7 +73,7 @@ const OrderDetails = () => {
           title: "Payment method",
           value: order?.payment_method?.name || "Cash",
         },
-        { title: "Note", value: order?.comment },
+        // { title: `${order?.comment ? "Note" : ""} `, value: order?.comment },
       ];
     }
   };
@@ -184,6 +184,23 @@ const OrderDetails = () => {
                       />
                     </Box>
                   ))}
+
+                  {order?.data?.comment && (
+                    <Box
+                      item
+                      container
+                      sx={(theme) => ({
+                        backgroundColor: theme.palette.common.extraLight,
+                        padding: "1em",
+                        borderRadius: theme.rounded.small,
+                      })}
+                    >
+                      <Typography variant="body2" fontWeight="bold">
+                        Note
+                      </Typography>
+                      <Box>{order?.data?.comment || "Hello World"}</Box>
+                    </Box>
+                  )}
                 </Box>
               </Box>
             </Paper>

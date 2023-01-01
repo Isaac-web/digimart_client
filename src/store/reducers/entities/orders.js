@@ -6,6 +6,12 @@ const slice = createSlice({
   initialState: {
     loading: false,
     pendingCount: 0,
+    search: {
+      active: false,
+      data: {
+        items: [],
+      },
+    },
     data: {
       items: [],
       totalItemsCount: 0,
@@ -28,6 +34,22 @@ const slice = createSlice({
     pendingOrdersFetched: (orders, action) => {
       orders.pendingCount = action.payload.data;
     },
+
+    orderSearchBegan: (orders) => {
+      orders.search.searching = true;
+    },
+    searchResultFetched: (orders, action) => {
+      orders.search.active = true;
+      orders.search.data.items = action.payload.data.orders;
+    },
+    orderSearchEnded: (orders) => {
+      orders.search.searching = false;
+    },
+    orderSearchCleared: (orders) => {
+      orders.search.searching = false;
+      orders.search.data.items = [];
+      orders.search.active = false;
+    },
   },
 });
 
@@ -37,6 +59,10 @@ const {
   orderFetchStarted,
   orderFetchEnded,
   pendingOrdersFetched,
+  searchResultFetched,
+  orderSearchBegan,
+  orderSearchEnded,
+  orderSearchCleared,
 } = slice.actions;
 
 const url = "/orders";
@@ -70,7 +96,18 @@ export const fetchPendingOrders = (data) => (dispatch) => {
   dispatch(pendingOrdersFetched({ data: data.pendingOrders }));
 };
 
+export const searchOrders = (params) => async (dispatch) => {
+  dispatch(
+    apiRequest({
+      url,
+      params,
+      onBegin: orderSearchBegan.type,
+      onEnd: orderSearchEnded.type,
+      onSuccess: searchResultFetched.type,
+    })
+  );
+};
 
-const changePageSize = (pageSize) => {
-  
-}
+export const clearOrderSearch = () => (dispatch) => {
+  dispatch(orderSearchCleared());
+};

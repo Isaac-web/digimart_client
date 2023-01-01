@@ -22,9 +22,11 @@ import { useSelector, useDispatch } from "react-redux";
 import AppTable from "../components/AppTable";
 import SearchField from "../components/SearchField";
 import {
+  clearOrderSearch,
   fetchBranchOrders,
   fetchOrders,
   fetchPendingOrders,
+  searchOrders,
 } from "../store/reducers/entities/orders";
 import { columns } from "../data/orders";
 import getDateTime from "../utils/getDateTime";
@@ -34,6 +36,7 @@ import { subscribe } from "../utils/longPoll";
 const Orders = () => {
   const user = useUser();
   const navigate = useNavigate();
+  const [searchValue, setSearchValue] = useState("");
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.entities.orders);
   const [currentTab, setCurrentTab] = useState(0);
@@ -79,6 +82,16 @@ const Orders = () => {
     else dispatch(fetchBranchOrders({ currentPage: page, pageSize: 25 }));
   };
 
+  const handleSearchOrders = (value, key) => {
+    if (key === "Enter" && value.trim()) {
+      dispatch(searchOrders({ orderId: value }));
+    }
+  };
+
+  const handleClearOrderSearch = () => {
+    dispatch(clearOrderSearch());
+  };
+
   const mapToViewModel = (data) => {
     if (data.length) {
       return data.map((item) => ({
@@ -88,6 +101,7 @@ const Orders = () => {
         itemsCount: item.order_items.length,
         total: `Ghc${item.total?.toFixed(2)}`,
         date: getDateTime(new Date(item.createdAt)).dateString,
+        customerName: `${item?.customer?.firstname} ${item?.customer?.lastname}`,
         deliveryDate: "N/A",
       }));
     } else {
@@ -120,7 +134,12 @@ const Orders = () => {
     <Container sx={{ paddingBottom: "2em" }}>
       <Box>
         {renderTitle(orders)}
-        {renderSearchToolbar(orders, handleFetchOrders)}
+        {renderSearchToolbar(
+          orders,
+          handleFetchOrders,
+          handleSearchOrders,
+          handleClearOrderSearch
+        )}
 
         <Paper
           sx={(theme) => ({
@@ -146,7 +165,11 @@ const Orders = () => {
               <AppTable
                 rowKey={"_id"}
                 columns={columns}
-                data={mapToViewModel(orders.data.items)}
+                data={mapToViewModel(
+                  orders.search.data?.items?.length || orders.search.active
+                    ? orders.search.data?.items
+                    : orders.data.items
+                )}
                 onRowSelect={handleRowSelect}
                 // rowsPerPage={rowsPerPage}
                 // count={orders.data.totalItemsCount}
@@ -171,7 +194,12 @@ const renderTitle = (orders) => {
   );
 };
 
-const renderSearchToolbar = (orders, handleFetchOrders) => {
+const renderSearchToolbar = (
+  orders,
+  handleFetchOrders,
+  handleSearchOrders,
+  handleClearOrderSearch
+) => {
   return (
     <Box>
       <Box
@@ -184,6 +212,8 @@ const renderSearchToolbar = (orders, handleFetchOrders) => {
           <Grid item xs={12} md={10} lg={9}>
             <SearchField
               placeholder="Search by order Id"
+              onChange={handleSearchOrders}
+              onClear={handleClearOrderSearch}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton>
@@ -201,14 +231,14 @@ const renderSearchToolbar = (orders, handleFetchOrders) => {
               justifyContent={"flex-end"}
               sx={{ height: "100%" }}
             >
-              
               <Grid item>
                 <Chip
                   label={`Pending Orders: ${orders.pendingCount}`}
                   sx={(theme) => ({
-                    backgroundColor: (parseInt(orders.pendingCount) === 0)
-                      ? "rgba(0, 0, 0, 0.1)"
-                      : "lightgreen",
+                    backgroundColor:
+                      parseInt(orders.pendingCount) === 0
+                        ? "rgba(0, 0, 0, 0.1)"
+                        : "lightgreen",
                     color: "white",
                   })}
                 />

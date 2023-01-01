@@ -38,8 +38,8 @@ const validationSchema = Yup.object().shape({
   imageUri: Yup.string(),
   branchId: Yup.string().required(),
   designationId: Yup.string().required(),
-  password: Yup.string().min(10).max(128).required(),
-  confirmPassword: Yup.string().min(10).max(128).required(),
+  password: Yup.string().min(7).max(128).required(),
+  confirmPassword: Yup.string().min(7).max(128).required(),
 });
 
 const systemUserSchema = Yup.object().shape({

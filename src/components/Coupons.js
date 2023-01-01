@@ -97,7 +97,7 @@ const CouponsTable = ({ items }) => {
     {
       align: "center",
       key: "4",
-      label: "Expires At",
+      label: "Expires On",
       dataIndex: "expiresAt",
       render: (item) => `${getDateTime(new Date(item.expiresAt)).dateString}`,
     },

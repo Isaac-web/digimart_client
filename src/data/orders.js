@@ -7,16 +7,15 @@ export const columns = [
     dataIndex: "orderId",
   },
   {
-    key: "1",
+    key: "2",
+    label: "Customer",
+    dataIndex: "customerName",
+  },
+  {
+    key: "3",
     label: "Date",
     dataIndex: "date",
   },
-  // {
-  //   key: "2",
-  //   label: "Delivery Date",
-  //   dataIndex: "deliveryDate",
-  // },
-
   {
     key: "4",
     label: "Number Of Items",
@@ -24,7 +23,7 @@ export const columns = [
     align: "center",
   },
   {
-    key: "3",
+    key: "5",
     label: "Status",
     dataIndex: "status",
     align: "center",
@@ -33,9 +32,9 @@ export const columns = [
     },
   },
   {
-    key: "3",
+    key: "6",
     label: "Total",
     dataIndex: "total",
-    align: "right"
+    align: "right",
   },
 ];

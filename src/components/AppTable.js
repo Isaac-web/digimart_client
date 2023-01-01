@@ -70,8 +70,11 @@ const AppTable = ({
           </Grid>
         ) : (
           <TableBody>
-            {data?.map((item) => (
-              <TableRow key={item[rowKey]} onClick={() => raiseRowSelect(item)}>
+            {data?.map((item, rowIndex) => (
+              <TableRow
+                key={rowIndex.toString() + item[rowKey]}
+                onClick={() => raiseRowSelect(item)}
+              >
                 {columns.map((c, index) => (
                   <TableCell align={c?.align} key={c.dataIndex + index}>
                     {renderCell(item, c)}
