@@ -14,7 +14,7 @@ const DashboardSummery = () => {
 
   const dashboardData = [
     {
-      title: summery.data?.customerCount || 0,
+      title: summery.data?.productsCount || 0,
       subtitle: "Products",
       xData: "-3%",
       Icon: <BsBox />,
@@ -23,7 +23,7 @@ const DashboardSummery = () => {
       loading: summery?.loading || false,
     },
     {
-      title: summery.data?.productsCount || 0,
+      title: summery.data?.customerCount || 0,
       subtitle: "Customers",
       xData: "+4%",
       Icon: <BsFillPeopleFill />,
