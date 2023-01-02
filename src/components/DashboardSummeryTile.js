@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Paper, Box, Typography } from "@mui/material";
+import { Grid, Paper, Box, Typography, CircularProgress } from "@mui/material";
 
 const DashboarSummeryTile = ({
   title,
@@ -8,6 +8,7 @@ const DashboarSummeryTile = ({
   Icon,
   iconColor,
   iconBackgroundColor,
+  loading,
 }) => {
   return (
     <Grid item xs={12} md={6} lg={3}>
@@ -36,20 +37,25 @@ const DashboarSummeryTile = ({
               </Box>
             </Grid>
             <Grid item>
-              <Typography varaint="body1" fontWeight="bold">
-                {title}
+              {loading ? (
+                <CircularProgress size={"0.75em"} />
+              ) : (
+                <Typography varaint="body1" fontWeight="bold">
+                  {title}
 
-                <span
-                  style={{
-                    display: "inline",
-                    fontWeight: "300",
-                    marginLeft: "1em",
-                  }}
-                  variant="inherit"
-                >
-                  {xData}
-                </span>
-              </Typography>
+                  <span
+                    style={{
+                      display: "inline",
+                      fontWeight: "300",
+                      marginLeft: "1em",
+                      fontSize: "0.8em",
+                    }}
+                    variant="inherit"
+                  >
+                    {xData}
+                  </span>
+                </Typography>
+              )}
             </Grid>
             <Grid item>
               <Typography

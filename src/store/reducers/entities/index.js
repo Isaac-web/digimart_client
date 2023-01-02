@@ -9,6 +9,7 @@ import designations from "./designations";
 import recipeCategories from "./recipeCategories";
 import recipes from "./recipes";
 import coupons from "./coupons";
+import dashboardSummery from "./dashboardSummery";
 
 const entities = combineReducers({
   categories,
@@ -21,6 +22,7 @@ const entities = combineReducers({
   recipeCategories,
   recipes,
   coupons,
+  dashboardSummery,
 });
 
 export default entities;
