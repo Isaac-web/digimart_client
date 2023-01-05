@@ -6,7 +6,7 @@ export const tableColumns = [
     render: (item) => (
       <Avatar
         sx={(theme) => ({ backgroundColor: theme.palette.common.extraLight })}
-        image=""
+        image={item.image}
       />
     ),
     dataIndex: "image",

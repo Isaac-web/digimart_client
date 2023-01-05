@@ -11,6 +11,7 @@ import {
   Toolbar,
   Grid,
   Container,
+  Typography,
 } from "@mui/material";
 import _ from "lodash";
 import AppPorgress from "../components/AppProgress";
@@ -27,6 +28,7 @@ const AppTable = ({
   onPageChange,
   showFooter,
   loading,
+  empty,
 }) => {
   const renderCell = (item, column) => {
     if (column.render) return column.render(item);
@@ -42,11 +44,13 @@ const AppTable = ({
     if (onPageChange) onPageChange(newPage);
   };
 
-  if (!data?.length)
+  if (empty)
     return (
-      <Container>
-        <Empty />
-      </Container>
+      <Box>
+        <Typography align="center" fontWeight={"semibold"} variant="subtitle2">
+          Looks like there is not results for your search.
+        </Typography>
+      </Box>
     );
 
   return (
