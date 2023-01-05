@@ -60,6 +60,7 @@ const Customers = () => {
           <Grid item xs={12} lg={8}>
             <SearchField
               placeholder="Search Customers by firstname or lastname..."
+              loading={search.loading}
               onChange={handleSearch}
               onClear={handleClearSearch}
             />

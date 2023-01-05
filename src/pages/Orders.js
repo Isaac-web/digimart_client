@@ -145,7 +145,11 @@ const Orders = () => {
     if (!longPolling.current) {
       subscribe(
         `${process.env.REACT_APP_API_URI}/orders/branch/pending?status=0`,
-        (count) => dispatch(fetchPendingOrders(count))
+        (count) => {
+          if (orders.pendingCount < count.pendingOrders[0]) {
+            dispatch(fetchPendingOrders(count));
+          }
+        }
       );
       longPolling.current = true;
     }

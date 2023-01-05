@@ -10,8 +10,8 @@ import configureReduxStore from "./store";
 import AppSnacbar from "./components/AppSnacbar";
 import DateTimeProvider from "./components/DateTimeProvider";
 
+export const store = configureReduxStore();
 const App = () => {
-  const store = configureReduxStore();
   return (
     <Provider store={store}>
       <AppContext>
