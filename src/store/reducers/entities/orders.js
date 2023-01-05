@@ -31,10 +31,14 @@ const slice = createSlice({
     orderFetchEnded: (orders) => {
       orders.loading = false;
     },
+    orderDeleted: (orders, action) => {
+      orders.data.items = orders.data.items.filter(
+        (item) => item._id !== action.payload.id
+      );
+    },
     pendingOrdersFetched: (orders, action) => {
       orders.pendingCount = action.payload.data;
     },
-
     orderSearchBegan: (orders) => {
       orders.search.searching = true;
     },
@@ -63,6 +67,7 @@ const {
   orderSearchBegan,
   orderSearchEnded,
   orderSearchCleared,
+  orderDeleted,
 } = slice.actions;
 
 const url = "/orders";
@@ -110,4 +115,16 @@ export const searchOrders = (params) => async (dispatch) => {
 
 export const clearOrderSearch = () => (dispatch) => {
   dispatch(orderSearchCleared());
+};
+
+export const deleteOrder = (orderId) => (dispatch) => {
+  dispatch(orderDeleted({ id: orderId }));
+  dispatch(
+    apiRequest({
+      url: `${url}/${orderId}`,
+      method: "delete",
+      toggleOnError: true,
+      toggleOnSuccess: true,
+    })
+  );
 };

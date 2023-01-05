@@ -1,8 +1,14 @@
 import React, { memo, useEffect, useRef, useState } from "react";
 import {
   Box,
+  Button,
   Chip,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Grid,
   IconButton,
   InputAdornment,
@@ -14,7 +20,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { FilterList, Refresh } from "@mui/icons-material";
+import { Delete, FilterList, Refresh } from "@mui/icons-material";
 import { TabContext } from "@mui/lab";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -23,6 +29,7 @@ import AppTable from "../components/AppTable";
 import SearchField from "../components/SearchField";
 import {
   clearOrderSearch,
+  deleteOrder,
   fetchBranchOrders,
   fetchOrders,
   fetchPendingOrders,
@@ -36,7 +43,8 @@ import { subscribe } from "../utils/longPoll";
 const Orders = () => {
   const user = useUser();
   const navigate = useNavigate();
-  const [searchValue, setSearchValue] = useState("");
+  const [currentOrderId, setCurrentOrderId] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const dispatch = useDispatch();
   const orders = useSelector((state) => state.entities.orders);
   const [currentTab, setCurrentTab] = useState(0);
@@ -90,6 +98,21 @@ const Orders = () => {
 
   const handleClearOrderSearch = () => {
     dispatch(clearOrderSearch());
+  };
+
+  const handleOpenDeleteDialog = (item) => {
+    setCurrentOrderId(item._id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setCurrentOrderId(null);
+    setDeleteDialogOpen(false);
+  };
+
+  const handleDeleteOrder = () => {
+    dispatch(deleteOrder(currentOrderId));
+    handleCloseDeleteDialog();
   };
 
   const mapToViewModel = (data) => {
@@ -164,7 +187,22 @@ const Orders = () => {
             <Box sx={{ padding: "1.0em" }}>
               <AppTable
                 rowKey={"_id"}
-                columns={columns}
+                columns={[
+                  ...columns,
+                  {
+                    key: "6",
+                    label: null,
+                    align: "right",
+                    render: (item) => {
+                      return (
+                        <OrderDeleteButton
+                          order={item}
+                          onClick={() => handleOpenDeleteDialog(item)}
+                        />
+                      );
+                    },
+                  },
+                ]}
                 data={mapToViewModel(
                   orders.search.data?.items?.length || orders.search.active
                     ? orders.search.data?.items
@@ -179,6 +217,32 @@ const Orders = () => {
           </TabContext>
         </Paper>
       </Box>
+
+      <Dialog
+        open={deleteDialogOpen}
+        fullWidth
+        maxWidth="xs"
+        onClose={handleCloseDeleteDialog}
+      >
+        <DialogTitle>Confirmation</DialogTitle>
+        <DialogContent>
+          <DialogContentText variant="subtitle1">
+            Are you sure you to permanently want to delete this order?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCloseDeleteDialog}
+            size="small"
+            variant={"text"}
+          >
+            No
+          </Button>
+          <Button onClick={handleDeleteOrder} size="small">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };
@@ -296,6 +360,36 @@ const renderTablePagination = (props) => {
         onPageChange={onPageChange}
       />
     </Toolbar>
+  );
+};
+
+const OrderDeleteButton = ({ order, onClick, ...rest }) => {
+  const openDialog = (e) => {
+    e.stopPropagation();
+    onClick();
+  };
+
+  return (
+    <>
+      <IconButton
+        disabled={order?.status > 0}
+        onClick={openDialog}
+        sx={(theme) => ({
+          color: theme.palette.error.light,
+          opacity: "0.7",
+          "&:hover": {
+            opacity: "1",
+          },
+        })}
+        {...rest}
+      >
+        <Delete
+          sx={(theme) => ({
+            fontSize: "0.72em",
+          })}
+        />
+      </IconButton>
+    </>
   );
 };
 
