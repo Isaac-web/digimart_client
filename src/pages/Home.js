@@ -1,10 +1,9 @@
 import React from "react";
-import { Box, Grid, Typography, Container } from "@mui/material";
+import { Box, Typography, Container } from "@mui/material";
 
-import { dashboardData } from "../data/dashboard";
-import DashboardSummeryTile from "../components/DashboardSummeryTile";
 import Coupons from "../components/Coupons";
 import DashboardSummery from "../components/DashboardSummery";
+import Sliders from "../components/Sliders";
 
 const Home = () => {
   return (
@@ -19,7 +18,11 @@ const Home = () => {
         <DashboardSummery />
       </Box>
 
-      <Box>
+      <Box sx={{ marginBottom: "1.5em" }}>
+        <Sliders />
+      </Box>
+
+      <Box sx={{marginBottom: "3em"}}>
         <Coupons />
       </Box>
     </Container>

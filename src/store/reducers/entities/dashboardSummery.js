@@ -19,7 +19,6 @@ const slice = createSlice({
       summery.loading = false;
     },
     summeryFetched: (summery, action) => {
-      console.log(action);
       summery.data.productsCount = action.payload.data.productsCount;
       summery.data.recipeCount = action.payload.data.recipeCount;
       summery.data.customerCount = action.payload.data.customerCount;

@@ -10,6 +10,7 @@ import recipeCategories from "./recipeCategories";
 import recipes from "./recipes";
 import coupons from "./coupons";
 import dashboardSummery from "./dashboardSummery";
+import sliders from "./sliders";
 
 const entities = combineReducers({
   categories,
@@ -23,6 +24,7 @@ const entities = combineReducers({
   recipes,
   coupons,
   dashboardSummery,
+  sliders,
 });
 
 export default entities;
