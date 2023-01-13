@@ -1,18 +1,15 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import {
   AppBar,
   Avatar,
   Box,
   Button,
+  CircularProgress,
   Divider,
   Grid,
   IconButton,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Paper,
   Popover,
-  Popper,
+  Switch,
   Toolbar,
   Typography,
   useTheme,
@@ -20,19 +17,29 @@ import {
 import { Logout, Menu, Notifications, Settings } from "@mui/icons-material";
 
 import { AppContext } from "../context/AppContext";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/reducers/auth/auth";
 import useAuth from "../customHooks/useAuth";
 import jwtDecode from "jwt-decode";
 import storage from "../utils/storage";
+import {
+  closeBranch,
+  fetchBranch,
+  openBranch,
+} from "../store/reducers/details/branch";
+import useUser from "../customHooks/useUser";
 
 const AppNavBar = () => {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
   const { setDrawerOpen, drawerMargin } = useContext(AppContext);
   const popperId = open ? "profile-popper-id" : undefined;
   const isLoggedIn = useAuth();
+  const user = useUser();
+
+  const branch = useSelector((state) => state.details.branch);
 
   const togglePopper = ({ target }) => {
     if (open) {
@@ -43,6 +50,22 @@ const AppNavBar = () => {
       setOpen(true);
     }
   };
+
+  const handleBranchStatusChange = () => {
+    if (branch.data.isOpen) {
+      dispatch(closeBranch(user.branchId));
+    } else {
+      dispatch(openBranch(user.branchId));
+    }
+  };
+
+  const apiCalled = useRef(false);
+  useEffect(() => {
+    if (apiCalled)
+      if (user?.branchId) {
+        dispatch(fetchBranch(user.branchId));
+      }
+  }, []);
 
   return (
     <div>
@@ -88,7 +111,11 @@ const AppNavBar = () => {
           open={open}
           anchorEl={anchorEl}
           id={popperId}
+          branchId={user?.branchId}
+          isOpen={branch?.data?.isOpen}
           onClose={() => setOpen(false)}
+          onBranchStatusChange={handleBranchStatusChange}
+          branchStatusLoading={branch?.updating}
         />
       </AppBar>
       <Box sx={{ ...theme.mixins.toolbar, marginBottom: 1 }} />
@@ -98,7 +125,16 @@ const AppNavBar = () => {
 
 export default AppNavBar;
 
-const ProfilePopper = ({ open, anchorEl, id, onClose }) => {
+const ProfilePopper = ({
+  open,
+  anchorEl,
+  id,
+  onClose,
+  isOpen,
+  branchId,
+  onBranchStatusChange,
+  branchStatusLoading,
+}) => {
   const dispatch = useDispatch();
   const token = storage.getItem("token");
   const user = token && jwtDecode(token);
@@ -179,6 +215,54 @@ const ProfilePopper = ({ open, anchorEl, id, onClose }) => {
               Settings
             </Button>
           </Grid>
+
+          {branchId && (
+            <Grid
+              item
+              container
+              justifyContent={"space-between"}
+              alignItems="center"
+            >
+              <Grid container item>
+                <Typography
+                  variant="body1"
+                  fontWeight="bold"
+                  fontSize={"0.9em"}
+                >
+                  Branch Details
+                </Typography>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Grid
+                  container
+                  justifyContent={"space-between"}
+                  alignItems="center"
+                >
+                  <Grid item>
+                    Status {"("}
+                    {isOpen ? "Open" : "Closed"}
+                    {")"}
+                  </Grid>
+                  <Grid item justifyContent={"flex-end"}>
+                    <Grid container alignItems={"center"}>
+                      {branchStatusLoading && (
+                        <Grid item>
+                          <CircularProgress size={"1em"} />
+                        </Grid>
+                      )}
+                      <Grid item>
+                        <Switch
+                          checked={isOpen}
+                          onChange={onBranchStatusChange}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          )}
 
           <Grid item>
             <Button

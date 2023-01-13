@@ -5,7 +5,10 @@ const slice = createSlice({
   name: "branch",
   initialState: {
     loading: false,
-    data: {},
+    updating: false,
+    data: {
+      isOpen: false,
+    },
   },
   reducers: {
     branchLoaded: (branch, action) => {
@@ -20,12 +23,32 @@ const slice = createSlice({
     branchCleared: (branch) => {
       branch.data = {};
     },
+    branchStatusUpdateBegan: (branch) => {
+      branch.updating = true;
+    },
+    branchStatusUpdateEnded: (branch) => {
+      branch.updating = false;
+    },
+    branchClosed: (branch) => {
+      branch.data.isOpen = false;
+    },
+    branchOpened: (branch) => {
+      branch.data.isOpen = true;
+    },
   },
 });
 
 export default slice.reducer;
-const { branchLoadEnded, branchLoadBegan, branchLoaded, branchCleared } =
-  slice.actions;
+const {
+  branchLoadEnded,
+  branchLoadBegan,
+  branchLoaded,
+  branchCleared,
+  branchStatusUpdateBegan,
+  branchStatusUpdateEnded,
+  branchClosed,
+  branchOpened,
+} = slice.actions;
 
 export const url = "/branches";
 export const fetchBranch = (id) => (dispatch) => {
@@ -39,6 +62,38 @@ export const fetchBranch = (id) => (dispatch) => {
     })
   );
 };
+
+export const closeBranch = (id) => (dispatch) => {
+  dispatch(
+    apiRequest({
+      url: `${url}/close/${id}`,
+      method: "patch",
+      onSuccess: branchClosed.type,
+      onBegin: branchStatusUpdateBegan.type,
+      onEnd: branchStatusUpdateEnded.type,
+      toggleOnError: true,
+    })
+  );
+};
+
+export const openBranch = (id) => (dispatch) => {
+  dispatch(
+    apiRequest({
+      url: `${url}/close/${id}`,
+      method: "patch",
+      onSuccess: branchOpened.type,
+      onBegin: branchStatusUpdateBegan.type,
+      onEnd: branchStatusUpdateEnded.type,
+      toggleOnError: true,
+    })
+  );
+};
+
+
+
+
+
+
 
 export const clearBranch = () => (dispatch) => {
   dispatch(branchCleared());

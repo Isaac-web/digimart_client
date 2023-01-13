@@ -23,18 +23,12 @@ import NewBranch from "../pages/NewBranch";
 import EditBranch from "../pages/EditBranch";
 import Login from "../pages/Login";
 import ProtectedRoute from "./ProtectedRoute";
-import { subscribe } from "../utils/longPoll";
-import { fetchPendingOrders } from "../store/reducers/entities/orders";
-import { useDispatch } from "react-redux";
 import Recipes from "../pages/Recipes";
 import EditRecipe from "../pages/EditRecipe";
 import RecipeDetails from "../pages/RecipeDetails";
 
 const Main = () => {
   const { drawerMargin } = useContext(AppContext);
-  const dispatch = useDispatch();
-
-
 
   return (
     <Box
