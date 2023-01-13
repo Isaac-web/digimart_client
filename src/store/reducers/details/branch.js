@@ -79,7 +79,7 @@ export const closeBranch = (id) => (dispatch) => {
 export const openBranch = (id) => (dispatch) => {
   dispatch(
     apiRequest({
-      url: `${url}/close/${id}`,
+      url: `${url}/open/${id}`,
       method: "patch",
       onSuccess: branchOpened.type,
       onBegin: branchStatusUpdateBegan.type,
