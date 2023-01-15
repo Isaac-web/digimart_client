@@ -37,6 +37,19 @@ const slice = createSlice({
         (item) => item._id !== action.payload.id
       );
     },
+    sliderUpdateBegan: (sliders) => {
+      sliders.posting = true;
+    },
+    sliderUpdateEnded: (sliders) => {
+      sliders.data.posting = false;
+    },
+    sliderUpdated: (sliders, action) => {
+      const index = sliders.data.items.findIndex(
+        (item) => item._id === action.payload.data._id
+      );
+
+      sliders.data.items[index] = action.payload.data;
+    },
   },
 });
 
@@ -49,6 +62,9 @@ const {
   slidersFetchEnded,
   slidersFetched,
   sliderDeleted,
+  sliderUpdateBegan,
+  sliderUpdateEnded,
+  sliderUpdated,
 } = slice.actions;
 
 const url = "/sliders";
@@ -61,6 +77,23 @@ export const addSlider = (data, callback) => async (dispatch) => {
       onSuccess: sliderAdded.type,
       onBegin: sliderAddBegan.type,
       onEnd: sliderAddEnded.type,
+      toggleOnError: true,
+      toggleOnSuccess: true,
+    })
+  );
+
+  if (typeof callback === "function") callback();
+};
+
+export const updateSlider = (id, data, callback) => async (dispatch) => {
+  dispatch(
+    apiRequest({
+      url: `${url}/${id}`,
+      data,
+      method: "put",
+      onSuccess: sliderUpdated.type,
+      onBegin: sliderUpdateBegan.type,
+      onEnd: sliderUpdateEnded.type,
       toggleOnError: true,
       toggleOnSuccess: true,
     })

@@ -1,9 +1,9 @@
-import { DeleteOutline } from "@mui/icons-material";
-import { Box, CardMedia, IconButton, Typography } from "@mui/material";
+import { DeleteOutline, Edit } from "@mui/icons-material";
+import { Box, CardMedia, Grid, IconButton, Typography } from "@mui/material";
 import React, { useState } from "react";
 
-const Slide = ({ fullWidth, subtitle, title, onDelete, imageUrl }) => {
-  const [showDelete, setShowDelete] = useState(false);
+const Slide = ({ fullWidth,  onDelete, onEdit, imageUrl, subtitle, title, }) => {
+  const [showOptions, setShowDelete] = useState(false);
 
   return (
     <Box
@@ -23,23 +23,47 @@ const Slide = ({ fullWidth, subtitle, title, onDelete, imageUrl }) => {
         setShowDelete(false);
       }}
     >
-      {showDelete && (
-        <IconButton
-          sx={(theme) => ({
+      {showOptions && (
+        <Grid
+          container
+          sx={{
             position: "absolute",
-            right: "0.2em",
-            top: "0.1em",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            color: theme.palette.common.white,
-            "&:hover": {
-              backgroundColor: theme.palette.error.main,
-              //   backgroundColor: "red",
-            },
-          })}
-          onClick={onDelete}
+            right: "0.5em",
+            top: "0.3em",
+            width: "2em",
+          }}
         >
-          <DeleteOutline sx={{ fontSize: "0.8em" }} />
-        </IconButton>
+          <Grid item>
+            <IconButton
+              sx={(theme) => ({
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                color: theme.palette.common.white,
+                marginBottom: "0.2em",
+                "&:hover": {
+                  backgroundColor: "rgba(0, 100, 255, 0.5)",
+                },
+              })}
+              onClick={onEdit}
+            >
+              <Edit sx={{ fontSize: "0.8em" }} />
+            </IconButton>
+          </Grid>
+
+          <Grid item>
+            <IconButton
+              sx={(theme) => ({
+                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                color: theme.palette.common.white,
+                "&:hover": {
+                  backgroundColor: theme.palette.error.main,
+                },
+              })}
+              onClick={onDelete}
+            >
+              <DeleteOutline sx={{ fontSize: "0.8em" }} />
+            </IconButton>
+          </Grid>
+        </Grid>
       )}
       <CardMedia image={imageUrl} sx={{ width: "100%", height: "100%" }} />
       {subtitle && (

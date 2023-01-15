@@ -9,8 +9,8 @@ import {
 } from "@mui/material";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 
-const AppImagePicker = ({ onChange, name, types, label }) => {
-  const [fileUrl, setFileUrl] = useState(null);
+const AppImagePicker = ({ onChange, name, types, label, imageUrl = null }) => {
+  const [fileUrl, setFileUrl] = useState(imageUrl);
   const fileInput = useRef();
 
   const raiseChange = ({ target: input }) => {
