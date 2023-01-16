@@ -47,6 +47,14 @@ const EmployeePicker = ({
   const employeeData = useSelector((state) => state.entities.employees);
 
   const handleOpenDialog = () => {
+    dispatch(
+      searchEmployees({
+        pageSize: 10,
+        designationId,
+        branchId: user.branchId || null,
+      })
+    );
+
     setOpen(true);
   };
 
