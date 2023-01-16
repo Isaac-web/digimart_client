@@ -25,6 +25,7 @@ import {
   clearSearch,
   loadProducts,
   searchProducts,
+  setCurrentCategory,
 } from "../store/reducers/entities/products";
 import AppSelectField from "../AppSelectField";
 import { fetchCategories } from "../store/reducers/entities/categories";
@@ -58,7 +59,9 @@ const Products = () => {
   };
 
   useEffect(() => {
-    dispatch(loadProducts({ currentPage: 0, categoryId: "none" }));
+    dispatch(
+      loadProducts({ currentPage: 0, categoryId: products.currentCategoryId })
+    );
     dispatch(fetchCategories());
 
     return () => {
@@ -86,6 +89,7 @@ const Products = () => {
 
   const handleSelectCategory = ({ target: input }) => {
     setCategoryId(input.value);
+    dispatch(setCurrentCategory(input.value));
     dispatch(loadProducts({ categoryId: input.value }));
   };
 
@@ -158,7 +162,7 @@ const Products = () => {
                   menuItemLabelAttribute="name"
                   menuItemValueAttribute="_id"
                   onChange={handleSelectCategory}
-                  value={categoryId}
+                  value={products.currentCategoryId}
                 />
               </Toolbar>
             </Grid>

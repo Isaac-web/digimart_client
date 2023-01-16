@@ -35,6 +35,7 @@ const slice = createSlice({
       orders.data.items = orders.data.items.filter(
         (item) => item._id !== action.payload.id
       );
+      orders.pendingCount -= 1;
     },
     pendingOrdersFetched: (orders, action) => {
       orders.pendingCount = action.payload.data;
@@ -125,6 +126,19 @@ export const deleteOrder = (orderId) => (dispatch) => {
       method: "delete",
       toggleOnError: true,
       toggleOnSuccess: true,
+    })
+  );
+};
+
+export const markAsDelivered = (orderId) => (dispatch) => {
+  dispatch(orderDeleted({ id: orderId }));
+
+  dispatch(
+    apiRequest({
+      url: `${url}/${orderId}/mark_as_delivered`,
+      method: "patch",
+      toggleOnSuccess: true,
+      toggleOnError: true,
     })
   );
 };

@@ -67,7 +67,7 @@ const EditProduct = () => {
       setLoaded(0);
       setProgressDialogOpen(true);
       const result = await uploadFile(image, "products", trackUploadProgress);
-      console.log(result);
+
       if (!result.uploaded) return setProgressError(true);
       data.imageUri = result?.url;
       data.imagePublicId = result?.public_id;
@@ -192,7 +192,11 @@ const EditProduct = () => {
                   />
 
                   <Grid item xs={12}>
-                    <AppImagePicker label="Photo" onChange={handleImageLoad} />
+                    <AppImagePicker
+                      label="Photo"
+                      onChange={handleImageLoad}
+                      imageUrl={product?.data?.image?.url || "none"}
+                    />
                   </Grid>
                   <Grid item container sx={{ padding: "1em 0" }}>
                     <Tooltip title="Indicate whether product is available">

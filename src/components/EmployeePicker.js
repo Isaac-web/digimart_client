@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import {
   Paper,
   Box,
@@ -39,6 +39,7 @@ const EmployeePicker = ({
   placeholder,
   designationId,
   title,
+  showSubtitle = true,
   text,
   disabled,
 }) => {
@@ -47,7 +48,6 @@ const EmployeePicker = ({
   const user = useUser();
 
   const employeeData = useSelector((state) => state.entities.employees);
-  console.log(employeeData.loading);
 
   const handleOpenDialog = () => {
     dispatch(
@@ -98,6 +98,8 @@ const EmployeePicker = ({
     dispatch(clearSearch());
   };
 
+  console.log(employee);
+
   const employees = mapToViewModel(employeeData.search.data?.items);
   return (
     <>
@@ -124,15 +126,22 @@ const EmployeePicker = ({
                       </Typography>
                     }
                     secondary={
-                      <Typography variant="subtitle2">
-                        {employee.title}
-                      </Typography>
+                      showSubtitle && (
+                        <Typography variant="subtitle2">
+                          {employee.title}
+                        </Typography>
+                      )
                     }
                   />
                 </ListItem>
               </Box>
               <Box>
-                <Button variant="text" onClick={handleOpenDialog}>
+                <Button
+                  variant="text"
+                  onClick={handleOpenDialog}
+                  disabled={disabled}
+                  size="small"
+                >
                   {changeEmployeeButtonTitle || "Change Employee"}
                 </Button>
               </Box>

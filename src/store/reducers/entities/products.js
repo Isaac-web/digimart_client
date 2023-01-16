@@ -10,6 +10,7 @@ const slice = createSlice({
       count: 0,
       currentPage: 0,
       pageSize: 0,
+      currentCategoryId: "none",
       items: [],
     },
     searchResults: [],
@@ -48,6 +49,9 @@ const slice = createSlice({
     searchCleared: (products) => {
       products.searchResults = [];
     },
+    currentCategoryIdSet: (products, action) => {
+      products.data.currentCategoryId = action.payload.categoryId || "none";
+    },
   },
 });
 export default slice.reducer;
@@ -61,6 +65,7 @@ const {
   searchBegan,
   searchEnded,
   searchCleared,
+  currentCategoryIdSet
 } = slice.actions;
 
 const url = "/products";
@@ -115,6 +120,11 @@ export const searchProducts = (data) => (dispatch) => {
     })
   );
 };
+
+
+export const setCurrentCategory = (categoryId) => dispatch => {
+  dispatch(currentCategoryIdSet({categoryId}))
+}
 
 
 export const clearSearch = () => dispatch => {

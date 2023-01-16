@@ -20,7 +20,13 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { Delete, FilterList, Refresh } from "@mui/icons-material";
+import {
+  Delete,
+  FilterList,
+  LibraryAdd,
+  LibraryAddCheck,
+  Refresh,
+} from "@mui/icons-material";
 import { TabContext } from "@mui/lab";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -33,6 +39,7 @@ import {
   fetchBranchOrders,
   fetchOrders,
   fetchPendingOrders,
+  markAsDelivered,
   searchOrders,
 } from "../store/reducers/entities/orders";
 import { columns } from "../data/orders";
@@ -72,14 +79,14 @@ const Orders = () => {
       dispatch(
         fetchOrders({
           currentPage: 0,
-          status: value === 2 ? 4 : value,
+          status: value === 2 ? 3 : value,
         })
       );
     else
       dispatch(
         fetchBranchOrders({
           currentPage: 0,
-          status: value === 2 ? 4 : value,
+          status: value === 2 ? 3 : value,
         })
       );
   };
@@ -199,7 +206,7 @@ const Orders = () => {
                     align: "right",
                     render: (item) => {
                       return (
-                        <OrderDeleteButton
+                        <RowActions
                           order={item}
                           onClick={() => handleOpenDeleteDialog(item)}
                         />
@@ -367,14 +374,45 @@ const renderTablePagination = (props) => {
   );
 };
 
-const OrderDeleteButton = ({ order, onClick, ...rest }) => {
+const RowActions = ({ order, onClick, ...rest }) => {
+  const dispatch = useDispatch();
+
   const openDialog = (e) => {
     e.stopPropagation();
     onClick();
   };
 
+  const handleMarkAsDelivered = (e, orderId) => {
+    e.stopPropagation();
+
+    dispatch(markAsDelivered(orderId));
+  };
+
+  if (order?.status > 0)
+    return (
+      <Tooltip title="Mark as delivered">
+        <IconButton
+          sx={(theme) => ({
+            color: theme.palette.info.light,
+            opacity: "0.7",
+            "&:hover": {
+              opacity: "1",
+            },
+          })}
+          disabled={order?.status >= 3}
+          onClick={(e) => handleMarkAsDelivered(e, order._id)}
+        >
+          <LibraryAddCheck
+            sx={(theme) => ({
+              fontSize: "0.75em",
+            })}
+          />
+        </IconButton>
+      </Tooltip>
+    );
+
   return (
-    <>
+    <Tooltip title="Delete">
       <IconButton
         disabled={order?.status > 0}
         onClick={openDialog}
@@ -393,7 +431,7 @@ const OrderDeleteButton = ({ order, onClick, ...rest }) => {
           })}
         />
       </IconButton>
-    </>
+    </Tooltip>
   );
 };
 

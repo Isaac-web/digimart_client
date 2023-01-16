@@ -57,7 +57,11 @@ const OrderDetails = () => {
   };
 
   const mapToEmployee = (employee) => {
-    if (employee) return { name: employee.name, title: employee.designation };
+    if (employee)
+      return {
+        name: `${employee?.firstname} ${employee?.lastname}`,
+        title: employee?.designation,
+      };
     else return null;
   };
 
@@ -150,13 +154,13 @@ const OrderDetails = () => {
                   />
                 </Box>
 
-                <Box>
+                {/* <Box>
                   <ProductListAccordion
                     items={order?.clearedItems}
                     onRemoveItem={(item) => dispatch(unclearOrderItem(item))}
                     title="Cleared"
                   />
-                </Box>
+                </Box> */}
               </Box>
             </Paper>
 
@@ -220,7 +224,8 @@ const OrderDetails = () => {
                   text="Shopper for this order is not set."
                   pickEmployeeButtonTitle={"Pick a shopper"}
                   changeEmployeeButtonTitle={"Change shopper"}
-                  disabled={order.data.status?.value}
+                  showSubtitle={!order?.data?.status?.value}
+                  disabled={order?.data?.status?.value > 0}
                 />
               </Grid>
 
@@ -236,7 +241,8 @@ const OrderDetails = () => {
                   text="Rider for this order is not set."
                   pickEmployeeButtonTitle={"Pick a rider"}
                   changeEmployeeButtonTitle={"Change rider"}
-                  disabled={order.data.status?.value}
+                  showSubtitle={!order?.data?.status?.value}
+                  disabled={order?.data?.status?.value > 0}
                 />
               </Grid>
 
@@ -331,7 +337,11 @@ const OrderDetails = () => {
                     onClick={handleUpdateOrder}
                     fullWidth
                     endIcon={<Send size="small" />}
-                    disabled={!order.data.shopper || !order.data.rider}
+                    disabled={
+                      !order.data.shopper ||
+                      !order.data.rider ||
+                      order?.data?.status?.value >= 1
+                    }
                   >
                     {order.data.status?.value === 0
                       ? "Update Order"
