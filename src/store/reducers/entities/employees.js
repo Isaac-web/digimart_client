@@ -101,6 +101,18 @@ export const searchEmployees = (params) => async (dispatch) => {
   );
 };
 
+export const fetchBranchEmployees = (params) => async (dispatch) => {
+  dispatch(
+    apiRequest({
+      onBegin: employeesLoadBegan.type,
+      params,
+      onEnd: employeesLoadEnded.type,
+      onSuccess: employeesSearched.type,
+      url: `${url}?userType=employee`,
+    })
+  );
+};
+
 export const clearSearch = () => async (dispatch) => {
   dispatch(employeeSearchCleared());
 };

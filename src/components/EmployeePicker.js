@@ -18,11 +18,13 @@ import {
   List,
   ListItemSecondaryAction,
   CircularProgress,
+  Grid,
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import {
   clearSearch,
+  fetchBranchEmployees,
   searchEmployees,
 } from "../store/reducers/entities/employees";
 import useUser from "../customHooks/useUser";
@@ -45,10 +47,11 @@ const EmployeePicker = ({
   const user = useUser();
 
   const employeeData = useSelector((state) => state.entities.employees);
+  console.log(employeeData.loading);
 
   const handleOpenDialog = () => {
     dispatch(
-      searchEmployees({
+      fetchBranchEmployees({
         pageSize: 10,
         designationId,
         branchId: user.branchId || null,
@@ -159,7 +162,7 @@ const EmployeePicker = ({
           <DialogSearch
             onSearch={handleSearch}
             onClear={handleClearSearch}
-            searching={employeeData.search.loading}
+            loading={employeeData.search.loading}
             placeholder={placeholder}
           />
         </DialogTitle>
@@ -167,16 +170,28 @@ const EmployeePicker = ({
           <Divider />
         </Box>
         <DialogContent sx={{ height: "18em" }}>
-          {employees.length ? (
-            <EmployeeList
-              list={employees}
-              onEmployeeSelect={raiseEmployeeSelect}
-            />
+          {employeeData.loading ? (
+            <Box>
+              <Grid container justifyContent={"center"} alignItems="center">
+                <Grid item>
+                  <CircularProgress size="1em" />
+                </Grid>
+              </Grid>
+            </Box>
           ) : (
-            <EmptySearch
-              title={emptyContentTitle}
-              subtitle={emptyContentSubtitle}
-            />
+            <Box>
+              {employees.length ? (
+                <EmployeeList
+                  list={employees}
+                  onEmployeeSelect={raiseEmployeeSelect}
+                />
+              ) : (
+                <EmptySearch
+                  title={emptyContentTitle}
+                  subtitle={emptyContentSubtitle}
+                />
+              )}
+            </Box>
           )}
         </DialogContent>
 
