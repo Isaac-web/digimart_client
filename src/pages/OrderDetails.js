@@ -46,7 +46,9 @@ const OrderDetails = () => {
       const items = data.order_items.map((item) => ({
         _id: item.productId,
         productName: item.productName,
-        unitPrice: item.unitPrice,
+        unitPrice: item.optionalPrice
+          ? `${item.optionalPrice} (Optional Price)`
+          : item.unitPrice,
         imageUri: item.imageUri,
         subtotal: item.subtotal,
         quantity: item.quantity,
@@ -153,14 +155,6 @@ const OrderDetails = () => {
                     rowKey="_id"
                   />
                 </Box>
-
-                {/* <Box>
-                  <ProductListAccordion
-                    items={order?.clearedItems}
-                    onRemoveItem={(item) => dispatch(unclearOrderItem(item))}
-                    title="Cleared"
-                  />
-                </Box> */}
               </Box>
             </Paper>
 

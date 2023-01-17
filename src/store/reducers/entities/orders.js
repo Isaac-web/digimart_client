@@ -6,6 +6,7 @@ const slice = createSlice({
   initialState: {
     loading: false,
     pendingCount: 0,
+    currentTab: 0,
     search: {
       active: false,
       data: {
@@ -55,6 +56,9 @@ const slice = createSlice({
       orders.search.data.items = [];
       orders.search.active = false;
     },
+    currentTabSet: (products, action) => {
+      products.currentTab = action.payload.currentTab;
+    },
   },
 });
 
@@ -69,6 +73,7 @@ const {
   orderSearchEnded,
   orderSearchCleared,
   orderDeleted,
+  currentTabSet,
 } = slice.actions;
 
 const url = "/orders";
@@ -141,4 +146,8 @@ export const markAsDelivered = (orderId) => (dispatch) => {
       toggleOnError: true,
     })
   );
+};
+
+export const setCurrentTab = (currentTab) => (dispatch) => {
+  dispatch(currentTabSet({ currentTab }));
 };

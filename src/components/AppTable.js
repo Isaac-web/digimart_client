@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import _ from "lodash";
 import AppPorgress from "../components/AppProgress";
-import Empty from "../Empty";
 
 const AppTable = ({
   columns,

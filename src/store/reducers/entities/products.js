@@ -65,7 +65,8 @@ const {
   searchBegan,
   searchEnded,
   searchCleared,
-  currentCategoryIdSet
+  currentCategoryIdSet,
+  currentTabSet,
 } = slice.actions;
 
 const url = "/products";
@@ -121,12 +122,11 @@ export const searchProducts = (data) => (dispatch) => {
   );
 };
 
+export const setCurrentCategory = (categoryId) => (dispatch) => {
+  dispatch(currentCategoryIdSet({ categoryId }));
+};
 
-export const setCurrentCategory = (categoryId) => dispatch => {
-  dispatch(currentCategoryIdSet({categoryId}))
-}
+export const clearSearch = () => (dispatch) => {
+  dispatch(searchCleared());
+};
 
-
-export const clearSearch = () => dispatch => {
-  dispatch(searchCleared())
-}

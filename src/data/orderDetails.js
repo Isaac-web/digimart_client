@@ -41,14 +41,6 @@ export const columns = [
     key: "subtotal",
     render: (item) => `Ghc ${item.subtotal}`,
   },
-  {
-    id: "6",
-    label: "",
-    dataIndex: "addProductButton",
-    key: "addProductButton",
-    align: "right",
-    render: (item) => <DeleteButton item={item} />,
-  },
 ];
 
 const DeleteButton = ({ item }) => {
