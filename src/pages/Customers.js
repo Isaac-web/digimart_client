@@ -23,7 +23,7 @@ const Customers = () => {
         image: item?.image?.url,
         phone: item?.phone,
         email: item?.email,
-        numberOfOrders: "0",
+        numberOfOrders: item?.ordersCount || "0",
       }));
     }
   };

@@ -41,37 +41,3 @@ export const tableColumns = [
   },
 ];
 
-// export const customers = [
-//   {
-//     _id: "1",
-//     name: "John Doe",
-//     phone: "555-555-5555",
-//     email: "johnexample@gmail.com",
-//     status: 3,
-//     numberOfOrders: 24,
-//   },
-//   {
-//     _id: "2",
-//     name: "John Doe",
-//     phone: "555-555-5555",
-//     email: "johnexample@gmail.com",
-//     status: 3,
-//     numberOfOrders: 24,
-//   },
-//   {
-//     _id: "3",
-//     name: "John Doe",
-//     phone: "555-555-5555",
-//     email: "johnexample@gmail.com",
-//     status: 3,
-//     numberOfOrders: 24,
-//   },
-//   {
-//     _id: "4",
-//     name: "John Doe",
-//     phone: "555-555-5555",
-//     email: "johnexample@gmail.com",
-//     status: 3,
-//     numberOfOrders: 24,
-//   },
-// ];
