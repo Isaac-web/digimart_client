@@ -14,6 +14,7 @@ import { Save } from "@mui/icons-material";
 import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { getImagePresignedUrl, uploadAWSFile } from "../utils/uploader";
 
 import { AppContext } from "../context/AppContext";
 import { fetchCategories } from "../store/reducers/entities/categories";
@@ -24,9 +25,7 @@ import FormSubmitButton from "../components/form/FormSubmitButton";
 import AppImagePicker from "../components/AppImagePicker";
 import FormSelectField from "../components/form/FormSelectField";
 import AppProgress from "../components/AppProgress";
-import { uploadFile } from "../utils/uploader";
 import ProgressDialog from "../components/ProgressDialog";
-import FormSwitch from "../components/form/FormSwitch";
 
 const NewProduct = () => {
   const [image, setImage] = useState(null);
@@ -54,27 +53,31 @@ const NewProduct = () => {
     setProgressDialogOpen(false);
   };
 
-  const handleUploadProgress = (loaded, total) => {
-    let progressPercent = Math.floor(loaded * 100) / total;
+  const handleUploadProgress = (progressPercent) => {
     setProgressValue(progressPercent);
 
     if (progressPercent >= 100) setProgressDone(true);
   };
 
   const handleSubmit = async (data) => {
-    if (!image) return;
     if (image) {
+      const { signedUrl, publicId, url } = await getImagePresignedUrl({
+        path: "products",
+      });
+      console.log(url);
       setProgressDialogError(false);
       setProgressDialogOpen(true);
-      const result = await uploadFile(image, "products", handleUploadProgress);
-      if (!result.url) setProgressDialogError(true);
-      data.imageUri = result?.url;
-      data.imagePublicId = result?.public_id;
+      const result = await uploadAWSFile(
+        signedUrl,
+        image,
+        handleUploadProgress
+      );
+      if (!result.uploaded) setProgressDialogError(true);
+      data.imageUri = url;
+      data.imagePublicId = publicId;
     }
-
     data.status = available;
     data.priceFixed = priceFixed;
-    
     dispatch(createProduct(data));
   };
 
@@ -122,11 +125,11 @@ const NewProduct = () => {
             <Box>
               <Form
                 initialValues={{
-                  name: "",
-                  categoryId: "",
-                  price: "",
-                  unit: "",
-                  desc: "",
+                  name: "name",
+                  categoryId: "hello",
+                  price: "100",
+                  unit: "unit",
+                  desc: "price",
                   status: true,
                 }}
                 onSubmit={handleSubmit}

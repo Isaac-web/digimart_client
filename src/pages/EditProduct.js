@@ -27,7 +27,7 @@ import AppImagePicker from "../components/AppImagePicker";
 import FormSelectField from "../components/form/FormSelectField";
 import AppProgress from "../components/AppProgress";
 import ProgressDialog from "../components/ProgressDialog";
-import { uploadFile } from "../utils/uploader";
+import { getImagePresignedUrl, uploadAWSFile, uploadFile } from "../utils/uploader";
 
 const EditProduct = () => {
   const [image, setImage] = useState(null);
@@ -56,21 +56,30 @@ const EditProduct = () => {
     setImage(image);
   };
 
-  const trackUploadProgress = (loaded, total) => {
-    let loadedPercent = Math.floor(loaded * 100) / total;
+  const handleUploadProgress = (loadedPercent) => {
     setLoaded(loadedPercent);
     if (loadedPercent >= 100) setProgressDone(true);
   };
 
+
+
   const handleSubmit = async (data) => {
     if (image) {
+      const { signedUrl, publicId, url } = await getImagePresignedUrl({
+        path: "products",
+      });
       setLoaded(0);
       setProgressDialogOpen(true);
-      const result = await uploadFile(image, "products", trackUploadProgress);
+      const result = await uploadAWSFile(
+        signedUrl,
+        image,
+        handleUploadProgress
+      );
 
       if (!result.uploaded) return setProgressError(true);
-      data.imageUri = result?.url;
-      data.imagePublicId = result?.public_id;
+
+      data.imageUri = url;
+      data.imagePublicId = publicId;
     }
 
     data.status = available;
