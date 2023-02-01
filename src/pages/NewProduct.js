@@ -125,11 +125,11 @@ const NewProduct = () => {
             <Box>
               <Form
                 initialValues={{
-                  name: "name",
-                  categoryId: "hello",
-                  price: "100",
-                  unit: "unit",
-                  desc: "price",
+                  name: "",
+                  categoryId: "",
+                  price: "",
+                  unit: "",
+                  desc: "",
                   status: true,
                 }}
                 onSubmit={handleSubmit}

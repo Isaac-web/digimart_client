@@ -33,15 +33,18 @@ import {
 } from "../store/reducers/entities/products";
 import { fetchCategories } from "../store/reducers/entities/recipeCategories";
 import { addRecipe } from "../store/reducers/entities/recipes";
-import { uploadFile } from "../utils/uploader";
+import {
+  getImagePresignedUrl,
+  uploadAWSFile,
+  
+} from "../utils/uploader";
 import { useNavigate, useParams } from "react-router-dom";
 import FormRecipeSteps from "../components/form/FormRecipeSteps";
 import { useFormikContext } from "formik";
-import recipe, {
+import {
   fetchRecipe,
   updateRecipe,
 } from "../store/reducers/details/recipe";
-import categories from "../store/reducers/entities/categories";
 import AppCircurlarProgress from "../components/AppProgress";
 import { Delete, Edit } from "@mui/icons-material";
 
@@ -92,25 +95,25 @@ const EditRecipe = () => {
     dispatch(fetchRecipe(recipeId));
   };
 
-  const handleUploadProgress = (loaded, total) => {
-    setProgress(Math.floor(loaded / total) * 100);
+  const handleUploadProgress = (loaded) => {
+    setProgress(loaded);
   };
 
   const handleSubmit = async (data) => {
     if (image) {
       setProgress(0);
       setOpen(true);
-      const { uploaded, url, public_id } = await uploadFile(
-        image,
-        "recipe_images",
-        handleUploadProgress
-      );
+      const { signedUrl, publicId, url } = await getImagePresignedUrl({
+        path: "recipes/images",
+      });
+
+      const {uploaded} = await uploadAWSFile(signedUrl, image, handleUploadProgress);
 
       if (!uploaded) return;
 
       if (uploaded) {
         data.imageUrl = url;
-        data.imagePublicId = public_id;
+        data.imagePublicId = publicId;
       }
     }
 

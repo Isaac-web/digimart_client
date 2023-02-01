@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
@@ -11,14 +10,12 @@ import {
   Tooltip,
   useTheme,
 } from "@mui/material";
-import { ConstructionOutlined, Save } from "@mui/icons-material";
 import * as Yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { AppContext } from "../context/AppContext";
 import { fetchCategories } from "../store/reducers/entities/categories";
-import { createProduct } from "../store/reducers/entities/products";
 import { fetchProduct, updateProduct } from "../store/reducers/details/product";
 import Form from "../components/form/Form";
 import FormTextField from "../components/form/FormTextField";
@@ -27,7 +24,8 @@ import AppImagePicker from "../components/AppImagePicker";
 import FormSelectField from "../components/form/FormSelectField";
 import AppProgress from "../components/AppProgress";
 import ProgressDialog from "../components/ProgressDialog";
-import { getImagePresignedUrl, uploadAWSFile, uploadFile } from "../utils/uploader";
+import { getImagePresignedUrl, uploadAWSFile } from "../utils/uploader";
+import { Save } from "@mui/icons-material";
 
 const EditProduct = () => {
   const [image, setImage] = useState(null);
