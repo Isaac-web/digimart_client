@@ -29,17 +29,23 @@ export const uploadFile = async (file, upload_preset, callback) => {
     payload.uploaded = true;
   } catch (error) {
     payload.uploaded = false;
-    console.log(error);
   }
 
   return payload;
 };
 
-
 export const getImagePresignedUrl = async (params) => {
   const api = axios.create({ baseURL: process.env.REACT_APP_API_URI });
 
   const { data } = await api.get("/uploads/image", { params });
+
+  return data;
+};
+
+export const getVideoPresignedUrl = async (params) => {
+  const api = axios.create({ baseURL: process.env.REACT_APP_API_URI });
+
+  const { data } = await api.get("/uploads/video", { params });
 
   return data;
 };
@@ -64,9 +70,12 @@ export const uploadAWSFile = async (url, file, callback) => {
     return {
       uploaded: false,
       message: "An error occured while uploading the file.",
+      error: err,
     };
   }
 };
+
+
 
 
 

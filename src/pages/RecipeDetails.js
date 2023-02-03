@@ -124,6 +124,13 @@ const RecipeDetails = () => {
             </Typography>
           </Box>
 
+          <Typography variant="subtitle2">
+            Video Url:{" "}
+            <a href={`${recipe?.data?.recipe?.video?.url}`} target="_blank">
+              {recipe?.data?.recipe?.video?.url}
+            </a>
+          </Typography>
+
           <Box sx={{ padding: "5em 0" }}>
             <Typography variant="h5">Estimate Price: N/A</Typography>
           </Box>

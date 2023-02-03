@@ -20,7 +20,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { addSlider, updateSlider } from "../store/reducers/entities/sliders";
 import { Close } from "@mui/icons-material";
 import ImagePicker from "./AppImagePicker";
-import { uploadFile } from "../utils/uploader";
+import {
+  getImagePresignedUrl,
+  uploadAWSFile,
+  uploadFile,
+} from "../utils/uploader";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
@@ -38,8 +42,8 @@ const NewSliderDialog = ({ open, onClose }) => {
 
   const slide = useSelector((state) => state.details.slide);
 
-  const handleUploadProgress = (loaded, total) => {
-    setProgress(Math.floor(loaded / total) * 100);
+  const handleUploadProgress = (loaded) => {
+    setProgress(loaded);
   };
 
   const handleSubmit = async (data) => {
@@ -47,9 +51,19 @@ const NewSliderDialog = ({ open, onClose }) => {
       setSubmitting(true);
       setProgress(0);
 
-      const { uploaded, url, public_id } = await uploadFile(
+      // const { uploaded, url, public_id } = await uploadFile(
+      //   image,
+      //   "slider_images",
+      //   handleUploadProgress
+      // );
+
+      const { url, publicId, signedUrl } = await getImagePresignedUrl({
+        path: "sliders/images",
+      });
+
+      const { uploaded } = await uploadAWSFile(
+        signedUrl,
         image,
-        "slider_images",
         handleUploadProgress
       );
 
@@ -57,7 +71,7 @@ const NewSliderDialog = ({ open, onClose }) => {
 
       if (uploaded) {
         data.imageUrl = url;
-        data.imagePublicId = public_id;
+        data.imagePublicId = publicId;
       }
     }
 
@@ -83,16 +97,6 @@ const NewSliderDialog = ({ open, onClose }) => {
   const handleImageChange = (image) => {
     setImage(image);
   };
-
-  // const initialValues = ;
-
-  // if (slide.loading) return (
-  //   <Grid container>
-  //     <Grid item>
-  //       <CircularProgress size={"1em"} />
-  //     </Grid>
-  //   </Grid>
-  // );
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
@@ -141,7 +145,10 @@ const NewSliderDialog = ({ open, onClose }) => {
             </Grid>
 
             <Grid item>
-              <ImagePicker onChange={handleImageChange} imageUrl={slide?.data?.image?.url} />
+              <ImagePicker
+                onChange={handleImageChange}
+                imageUrl={slide?.data?.image?.url}
+              />
             </Grid>
 
             <Grid container spacing={2}>

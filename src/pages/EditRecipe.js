@@ -2,6 +2,7 @@ import React, { memo, useEffect, useRef, useState } from "react";
 import {
   Button,
   ButtonBase,
+  CircularProgress,
   Container,
   Dialog,
   DialogActions,
@@ -11,6 +12,7 @@ import {
   Grid,
   IconButton,
   InputAdornment,
+  LinearProgress,
   List,
   Paper,
   TextField,
@@ -35,18 +37,16 @@ import { fetchCategories } from "../store/reducers/entities/recipeCategories";
 import { addRecipe } from "../store/reducers/entities/recipes";
 import {
   getImagePresignedUrl,
+  getVideoPresignedUrl,
   uploadAWSFile,
-  
 } from "../utils/uploader";
 import { useNavigate, useParams } from "react-router-dom";
 import FormRecipeSteps from "../components/form/FormRecipeSteps";
 import { useFormikContext } from "formik";
-import {
-  fetchRecipe,
-  updateRecipe,
-} from "../store/reducers/details/recipe";
+import { fetchRecipe, updateRecipe } from "../store/reducers/details/recipe";
 import AppCircurlarProgress from "../components/AppProgress";
-import { Delete, Edit } from "@mui/icons-material";
+import { Delete, Edit, Upload } from "@mui/icons-material";
+import VideoPicker from "../components/VideoPicker";
 
 const data = {
   name: "",
@@ -85,7 +85,13 @@ const EditRecipe = () => {
   const navigate = useNavigate();
   const { id: recipeId } = useParams();
   const [image, setImage] = useState(null);
+  const [video, setVideo] = useState(null);
+  const [videoUrl, setVideoUrl] = useState(null);
+  const [videoPublicId, setVideoPublicId] = useState(null);
   const [progress, setProgress] = useState(0);
+  const [videoUploadProgress, setVideoUploadProgress] = useState(0);
+  const [videoPresignedUrlLoading, setVideoPresignedUrlLoading] =
+    useState(false);
   const [open, setOpen] = useState(false);
 
   const categories = useSelector((state) => state.entities.recipeCategories);
@@ -107,7 +113,11 @@ const EditRecipe = () => {
         path: "recipes/images",
       });
 
-      const {uploaded} = await uploadAWSFile(signedUrl, image, handleUploadProgress);
+      const { uploaded } = await uploadAWSFile(
+        signedUrl,
+        image,
+        handleUploadProgress
+      );
 
       if (!uploaded) return;
 
@@ -117,9 +127,15 @@ const EditRecipe = () => {
       }
     }
 
+    if (videoUrl) data.videoUrl = videoUrl;
+    if (videoPublicId) data.videoPublicId = videoPublicId;
+
     if (recipeId && recipe) {
       dispatch(updateRecipe(recipeId, data, () => navigate("/recipes")));
     } else dispatch(addRecipe(data));
+
+    setVideoUrl(null);
+    setVideoPublicId(null);
   };
 
   const handleChangeImage = (file) => {
@@ -132,6 +148,31 @@ const EditRecipe = () => {
 
   const handleCloseImageUploadDialog = () => {
     setOpen(false);
+  };
+
+  const handleSetVideo = (video) => {
+    setVideo(video);
+  };
+
+  const trackVideoUploadProgress = (loaded) => {
+    setVideoUploadProgress(loaded);
+  };
+
+  const handleVideoUpload = async () => {
+    if (!video) return;
+    setVideoUploadProgress(0);
+    setVideoPresignedUrlLoading(true);
+    const { url, signedUrl, publicId } = await getVideoPresignedUrl({
+      path: "recipes/videos",
+    });
+    setVideoPresignedUrlLoading(false);
+
+    const res = await uploadAWSFile(signedUrl, video, trackVideoUploadProgress);
+
+    if (res.uploaded) {
+      setVideoUrl(url);
+      setVideoPublicId(publicId);
+    }
   };
 
   const mapRecipeDataToInputs = (recipe) => {
@@ -257,6 +298,7 @@ const EditRecipe = () => {
                   <AppImagePicker
                     label={"Recipe Image"}
                     onChange={handleChangeImage}
+                    imageUrl={recipe?.data?.recipe?.image?.url}
                   />
                   <ProgressDialog
                     open={open}
@@ -290,8 +332,57 @@ const EditRecipe = () => {
                   />
                 </Grid>
 
-                <Grid item>
-                  <FormTextField name={"videoUrl"} label="Video Url" />
+                <Grid
+                  item
+                  container
+                  direction="column"
+                  spacing={2}
+                  sx={{ marginTop: 1 }}
+                >
+                  <Grid item>
+                    <VideoPicker onChange={handleSetVideo} />
+                  </Grid>
+                  <Grid item>
+                    <Grid container alignItems="center" spacing={1}>
+                      <Grid item>
+                        <Button
+                          onClick={handleVideoUpload}
+                          startIcon={<Upload />}
+                          disabled={!video || videoUploadProgress > 0}
+                        >
+                          Upload
+                        </Button>
+                      </Grid>
+                      {videoPresignedUrlLoading && (
+                        <Grid item>
+                          <CircularProgress size={"1em"} />
+                        </Grid>
+                      )}
+                    </Grid>
+                  </Grid>
+                  {videoUploadProgress ? (
+                    <Grid item xs={12}>
+                      <LinearProgress
+                        variant="determinate"
+                        value={videoUploadProgress}
+                      />
+                      <Typography
+                        variant="subtitle2"
+                        sx={{ fontSize: "0.9em" }}
+                      >
+                        Uploading Video: {videoUploadProgress.toFixed(1)}%
+                      </Typography>
+                    </Grid>
+                  ) : null}
+
+                  {videoUploadProgress === 100 && (
+                    <Typography
+                      variant="subtitle2"
+                      sx={(theme) => ({ color: theme.palette.success.main })}
+                    >
+                      Video uploaded successfully.
+                    </Typography>
+                  )}
                 </Grid>
 
                 <Grid

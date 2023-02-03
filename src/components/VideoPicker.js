@@ -1,5 +1,5 @@
 import { VideoCameraBack } from "@mui/icons-material";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import React, { useRef, useState } from "react";
 
 const VideoPicker = ({ onChange }) => {
@@ -9,18 +9,19 @@ const VideoPicker = ({ onChange }) => {
   const handleChange = ({ target }) => {
     const file = target.files[0];
 
-    console.log(file);
 
     const reader = new FileReader();
 
-    reader.onload = (file) => {
-      if (onChange) {
-        setVideo(file);
-      }
-    };
+    if (file) {
+      reader.onload = (file) => {
+        if (onChange) {
+          setVideo(file);
+        }
+      };
 
-    onChange(file);
-    reader.readAsDataURL(file);
+      onChange(file);
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
